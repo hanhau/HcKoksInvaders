@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{cf15d701-943a-4a76-8fc8-f973a3cc7906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="images">
+      <UniqueIdentifier>{b17b67de-5445-4a73-bf94-a705e017f1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="models">
+      <UniqueIdentifier>{9f7437af-087c-4f42-9732-4b34349defdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{bc9616d7-7f26-4915-8893-a44dcc7cd12b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\ResourceManagers">
+      <UniqueIdentifier>{5ea5a870-4bed-419a-9c1f-99f95bd7f279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\TileEntities">
+      <UniqueIdentifier>{cf93b656-204f-412d-9bf8-c9da42eac657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Models">
+      <UniqueIdentifier>{fc315cde-9740-4c05-ad5f-13079cf2fb66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\OpenGL">
+      <UniqueIdentifier>{a3383814-89c6-4649-84a8-f00bbee0eb3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Game">
+      <UniqueIdentifier>{9bf5a8e0-c2b5-4279-be72-8725cb29d05d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="images\cubemap">
+      <UniqueIdentifier>{978924ed-4731-4e41-9501-edce3714d0c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\GameWorld">
+      <UniqueIdentifier>{ef265da3-fea9-49ec-9adf-e88319b255ca}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Cubemap.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWorld.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Turret.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundBufferManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="EmptyTile.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="StarBackground.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="AmmunitionIcon.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletRenderer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySpaceShipTile.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyTurretTile.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Game.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Button.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StarShip.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Util.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Cubemap.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Turret.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ModelManager.hpp">
+      <Filter>Headerdateien\ResourceManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoundBufferManager.hpp">
+      <Filter>Headerdateien\ResourceManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TextureManager.hpp">
+      <Filter>Headerdateien\ResourceManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EmptyTile.hpp">
+      <Filter>Headerdateien\TileEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TileEntityBase.hpp">
+      <Filter>Headerdateien\TileEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EnemySpaceShipTile.hpp">
+      <Filter>Headerdateien\TileEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EnemyTurretTile.hpp">
+      <Filter>Headerdateien\TileEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Model.hpp">
+      <Filter>Headerdateien\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ModelPosition.hpp">
+      <Filter>Headerdateien\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Shader.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Program.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ProgramManager.hpp">
+      <Filter>Headerdateien\ResourceManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StarBackground.hpp">
+      <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameWorld.hpp">
+      <Filter>Headerdateien\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AmmunitionIcon.hpp">
+      <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BoundingBox.hpp">
+      <Filter>Headerdateien\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Bullet.hpp">
+      <Filter>Headerdateien\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BulletRenderer.hpp">
+      <Filter>Headerdateien\GameWorld</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shaders\frag_shader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\vertex_shader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\background_star_shader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="packages.config" />
+    <None Include="res\audio\main_menu.flac">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="res\audio\select.flac">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="res\shaders\model_frag.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\model_vert.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\button_vert.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\button_frag.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\main_menu_frag.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\background_star_shader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\AmmunitionIcon.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\AmmunitionIcon.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\bullet_vert.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="res\shaders\bullet_frag.frag">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="res\models\sphere.obj">
+      <Filter>models</Filter>
+    </Object>
+    <Object Include="res\models\vengabus.obj">
+      <Filter>models</Filter>
+    </Object>
+    <Object Include="res\models\vengabus_hq.obj">
+      <Filter>models</Filter>
+    </Object>
+    <Object Include="res\models\finger.obj">
+      <Filter>models</Filter>
+    </Object>
+    <Object Include="res\models\money.obj">
+      <Filter>models</Filter>
+    </Object>
+    <Object Include="res\models\turret_base.obj">
+      <Filter>models</Filter>
+    </Object>
+    <Object Include="res\models\turret_head.obj">
+      <Filter>models</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\models\ship1_diffuse.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\ship1_emit.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\ship1_glossy.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\ship1_normal.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\images\icon_munition_pistol.png">
+      <Filter>images</Filter>
+    </Image>
+    <Image Include="res\images\icon_munition_rocket.png">
+      <Filter>images</Filter>
+    </Image>
+    <Image Include="res\images\icon_munition_shotgun.png">
+      <Filter>images</Filter>
+    </Image>
+    <Image Include="res\images\icon_munition_smg.png">
+      <Filter>images</Filter>
+    </Image>
+    <Image Include="res\models\vengabus_diffuse.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\vengabus_emit.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\vengabus_glossy.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\vengabus_normal.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\vengabus_hq_diffuse.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\images\cubemap\back.png">
+      <Filter>images\cubemap</Filter>
+    </Image>
+    <Image Include="res\images\cubemap\bot.png">
+      <Filter>images\cubemap</Filter>
+    </Image>
+    <Image Include="res\images\cubemap\front.png">
+      <Filter>images\cubemap</Filter>
+    </Image>
+    <Image Include="res\images\cubemap\left.png">
+      <Filter>images\cubemap</Filter>
+    </Image>
+    <Image Include="res\images\cubemap\right.png">
+      <Filter>images\cubemap</Filter>
+    </Image>
+    <Image Include="res\images\cubemap\top.png">
+      <Filter>images\cubemap</Filter>
+    </Image>
+    <Image Include="res\models\finger_diffuse.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\finger_glossy.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\money_diffuse.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\money_glossy.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\turret_base_diffuse.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\turret_base_glossy.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\turret_head_diffuse.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\turret_head_glossy.png">
+      <Filter>models</Filter>
+    </Image>
+    <Image Include="res\models\vengabus_hq_glossy.png">
+      <Filter>models</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\models\main_menu_title.obj">
+      <Filter>models</Filter>
+    </Text>
+    <Text Include="res\models\ship1.obj">
+      <Filter>models</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

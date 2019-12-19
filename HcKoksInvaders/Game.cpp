@@ -1,0 +1,264 @@
+#include <GL/glew.h>
+#include <math.h>
+#include <sfml/Audio.hpp>
+#include "include/Model.hpp"
+#include "include/TextureManager.hpp"
+#include "include/ProgramManager.hpp"
+#include <iostream>
+#include "include/Button.hpp"
+#include <glm\ext\matrix_transform.hpp>
+#include <glm\ext\matrix_clip_space.hpp>
+#include "include/Util.hpp"
+#include "include/GameWorld.hpp"
+#include <sstream>
+#include <thread>
+#include <algorithm>
+#include "include/StarBackground.hpp"
+#include "include/AmmunitionIcon.hpp"
+#include "include/BulletRenderer.hpp"
+
+sf::Font* m_fpsTextFont;
+sf::Text* m_fpsText;
+
+void Game::init() {
+	// Init window with Context
+	sf::ContextSettings cs(24,8,2,4,3,0U,false);
+	window.create(sf::VideoMode(640, 960), "HcKoksInvaders", sf::Style::Close,cs);
+	window.setActive(true);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	// fps counter
+	m_fpsTextFont = new sf::Font();
+	m_fpsTextFont->loadFromFile("res/fonts/PressStart2P-Regular.ttf");
+	m_fpsText = new sf::Text("awd",*m_fpsTextFont,12);
+	m_fpsText->setFillColor(sf::Color::Magenta);
+	m_fpsText->setPosition(sf::Vector2f(10,10));
+
+	// Init View Matrix
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	
+	matView = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	matPerspective = glm::perspective(1.f, (float)window.getSize().x/(float)window.getSize().y, 0.01f, 100.f);
+
+	// set OpenGL Function Ptrs
+	glewExperimental = GL_TRUE;
+	glewInit();
+
+	// Initialize ResourceManagers
+	textureManager = new TextureManager();
+	programManager = new ProgramManager();
+	modelManager = new ModelManager();
+	soundBufferManager = new SoundBufferManager();
+
+	// Cubemap
+	cubeMap = new Cubemap(*textureManager);
+
+	// Check OpenGL Version
+	std::cout << "OpenGL-Version: " << (const char*)glGetString(GL_VERSION) << "\n";
+	std::cout << "Vendor: " << (const char*)glGetString(GL_VENDOR) << "\n";
+	std::cout << "Renderer: " << (const char*)glGetString(GL_RENDERER) << "\n";
+	sf::ContextSettings settings = window.getSettings();
+	std::cout << "depth bits:" << settings.depthBits << std::endl;
+	std::cout << "stencil bits:" << settings.stencilBits << std::endl;
+	std::cout << "antialiasing level:" << settings.antialiasingLevel << std::endl;
+
+	// Check OpenGL Errors
+	util::checkGlCalls(__FUNCSIG__);
+
+	// Load IngameUI
+	{
+		ingameMunitionIconPistol = new AmmunitionIcon(
+			"res/images/icon_munition_pistol.png",
+			sf::Color::Blue,
+			0.1,
+			sf::Vector2f(-0.85, 0.9),
+			*textureManager,
+			window
+		);
+		ingameMunitionIconSMG = new AmmunitionIcon(
+			"res/images/icon_munition_smg.png",
+			sf::Color::Yellow,
+			0.1,
+			sf::Vector2f(-0.6, 0.9),
+			*textureManager,
+			window
+		);
+		ingameMunitionIconRocket = new AmmunitionIcon(
+			"res/images/icon_munition_rocket.png",
+			sf::Color::Green,
+			0.1,
+			sf::Vector2f(-0.35, 0.9),
+			*textureManager,
+			window
+		);
+		ingameMunitionIconShotgun = new AmmunitionIcon(
+			"res/images/icon_munition_shotgun.png",
+			sf::Color::Red,
+			0.1,
+			sf::Vector2f(-0.1, 0.9),
+			*textureManager,
+			window
+		);
+	}
+}
+
+void handleButtons_MouseMoved(const std::vector<Button> &buttons,
+							  const sf::Event::MouseMoveEvent mouseMoveEvent) 
+{
+	std::cout << "Left Mouse moved\n";
+	for (auto& button : buttons) {
+		if (button.onHoverActive == false) {
+			if (button.containsPoint(sf::Vector2f(mouseMoveEvent.x, mouseMoveEvent.y))) {
+				button.onHover();
+			}
+		}
+	}
+}
+void handleButtons_MouseLeftClicked(const std::vector<Button>& buttons,
+									const sf::Event::MouseButtonEvent& mouseButtonEvent) 
+{
+	for (auto& button : buttons) {
+		if (button.containsPoint(sf::Vector2f(mouseButtonEvent.x, mouseButtonEvent.y))) {
+			std::cout << "Left Mouse clicked\n";
+			button.onClick();
+		}
+	}
+}
+
+void Game::run() {
+	GameState gameState = GameState::MainMenu;
+
+	GameWorld gameWorld(this);
+	gameWorld.init(256, 2);
+	
+	BulletRenderer br(*programManager);
+	std::vector<Bullet> bullets(1000);
+	for (int i = 0; i < 1000;i++) {
+		bullets[i].m_pos.x = std::cosf(i);
+		bullets[i].m_pos.y = std::sinf(i);
+		bullets[i].m_pos.z = std::cosf(i*0.33f);
+	}
+
+	sf::Clock gameClock;
+	sf::Clock fpsClock;
+	std::vector<long long> frametimes;
+
+	Camera cam;
+	cam.setProjectionMatrix(glm::perspective(glm::radians(95.f), 640.f / 960.f, 1.f, 100.f));
+	cam.setCameraPos(glm::vec3(0.0f, 0.0f, 2.0f));
+	cam.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f));
+	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
+
+	while (window.isOpen())
+	{
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				this->exit();
+				break;
+			}
+
+			if (gameState == GameState::MainMenu) {
+				if (event.type == sf::Event::MouseMoved) {
+					//handleButtons_MouseMoved(std::vector<Button>{button}, event.mouseMove);
+				}
+				if (event.type == sf::Event::MouseButtonPressed) {
+					if (event.mouseButton.button == sf::Mouse::Left) {
+						//handleButtons_MouseLeftClicked(std::vector<Button>{button}, event.mouseButton);
+					}
+				}
+			}
+
+			if (gameState == GameState::Ingame) {
+				if (event.type == sf::Event::KeyPressed) {
+
+				}
+			}
+		}
+
+		glClearColor(0.5, 0.75, 0.25, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform("matProgressCubemap", glm::rotate(glm::identity<glm::mat4>(), gameClock.getElapsedTime().asSeconds() * 2, glm::vec3(0.1, 0.1, 1.0)));
+
+		drawCredits();
+
+		Program& const prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
+		ingameMunitionIconPistol->draw(50.f, prog);
+		ingameMunitionIconSMG->draw(50.f, prog);
+		ingameMunitionIconRocket->draw(50.f, prog);
+		ingameMunitionIconShotgun->draw(50.f, prog);
+
+		br.drawInstances(bullets,cam);
+		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
+		fpsClock.restart();
+
+		window.display();
+	}
+}
+
+void Game::exit() {
+	window.close();
+}
+
+// private functions
+void Game::drawFpsCounter(sf::Time timeElapsed) {
+	
+}
+
+void Game::drawMainMenu() {
+	
+}
+
+void Game::drawCredits() {
+	static StarBackground starBkg;
+	static std::vector<ModelPosition> moneyPos(100);
+	static std::vector<ModelPosition> fingerPos(1);
+	static std::vector<ModelPosition> busPos(1);
+
+	const float secs = m_gameClock.getElapsedTime().asSeconds()*2*(60.f/130.f);
+	Model3D& const money = modelManager->getModel("res/models/money.obj");
+	Model3D& const finger = modelManager->getModel("res/models/finger.obj");
+	Model3D& const bus = modelManager->getModel("res/models/vengabus.obj");
+	Model3D& const base = modelManager->getModel("res/models/turret_base.obj");
+	Model3D& const head = modelManager->getModel("res/models/turret_head.obj");
+
+	starBkg.draw(&programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs*3.0);
+
+	for (double i = 0, j = 0; i < 1000.0; i += 10.0,j+=1.0) {
+		float s = 0.2 + abs(cos(secs + i)) * 0.1;
+		moneyPos[(int)j] = 
+			ModelPosition(
+				sf::Vector3f(
+					cos(i + secs / 2.52442) * 2.0,
+					sin(i + secs / 2.52442) * 2.0,
+					-75.f + j*0.75
+				),
+				secs*cos(j)*0.25f*j, sf::Vector3f(cos(i),cos(j),cos(i+j)),
+				sf::Vector3f(s, s, s)
+			);
+	}
+
+	fingerPos[0] = ModelPosition(
+		sf::Vector3f(0.0,-0.2 + cos(secs*3)*0.4,-1.0f-abs(cosf(secs))*40.0f),
+		glm::radians(180.f+(sin(secs*1.2)+1.0)*90.f), sf::Vector3f(0.0001f,1.0,0.0001f),
+		sf::Vector3f(0.35,0.35,0.35)
+	);
+
+	busPos[0] = ModelPosition(
+		sf::Vector3f(0.0, -0.2 + cos(secs * 3) * 0.4, -1.0f - abs(sinf(secs)) * 40.0f),
+		glm::radians(90.f + (sin(secs*1.1) + 1.0) * 90.f), sf::Vector3f(0.0001f, 1.0, 0.0001f),
+		sf::Vector3f(0.35, 0.35, 0.35)
+	);
+
+	money.drawInstanceQueue(moneyPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
+	finger.drawInstanceQueue(fingerPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
+	
+	bus.drawInstanceQueue(busPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
+	//base.drawInstanceQueue(busPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
+	//head.drawInstanceQueue(busPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
+}
