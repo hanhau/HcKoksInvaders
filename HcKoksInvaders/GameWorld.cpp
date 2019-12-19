@@ -124,7 +124,7 @@ void GameWorld::saveToFileAsImage(std::string path) {
 	for (size_t y = 0; y < m_tiles.size(); y++) {
 		for (size_t x = 0; x < WidthInTiles; x++) {
 			sf::Color col;
-			
+			s
 			TileEntityBase* base = m_tiles[y][x];
 
 			if (EmptyTile * emptyTile = dynamic_cast<EmptyTile*>(base)) {
