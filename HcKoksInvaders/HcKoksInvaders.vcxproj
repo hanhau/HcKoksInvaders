@@ -74,8 +74,8 @@
     <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\Hannes\Documents\HcKoksInvaders\HcKoksInvaders\HcKoksInvaders\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Hannes\Documents\HcKoksInvaders\HcKoksInvaders\HcKoksInvaders\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -187,6 +187,7 @@
     <ClInclude Include="include\SoundBufferManager.hpp" />
     <ClInclude Include="include\StarBackground.hpp" />
     <ClInclude Include="include\StarShip.hpp" />
+    <ClInclude Include="include\Text.hpp" />
     <ClInclude Include="include\TextureManager.hpp" />
     <ClInclude Include="include\TileEntityBase.hpp" />
     <ClInclude Include="include\Turret.hpp" />
@@ -285,6 +286,7 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\fonts\font.png" />
     <Image Include="res\images\cubemap\back.png" />
     <Image Include="res\images\cubemap\bot.png" />
     <Image Include="res\images\cubemap\front.png" />

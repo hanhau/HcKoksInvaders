@@ -9,15 +9,22 @@ class EnemyTurretTile : TileEntityBase
 	ModelPosition m_basePos;
 	ModelPosition m_headPos;
 
+	enum class GunType {
+		Pistol, SMG, Shotgun
+	};
+
 	sf::Clock m_lastShot;
 	sf::Clock m_bulletInterval;
+	float m_health;
+	GunType m_gunType;
 
+	void fire();
 	void firePistolShot(std::vector<Bullet>& bullets);
 	void fireSMGShot(std::vector<Bullet>& bullets);
 	void fireShotgunShot(std::vector<Bullet>& bullets);
+
 public:
-	inline EnemyTurretTile(Game * const ref_game) :
-		TileEntityBase(ref_game){}
+	EnemyTurretTile(Game* const ref_game);
 
 	void update(double deltaTime);
 	void draw();

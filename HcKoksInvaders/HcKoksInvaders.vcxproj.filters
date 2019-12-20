@@ -16,15 +16,6 @@
     <Filter Include="Audio">
       <UniqueIdentifier>{cf15d701-943a-4a76-8fc8-f973a3cc7906}</UniqueIdentifier>
     </Filter>
-    <Filter Include="images">
-      <UniqueIdentifier>{b17b67de-5445-4a73-bf94-a705e017f1eb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="models">
-      <UniqueIdentifier>{9f7437af-087c-4f42-9732-4b34349defdc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="shaders">
-      <UniqueIdentifier>{bc9616d7-7f26-4915-8893-a44dcc7cd12b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headerdateien\ResourceManagers">
       <UniqueIdentifier>{5ea5a870-4bed-419a-9c1f-99f95bd7f279}</UniqueIdentifier>
     </Filter>
@@ -40,11 +31,26 @@
     <Filter Include="Headerdateien\Game">
       <UniqueIdentifier>{9bf5a8e0-c2b5-4279-be72-8725cb29d05d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="images\cubemap">
-      <UniqueIdentifier>{978924ed-4731-4e41-9501-edce3714d0c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headerdateien\GameWorld">
       <UniqueIdentifier>{ef265da3-fea9-49ec-9adf-e88319b255ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{a42112c5-73c9-4ebd-9507-aab615c4db4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\shaders">
+      <UniqueIdentifier>{bc9616d7-7f26-4915-8893-a44dcc7cd12b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\models">
+      <UniqueIdentifier>{9f7437af-087c-4f42-9732-4b34349defdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\images">
+      <UniqueIdentifier>{b17b67de-5445-4a73-bf94-a705e017f1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\images\cubemap">
+      <UniqueIdentifier>{978924ed-4731-4e41-9501-edce3714d0c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\fonts">
+      <UniqueIdentifier>{2028021a-29b6-4b27-a8fa-43565ba1b4fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -194,16 +200,19 @@
     <ClInclude Include="include\BoundingBall.hpp">
       <Filter>Headerdateien\Models</Filter>
     </ClInclude>
+    <ClInclude Include="include\Text.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\frag_shader.frag">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\vertex_shader.vert">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\background_star_shader.frag">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="packages.config" />
     <None Include="res\audio\main_menu.flac">
@@ -213,151 +222,154 @@
       <Filter>Audio</Filter>
     </None>
     <None Include="res\shaders\model_frag.frag">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\model_vert.vert">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\button_vert.vert">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\button_frag.frag">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\main_menu_frag.frag">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\background_star_shader.vert">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\AmmunitionIcon.vert">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\AmmunitionIcon.frag">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\bullet_vert.vert">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\bullet_frag.frag">
-      <Filter>shaders</Filter>
+      <Filter>res\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="res\models\sphere.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Object>
     <Object Include="res\models\vengabus.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Object>
     <Object Include="res\models\vengabus_hq.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Object>
     <Object Include="res\models\finger.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Object>
     <Object Include="res\models\money.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Object>
     <Object Include="res\models\turret_base.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Object>
     <Object Include="res\models\turret_head.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Object>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\models\ship1_diffuse.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\ship1_emit.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\ship1_glossy.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\ship1_normal.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\images\icon_munition_pistol.png">
-      <Filter>images</Filter>
+      <Filter>res\images</Filter>
     </Image>
     <Image Include="res\images\icon_munition_rocket.png">
-      <Filter>images</Filter>
+      <Filter>res\images</Filter>
     </Image>
     <Image Include="res\images\icon_munition_shotgun.png">
-      <Filter>images</Filter>
+      <Filter>res\images</Filter>
     </Image>
     <Image Include="res\images\icon_munition_smg.png">
-      <Filter>images</Filter>
+      <Filter>res\images</Filter>
     </Image>
     <Image Include="res\models\vengabus_diffuse.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\vengabus_emit.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\vengabus_glossy.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\vengabus_normal.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\vengabus_hq_diffuse.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\images\cubemap\back.png">
-      <Filter>images\cubemap</Filter>
+      <Filter>res\images\cubemap</Filter>
     </Image>
     <Image Include="res\images\cubemap\bot.png">
-      <Filter>images\cubemap</Filter>
+      <Filter>res\images\cubemap</Filter>
     </Image>
     <Image Include="res\images\cubemap\front.png">
-      <Filter>images\cubemap</Filter>
+      <Filter>res\images\cubemap</Filter>
     </Image>
     <Image Include="res\images\cubemap\left.png">
-      <Filter>images\cubemap</Filter>
+      <Filter>res\images\cubemap</Filter>
     </Image>
     <Image Include="res\images\cubemap\right.png">
-      <Filter>images\cubemap</Filter>
+      <Filter>res\images\cubemap</Filter>
     </Image>
     <Image Include="res\images\cubemap\top.png">
-      <Filter>images\cubemap</Filter>
+      <Filter>res\images\cubemap</Filter>
     </Image>
     <Image Include="res\models\finger_diffuse.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\finger_glossy.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\money_diffuse.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\money_glossy.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\turret_base_diffuse.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\turret_base_glossy.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\turret_head_diffuse.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\turret_head_glossy.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Image>
     <Image Include="res\models\vengabus_hq_glossy.png">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
+    </Image>
+    <Image Include="res\fonts\font.png">
+      <Filter>res\fonts</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\models\main_menu_title.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Text>
     <Text Include="res\models\ship1.obj">
-      <Filter>models</Filter>
+      <Filter>res\models</Filter>
     </Text>
   </ItemGroup>
 </Project>
