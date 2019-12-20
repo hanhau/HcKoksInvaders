@@ -226,8 +226,8 @@ void Model3D::drawInstanceQueue(std::vector<ModelPosition>& pos,Program& const p
 		m_instances[i] = pos[i].getTransformationMatrix();	
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_mesh.gl_ssbo);
-	glBufferSubDataARB(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::mat4) * pos_count, &m_instances[0]);
-	glBindBufferBaseEXT(GL_SHADER_STORAGE_BUFFER, 0, m_mesh.gl_ssbo);
+	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::mat4) * pos_count, &m_instances[0]);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_mesh.gl_ssbo);
 
 	bindTextures(
 		m_mesh.m_texDiffuse.getNativeHandle(),
