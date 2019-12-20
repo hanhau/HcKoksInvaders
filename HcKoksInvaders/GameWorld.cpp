@@ -16,8 +16,12 @@ enum TileType {
 	EnemySpaceShip
 };
 
-GameWorld::GameWorld(Game * const game_ref) :
-	m_gameRef(game_ref)
+GameWorld::GameWorld(
+	Game * const game_ref,
+	ModelManager * const modelMgrPtr
+) :
+	m_gameRef(game_ref),
+	m_modelMgrRef(modelMgrPtr)
 {}
 
 enum MoveDirection {
@@ -111,10 +115,25 @@ void GameWorld::draw(const Camera& camera) {
 
 	static std::vector<TileEntityBase*> visibleTiles(300);
 
-	std::vector<std::thread> t;// (WidthInTiles);
-	const int yies = m_tiles.size();
+	const Model3D& enemyShip = m_modelMgrRef->getModel("res/models/ship1.obj");
+	const Model3D& turretHead = m_modelMgrRef->getModel("res/models/turret_head.obj");
+	const Model3D& turretBase = m_modelMgrRef->getModel("res/models/turret_base.obj");
+	const Model3D& playerShip = m_modelMgrRef->getModel("res/models/vengabus.obj");
 
-	
+	for (size_t y = 0; y < m_tiles.size(); y++) {
+		for (size_t x = 0; x < WidthInTiles; x++) {
+			TileEntityBase* base = m_tiles[y][x];
+
+			if (EnemySpaceShipTile * spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base)) {
+					
+			}
+			else if (EnemyTurretTile * enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base)) {
+				
+			}
+		}
+	}
+
+
 }
 
 void GameWorld::saveToFileAsImage(std::string path) {
@@ -124,29 +143,16 @@ void GameWorld::saveToFileAsImage(std::string path) {
 	for (size_t y = 0; y < m_tiles.size(); y++) {
 		for (size_t x = 0; x < WidthInTiles; x++) {
 			sf::Color col;
-			s
+			
 			TileEntityBase* base = m_tiles[y][x];
 
 			if (EmptyTile * emptyTile = dynamic_cast<EmptyTile*>(base)) {
-
-			}
-			else if (EnemySpaceShipTile * spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base)) {
-
-			}
-			else if (EnemyTurretTile * enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base)) {
-
-			}
-			else {
-				col = sf::Color::Magenta;
-			}
-
-			if (0 == strcmp(typeid(*m_tiles[y][x]).name(),typeid(EmptyTile).name())) {
 				col = sf::Color::Black;
 			}
-			else if (0 == strcmp(typeid(*m_tiles[y][x]).name(),typeid(EnemySpaceShipTile).name())) {
+			else if (EnemySpaceShipTile * spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base)) {
 				col = sf::Color::Red;
 			}
-			else if (0 == strcmp(typeid(*m_tiles[y][x]).name(),typeid(EnemyTurretTile).name())) {
+			else if (EnemyTurretTile * enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base)) {
 				col = sf::Color::Green;
 			}
 			else {

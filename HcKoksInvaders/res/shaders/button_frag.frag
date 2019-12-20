@@ -1,7 +1,10 @@
-#version 330
+#version 430 core
 
 in vec4 col;
+in vec2 vUV;
+
 uniform float time;
+layout (binding = 0) uniform sampler2D iTexture;
 
 void main(){
 	float x = (gl_FragCoord.y+gl_FragCoord.x+time*100)*0.03;

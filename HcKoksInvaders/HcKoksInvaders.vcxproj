@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AmmunitionIcon.cpp" />
+    <ClCompile Include="BoundingBall.cpp" />
     <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="BulletRenderer.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AmmunitionIcon.hpp" />
+    <ClInclude Include="include\BoundingBall.hpp" />
     <ClInclude Include="include\BoundingBox.hpp" />
     <ClInclude Include="include\Bullet.hpp" />
     <ClInclude Include="include\BulletRenderer.hpp" />

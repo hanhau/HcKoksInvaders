@@ -108,6 +108,9 @@
     <ClCompile Include="EnemyTurretTile.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="BoundingBall.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -187,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="include\BulletRenderer.hpp">
       <Filter>Headerdateien\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BoundingBall.hpp">
+      <Filter>Headerdateien\Models</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

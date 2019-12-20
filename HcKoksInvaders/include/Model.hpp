@@ -45,7 +45,7 @@ public:
 	Model3D();
 	~Model3D();
 
-	bool loadFromFile(const std::string path);
+	bool loadFromFile(const std::string path,const TextureManager& texMgr);
 
 	// Instanced Rendering
 	void drawInstanceQueue(std::vector<ModelPosition>& pos,Program& const program,Cubemap& cubemap);

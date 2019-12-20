@@ -22,7 +22,7 @@ Model3D::~Model3D() {
 	
 }
 
-bool Model3D::loadFromFile(const std::string path)
+bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
 {
 	try {
 		Assimp::Importer importer;
@@ -44,17 +44,19 @@ bool Model3D::loadFromFile(const std::string path)
 		filename = filename.substr(0, filename.find('.'));
 		std::string folder = filepath.remove_filename().string();
 
-		if (std::filesystem::exists(folder + filename + "_diffuse.png")) {
-			m_mesh.m_texDiffuse.loadFromFile(folder + filename + "_diffuse.png");
+		const std::string rel_fn = folder + filename;
+
+		if (texMgr.exists(rel_fn + "_diffuse.png")) {
+			m_mesh.m_texDiffuse.loadFromFile(rel_fn + "_diffuse.png");
 		}
-		if (std::filesystem::exists(folder + filename + "_glossy.png")) {
-			m_mesh.m_texGlossy.loadFromFile(folder + filename + "_glossy.png");
+		if (texMgr.exists(rel_fn + "_glossy.png")) {
+			m_mesh.m_texGlossy.loadFromFile(rel_fn + "_glossy.png");
 		}
-		if (std::filesystem::exists(folder + filename + "_normal.png")) {
-			m_mesh.m_texNormal.loadFromFile(folder + filename + "_normal.png");
+		if (texMgr.exists(rel_fn + "_normal.png")) {
+			m_mesh.m_texNormal.loadFromFile(rel_fn + "_normal.png");
 		}
-		if (std::filesystem::exists(folder + filename + "_emit.png")) {
-			m_mesh.m_texEmit.loadFromFile(folder + filename + "_emit.png");
+		if (texMgr.exists(rel_fn + "_emit.png")) {
+			m_mesh.m_texNormal.loadFromFile(rel_fn + "_emit.png");
 		}
 
 		// Setup OpenGL Buffers

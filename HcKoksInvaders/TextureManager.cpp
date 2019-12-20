@@ -25,6 +25,9 @@ TextureManager::TextureManager() {
 	add("res/models/vengabus_glossy.png");
 	add("res/models/vengabus_normal.png");
 
+	add("res/models/finger_diffuse.png");
+	add("res/models/finger_glossy.png");
+
 	add("res/models/money_diffuse.png");
 	add("res/models/money_glossy.png");
 }
@@ -48,12 +51,12 @@ void TextureManager::add(std::string path) {
 	}
 }
 
-const sf::Texture& TextureManager::get(std::string path) {
+const sf::Texture& TextureManager::get(const std::string path) const {
 	try {
 		if (m_textures.find(path) == m_textures.end())
 			throw "Invalid path @ " + std::string(__FUNCSIG__);
 
-		return m_textures[path];
+		return m_textures.at(path);
 	}
 	catch (std::string e) {
 		std::cout << e << std::endl;
@@ -61,6 +64,6 @@ const sf::Texture& TextureManager::get(std::string path) {
 	return sf::Texture();
 }
 
-bool TextureManager::exists(std::string path) {
+bool TextureManager::exists(std::string path) const {
 	return m_textures.find(path) != m_textures.end();
 }

@@ -7,9 +7,6 @@
 class Button
 {
 private:
-	static sf::Font m_font;
-	static bool m_fontLoaded;
-
 	std::string m_title;
 	sf::Vector2f m_size;
 	sf::Vector2f m_position;
@@ -23,7 +20,7 @@ public:
 	void draw(sf::RenderWindow& win,sf::Shader * shader) const;
 	bool containsPoint(const sf::Vector2f& p) const;
 
-	std::function<void()> onHover;
+	std::function<void(const Button&)> onHover;
 	bool onHoverActive;
-	std::function<void()> onClick;
+	std::function<void(const Button&)> onClick;
 };

@@ -51,7 +51,7 @@ void Game::init() {
 	// Initialize ResourceManagers
 	textureManager = new TextureManager();
 	programManager = new ProgramManager();
-	modelManager = new ModelManager();
+	modelManager = new ModelManager(*textureManager);
 	soundBufferManager = new SoundBufferManager();
 
 	// Cubemap
@@ -113,7 +113,7 @@ void handleButtons_MouseMoved(const std::vector<Button> &buttons,
 	for (auto& button : buttons) {
 		if (button.onHoverActive == false) {
 			if (button.containsPoint(sf::Vector2f(mouseMoveEvent.x, mouseMoveEvent.y))) {
-				button.onHover();
+				button.onHover(button);
 			}
 		}
 	}
@@ -124,7 +124,7 @@ void handleButtons_MouseLeftClicked(const std::vector<Button>& buttons,
 	for (auto& button : buttons) {
 		if (button.containsPoint(sf::Vector2f(mouseButtonEvent.x, mouseButtonEvent.y))) {
 			std::cout << "Left Mouse clicked\n";
-			button.onClick();
+			button.onClick(button);
 		}
 	}
 }
@@ -132,9 +132,10 @@ void handleButtons_MouseLeftClicked(const std::vector<Button>& buttons,
 void Game::run() {
 	GameState gameState = GameState::MainMenu;
 
-	GameWorld gameWorld(this);
+	GameWorld gameWorld(this,modelManager);
 	gameWorld.init(256, 2);
-	
+	gameWorld.saveToFileAsImage("demo.bmp");
+
 	BulletRenderer br(*programManager);
 	std::vector<Bullet> bullets(1000);
 	for (int i = 0; i < 1000;i++) {
@@ -193,7 +194,7 @@ void Game::run() {
 		ingameMunitionIconRocket->draw(50.f, prog);
 		ingameMunitionIconShotgun->draw(50.f, prog);
 
-		br.drawInstances(bullets,cam);
+		//br.drawInstances(bullets,cam);
 		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
 		fpsClock.restart();
 

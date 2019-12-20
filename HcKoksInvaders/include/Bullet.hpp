@@ -18,7 +18,6 @@ struct Bullet {
 	}
 
 	inline glm::vec3&& orientation() {
-		return glm::vec3(0.1f,0.1f,0.1f);
-		//return glm::normalize(m_speed);
+		return glm::normalize(m_speed);
 	}
 };

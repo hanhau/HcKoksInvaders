@@ -5,10 +5,18 @@
 struct ButtonVertex {
 	sf::Vector3f pos;
 	float col[4];
+	sf::Vector2f uv;
 
-	inline ButtonVertex(sf::Vector3f pos, const float* col) {
-		this->pos = pos;
+	inline ButtonVertex(const sf::Vector3f pos, const float* col) : 
+		pos(pos) 
+	{
 		memcpy(this->col, col, 4 * sizeof(float));
+	}
+
+	inline ButtonVertex(const sf::Vector3f pos, const float* col, const sf::Vector2f uv)
+	{
+		ButtonVertex(pos, col);
+		this->uv = uv;
 	}
 };
 
@@ -32,6 +40,9 @@ Button::Button(std::string title, sf::Vector2f pos, sf::Vector2f size) :
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(ButtonVertex), (void*)offsetof(ButtonVertex, col));
+
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(ButtonVertex), (void*)offsetof(ButtonVertex, uv));
 
 	glBindVertexArray(0);
 
@@ -77,22 +88,22 @@ std::vector<ButtonVertex> createButtonMesh(sf::Vector2f size)
 
 	std::vector<ButtonVertex> v = {
 		// top left triangle
-		ButtonVertex(sf::Vector3f(bor,bor,0.0),gray.data()), // 0
+		ButtonVertex(sf::Vector3f(bor,bor,0.0),gray.data(),sf::Vector2f(0,0)), // 0
 		ButtonVertex(sf::Vector3f(0.0,bor,0.0),outline.data()), // 1
 		ButtonVertex(sf::Vector3f(bor,0.0,0.0),outline.data()), // 2
 
 		// top right triangle
-		ButtonVertex(sf::Vector3f(size.x-bor,bor,0.0),gray.data()), // 3
+		ButtonVertex(sf::Vector3f(size.x-bor,bor,0.0),gray.data(),sf::Vector2f(0,0)), // 3
 		ButtonVertex(sf::Vector3f(size.x-bor,0.0,0.0),outline.data()), // 4
 		ButtonVertex(sf::Vector3f(size.x,bor,0.0),outline.data()), // 5
 
 		// bottom right triangle
-		ButtonVertex(sf::Vector3f(size.x-bor,size.y-bor,0.0),gray.data()), // 6
+		ButtonVertex(sf::Vector3f(size.x-bor,size.y-bor,0.0),gray.data(),sf::Vector2f(0,0)), // 6
 		ButtonVertex(sf::Vector3f(size.x,size.y-bor,0.0),outline.data()), // 7
 		ButtonVertex(sf::Vector3f(size.x-bor,size.y,0.0),outline.data()), // 8
 
 		// bottom left triangle
-		ButtonVertex(sf::Vector3f(bor,size.y-bor,0.0),gray.data()), // 9
+		ButtonVertex(sf::Vector3f(bor,size.y-bor,0.0),gray.data(),sf::Vector2f(0,0)), // 9
 		ButtonVertex(sf::Vector3f(bor,size.y,0.0),outline.data()), // 10
 		ButtonVertex(sf::Vector3f(0.0,size.y-bor,0.0),outline.data()) // 11
 	};
