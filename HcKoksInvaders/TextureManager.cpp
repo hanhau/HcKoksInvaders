@@ -60,8 +60,8 @@ const sf::Texture& TextureManager::get(const std::string path) const {
 	}
 	catch (std::string e) {
 		std::cout << e << std::endl;
-	}
-	return sf::Texture();
+		throw;
+	}	
 }
 
 bool TextureManager::exists(std::string path) const {

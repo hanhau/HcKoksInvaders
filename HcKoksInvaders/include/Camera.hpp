@@ -39,15 +39,15 @@ public:
 		m_projectionMat = proj;
 	}
 
-	inline const glm::mat4& const getProjectionMatrix() const {
+	inline const glm::mat4& getProjectionMatrix() const {
 		return m_projectionMat;
 	}
 
 	inline const glm::mat4&& getViewMatrix() const {
-		return glm::lookAt(
+		return std::move(glm::lookAt(
 			m_cameraPos, 
 			m_cameraPos + m_cameraFront,
 			m_cameraUp
-		);
+		));
 	}
 };

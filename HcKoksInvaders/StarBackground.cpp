@@ -37,9 +37,9 @@ void StarBackground::draw(const Program& program,float pastTime) const {
 	program.bind();
 	program.setUniform("progress",pastTime*10);
 	program.setUniform("baseColor", sf::Vector3f(
-		abs(cos(pastTime*0.3)),
-		abs(cos(pastTime*0.3+2)),
-		abs(cos(pastTime*0.3+4))
+		abs(cosf(pastTime*0.3f)),
+		abs(cosf(pastTime*0.3f+2.f)),
+		abs(cosf(pastTime*0.3f+4.f))
 	));
 
 	glBindBuffer(GL_ARRAY_BUFFER, gl_vbo);

@@ -53,6 +53,6 @@ public:
 	}
 
 	inline glm::mat4x4&& getTransformationMatrix() {
-		return m_translation * m_scale * m_rotation;
+		return std::move(m_translation * m_scale * m_rotation);
 	}
 };

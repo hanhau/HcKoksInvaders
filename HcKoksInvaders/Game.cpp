@@ -36,6 +36,9 @@ void Game::init() {
 	m_fpsText->setFillColor(sf::Color::Magenta);
 	m_fpsText->setPosition(sf::Vector2f(10,10));
 
+	sf::RenderTexture tx;
+	//tx.getTexture().
+
 	// Init View Matrix
 	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -74,32 +77,32 @@ void Game::init() {
 		ingameMunitionIconPistol = new AmmunitionIcon(
 			"res/images/icon_munition_pistol.png",
 			sf::Color::Blue,
-			0.1,
-			sf::Vector2f(-0.85, 0.9),
+			0.1f,
+			sf::Vector2f(-0.85f, 0.9f),
 			*textureManager,
 			window
 		);
 		ingameMunitionIconSMG = new AmmunitionIcon(
 			"res/images/icon_munition_smg.png",
 			sf::Color::Yellow,
-			0.1,
-			sf::Vector2f(-0.6, 0.9),
+			0.1f,
+			sf::Vector2f(-0.6f, 0.9f),
 			*textureManager,
 			window
 		);
 		ingameMunitionIconRocket = new AmmunitionIcon(
 			"res/images/icon_munition_rocket.png",
 			sf::Color::Green,
-			0.1,
-			sf::Vector2f(-0.35, 0.9),
+			0.1f,
+			sf::Vector2f(-0.35f, 0.9f),
 			*textureManager,
 			window
 		);
 		ingameMunitionIconShotgun = new AmmunitionIcon(
 			"res/images/icon_munition_shotgun.png",
 			sf::Color::Red,
-			0.1,
-			sf::Vector2f(-0.1, 0.9),
+			0.1f,
+			sf::Vector2f(-0.1f, 0.9f),
 			*textureManager,
 			window
 		);
@@ -237,7 +240,7 @@ void Game::drawCredits() {
 	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs*3.0);
 
 	for (double i = 0, j = 0; i < 1000.0; i += 10.0,j+=1.0) {
-		float s = 0.2 + abs(cos(secs + i)) * 0.1;
+		float s = 0.2 + abs(cosf(secs + i)) * 0.1f;
 		moneyPos[(int)j] = 
 			ModelPosition(
 				sf::Vector3f(
@@ -245,7 +248,7 @@ void Game::drawCredits() {
 					sin(i + secs / 2.52442) * 2.0,
 					-50.f + j*0.5
 				),
-				secs*cos(j)*0.25f*j, sf::Vector3f(cos(i),cos(j),cos(i+j)),
+				secs*cos(j)*0.25f*j, sf::Vector3f(cosf(i),cosf(j),cosf(i+j)),
 				sf::Vector3f(s, s, s)
 			);
 	}

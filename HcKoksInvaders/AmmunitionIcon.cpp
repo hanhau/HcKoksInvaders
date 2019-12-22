@@ -42,7 +42,7 @@ void makeVertices(std::vector<ButtonVertex>& vertices,
 	{
 		// uv zero = bottom left
 		// 0.0 to 1.0
-		const float pad = 0.025;
+		const float pad = 0.025f;
 
 		vertices.push_back(ButtonVertex{
 			sf::Vector2f(-radius+pad,radius-pad),
@@ -79,8 +79,8 @@ void makeVertices(std::vector<ButtonVertex>& vertices,
 
 	// Flip UVs and apply Aspect Ratio
 	for (auto& iter : vertices) {
-		iter.uv.x = 1.0 - iter.uv.x;
-		iter.uv.y = 1.0 - iter.uv.y;
+		iter.uv.x = 1.0f - iter.uv.x;
+		iter.uv.y = 1.0f - iter.uv.y;
 		iter.pos.y *= aspectRatio;
 	}
 }
@@ -88,7 +88,7 @@ void makeVertices(std::vector<ButtonVertex>& vertices,
 AmmunitionIcon::AmmunitionIcon(const std::string pathIcon, 
 							   sf::Color outlineColor, 
 							   const float radius, sf::Vector2f pos,
-							   TextureManager& texMgr, sf::Window& const window) :
+							   TextureManager& texMgr, const sf::Window& window) :
 	m_col(outlineColor),
 	m_radius(radius),
 	m_position(pos),
@@ -152,7 +152,7 @@ void AmmunitionIcon::draw(float percentageFull, const Program& program) {
 
 	// if circle is visible
 	if (percentageFull >= 1.0) {
-		glDrawArrays(GL_TRIANGLE_FAN, 0, m_minDotsAmount + (m_maxDotsAmount-m_minDotsAmount)*percentageFull/100.f);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, m_minDotsAmount + std::round((m_maxDotsAmount-m_minDotsAmount)*percentageFull/100.f));
 	}
 
 	glDrawArrays(GL_TRIANGLES, m_maxDotsAmount, 6);

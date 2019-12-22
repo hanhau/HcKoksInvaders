@@ -32,6 +32,7 @@ sf::SoundBuffer& SoundBufferManager::get(std::string path)
 	}
 	catch (std::string e) {
 		std::cout << e << std::endl;
+		throw;
 	}
 }
 

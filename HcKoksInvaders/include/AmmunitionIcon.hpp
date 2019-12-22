@@ -25,7 +25,7 @@ public:
 		sf::Color outlineColor, 
 		const float radius, sf::Vector2f pos,
 		TextureManager& texMgr,
-		sf::Window& const window);
+		const sf::Window& window);
 
 	void draw(float percentageFull,const Program& program);
 };

@@ -38,7 +38,6 @@ namespace util {
 	}
 
 	inline void checkGlCalls(const char* func_name) {
-		return;
 		#ifdef RELEASE_BUILD
 			return;
 		#else

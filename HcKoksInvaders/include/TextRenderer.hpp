@@ -12,7 +12,5 @@ class TextRenderer {
 public:
 	TextRenderer(const ProgramManager& progMgr,const sf::Window& win);
 
-	void draw(const Text& text) const {
-
-	}
+	void draw(const Text& text) const;
 };

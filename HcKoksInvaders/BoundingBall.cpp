@@ -12,10 +12,10 @@ bool BoundingBall::intersects(const BoundingBall& b) const {
 }
 
 const BoundingBall&& BoundingBall::transform(const glm::mat4& mat) {
-	return BoundingBall(
+	return std::move(BoundingBall(
 		(glm::vec3)(mat * glm::vec4(m_pos, 1.0)),
 		(mat * glm::vec4(m_radius)).x
-	);
+	));
 }
 
 const glm::vec3& BoundingBall::getPos() const {
