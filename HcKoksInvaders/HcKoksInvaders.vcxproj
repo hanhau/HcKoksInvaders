@@ -160,6 +160,7 @@
     <ClCompile Include="ProgramManager.cpp" />
     <ClCompile Include="SoundBufferManager.cpp" />
     <ClCompile Include="StarBackground.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Turret.cpp" />
   </ItemGroup>
@@ -188,6 +189,7 @@
     <ClInclude Include="include\StarBackground.hpp" />
     <ClInclude Include="include\StarShip.hpp" />
     <ClInclude Include="include\Text.hpp" />
+    <ClInclude Include="include\TextRenderer.hpp" />
     <ClInclude Include="include\TextureManager.hpp" />
     <ClInclude Include="include\TileEntityBase.hpp" />
     <ClInclude Include="include\Turret.hpp" />
@@ -223,6 +225,8 @@
     <None Include="res\shaders\model_vert.vert">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
     </None>
+    <None Include="res\shaders\Text.frag" />
+    <None Include="res\shaders\Text.vert" />
     <None Include="res\shaders\vertex_shader.vert">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
     </None>

@@ -31,12 +31,12 @@ StarBackground::~StarBackground() {
 	//glDeleteVertexArrays(1, &gl_vao);
 }
 
-void StarBackground::draw(Program* const program,float pastTime) {
+void StarBackground::draw(const Program& program,float pastTime) const {
 	glDepthMask(GL_FALSE);
 	
-	program->bind();
-	program->setUniform("progress",pastTime*10);
-	program->setUniform("baseColor", sf::Vector3f(
+	program.bind();
+	program.setUniform("progress",pastTime*10);
+	program.setUniform("baseColor", sf::Vector3f(
 		abs(cos(pastTime*0.3)),
 		abs(cos(pastTime*0.3+2)),
 		abs(cos(pastTime*0.3+4))

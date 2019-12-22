@@ -6,8 +6,10 @@
 #include <GL/glew.h>
 #include "Cubemap.hpp"
 #include "ModelPosition.hpp"
+#include "ProgramManager.hpp"
 #include "Program.hpp"
 #include <array>
+#include "Camera.hpp"
 
 class Vertex {
 public:
@@ -38,15 +40,15 @@ struct Mesh {
 class Model3D {
 private:
 	Mesh m_mesh;
+	const Program& m_progRef;
 
 	static const size_t m_maxInstances = 256;
-	std::array<glm::mat4, m_maxInstances> m_instances;
 public:
-	Model3D();
+	Model3D(const Program& m_progRef);
 	~Model3D();
 
 	bool loadFromFile(const std::string path,const TextureManager& texMgr);
 
 	// Instanced Rendering
-	void drawInstanceQueue(std::vector<ModelPosition>& pos,Program& const program,Cubemap& cubemap);
+	void drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& cam,Cubemap& cubemap) const;
 };

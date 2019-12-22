@@ -129,7 +129,7 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 	glBindVertexArray(0);
 }
 
-void AmmunitionIcon::draw(float percentageFull, Program& program) {
+void AmmunitionIcon::draw(float percentageFull, const Program& program) {
 	percentageFull = std::clamp(percentageFull, 0.f, 100.f);
 
 	glDepthMask(GL_FALSE);

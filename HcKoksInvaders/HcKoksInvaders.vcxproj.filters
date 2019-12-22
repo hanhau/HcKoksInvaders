@@ -117,6 +117,9 @@
     <ClCompile Include="BoundingBall.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="TextRenderer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -203,6 +206,9 @@
     <ClInclude Include="include\Text.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="include\TextRenderer.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\frag_shader.frag">
@@ -249,6 +255,12 @@
       <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\bullet_frag.frag">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\Text.vert">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\Text.frag">
       <Filter>res\shaders</Filter>
     </None>
   </ItemGroup>

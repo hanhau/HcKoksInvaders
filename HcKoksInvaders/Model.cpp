@@ -8,14 +8,15 @@
 #include <filesystem>
 #include <GL/glew.h>
 #include "include/Util.hpp"
+#include <Camera.hpp>
 
 /* -------------------------------------------------------------------
                                MODEL
 ------------------------------------------------------------------- */
 void processAiMesh(aiMesh* ai_mesh, const aiScene* scene,Mesh &mesh);
 
-Model3D::Model3D() {
-	m_instances.fill(glm::identity<glm::mat4>());
+Model3D::Model3D(const Program& prog) : m_progRef(prog) {
+	
 }
 
 Model3D::~Model3D() {
@@ -203,30 +204,26 @@ void processAiMesh(aiMesh* ai_mesh, const aiScene* scene, Mesh& mesh) {
 	}
 }
 
-void Model3D::drawInstanceQueue(std::vector<ModelPosition>& pos,Program& const program,Cubemap &cubemap) {
-	program.bind();
+void Model3D::drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& cam,Cubemap &cubemap) const {
+	static std::array<glm::mat4, m_maxInstances> instances;
+	
+	m_progRef.bind();
 
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 10.0f);
-	//glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::mat4x4 view = cam.getViewMatrix();
+	glm::mat4x4 perspective = cam.getProjectionMatrix();
 
-	glm::mat4x4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	glm::mat4x4 perspective = glm::perspective(.3f, (float)640 / (float)960, 1.f, 500.f);
-	//glm::mat4x4 perspective = glm::perspective(95.f, (float)640 / (float)960, 0.1f, 100.f);
-
-	program.setUniform("matProjection", perspective);
-	program.setUniform("matView", view);
+	m_progRef.setUniform("matProjection", perspective);
+	m_progRef.setUniform("matView", view);
 
 	const unsigned int pos_count = pos.size();
 	if (pos_count > m_maxInstances)
 		throw "FUCK IT";
 
 	for (unsigned int i = 0; i < pos_count; i++)
-		m_instances[i] = pos[i].getTransformationMatrix();	
+		instances[i] = pos[i].getTransformationMatrix();	
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_mesh.gl_ssbo);
-	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::mat4) * pos_count, &m_instances[0]);
+	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::mat4) * pos_count, &instances[0]);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_mesh.gl_ssbo);
 
 	bindTextures(

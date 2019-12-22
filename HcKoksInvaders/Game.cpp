@@ -51,7 +51,7 @@ void Game::init() {
 	// Initialize ResourceManagers
 	textureManager = new TextureManager();
 	programManager = new ProgramManager();
-	modelManager = new ModelManager(*textureManager);
+	modelManager = new ModelManager(*textureManager,*programManager);
 	soundBufferManager = new SoundBufferManager();
 
 	// Cubemap
@@ -188,7 +188,7 @@ void Game::run() {
 
 		drawCredits();
 
-		Program& const prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
+		const Program& prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
 		ingameMunitionIconPistol->draw(50.f, prog);
 		ingameMunitionIconSMG->draw(50.f, prog);
 		ingameMunitionIconRocket->draw(50.f, prog);
@@ -222,13 +222,19 @@ void Game::drawCredits() {
 	static std::vector<ModelPosition> busPos(1);
 
 	const float secs = m_gameClock.getElapsedTime().asSeconds()*2*(60.f/130.f);
-	Model3D& const money = modelManager->getModel("res/models/money.obj");
-	Model3D& const finger = modelManager->getModel("res/models/finger.obj");
-	Model3D& const bus = modelManager->getModel("res/models/vengabus.obj");
-	Model3D& const base = modelManager->getModel("res/models/turret_base.obj");
-	Model3D& const head = modelManager->getModel("res/models/turret_head.obj");
+	const Model3D& money = modelManager->getModel("res/models/money.obj");
+	const Model3D& finger = modelManager->getModel("res/models/finger.obj");
+	const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
+	const Model3D& base = modelManager->getModel("res/models/turret_base.obj");
+	const Model3D& head = modelManager->getModel("res/models/turret_head.obj");
 
-	starBkg.draw(&programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs*3.0);
+	static Camera cam;
+	cam.setCameraPos(glm::vec3(0.0f, 0.0f, 1.0f));
+	cam.setCameraFront(glm::vec3(0.0f + sinf(secs) * 0.05, 0.0f + cosf(secs) * 0.05, -1.0f));
+	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
+	cam.setProjectionMatrix(glm::perspective(glm::radians(65.f), 640.f / 960.f, 1.f, 500.f));
+
+	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs*3.0);
 
 	for (double i = 0, j = 0; i < 1000.0; i += 10.0,j+=1.0) {
 		float s = 0.2 + abs(cos(secs + i)) * 0.1;
@@ -237,7 +243,7 @@ void Game::drawCredits() {
 				sf::Vector3f(
 					cos(i + secs / 2.52442) * 2.0,
 					sin(i + secs / 2.52442) * 2.0,
-					-75.f + j*0.75
+					-50.f + j*0.5
 				),
 				secs*cos(j)*0.25f*j, sf::Vector3f(cos(i),cos(j),cos(i+j)),
 				sf::Vector3f(s, s, s)
@@ -256,10 +262,8 @@ void Game::drawCredits() {
 		sf::Vector3f(0.35, 0.35, 0.35)
 	);
 
-	money.drawInstanceQueue(moneyPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
-	finger.drawInstanceQueue(fingerPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
+	money.drawInstanceQueue(moneyPos, cam, *cubeMap);
+	finger.drawInstanceQueue(fingerPos, cam, *cubeMap);
 	
-	bus.drawInstanceQueue(busPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
-	//base.drawInstanceQueue(busPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
-	//head.drawInstanceQueue(busPos, programManager->get(ProgramManager::ProgramEntry::Model3D), *cubeMap);
+	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 }

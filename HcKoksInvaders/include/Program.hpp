@@ -10,7 +10,7 @@ public:
 	Program(Shader const& vertex, Shader const& fragment);
 	~Program();
 
-	unsigned int getID() const;
+	const unsigned int getID() const;
 	void bind() const;
 
 	void setUniform(const std::string name, glm::mat4x4 mat4) const;

@@ -1,16 +1,19 @@
 #include "include/ModelManager.hpp"
 #include <iostream>
 
-void ModelManager::add(const std::string path, const TextureManager& texMgr) {
+void ModelManager::add(const std::string path, const TextureManager& texMgr,const Program& prog) {
 	try {
 		if (exists(path))
 			throw "Model already exists @ ModelManager::load(path)";
 
-		Model3D temp_model;
-		if (!temp_model.loadFromFile(path,texMgr))
-			throw "Unable to load " + path + " @ ModelManager::add(path)";
+		m_models.emplace(
+			std::piecewise_construct,
+			std::forward_as_tuple(path), 
+			std::forward_as_tuple(prog)
+		);
 
-		m_models.emplace(path,std::move(temp_model));
+		if (!m_models.at(path).loadFromFile(path,texMgr))
+			throw "Unable to load " + path + " @ ModelManager::add(path)";
 	}
 	catch (std::string e)
 	{
@@ -18,25 +21,27 @@ void ModelManager::add(const std::string path, const TextureManager& texMgr) {
 	}
 }
 
-ModelManager::ModelManager(const TextureManager& texMgr) {
-	add("res/models/vengabus.obj",texMgr);
-	add("res/models/vengabus_hq.obj",texMgr);
-	add("res/models/ship1.obj",texMgr);
-	add("res/models/sphere.obj",texMgr);
-	add("res/models/main_menu_title.obj",texMgr);
-	add("res/models/turret_base.obj",texMgr);
-	add("res/models/turret_head.obj",texMgr);
-	add("res/models/money.obj",texMgr);
-	add("res/models/finger.obj",texMgr);
+ModelManager::ModelManager(const TextureManager& texMgr,const ProgramManager& progMgr) {
+	const Program* p = &progMgr.get(ProgramManager::ProgramEntry::Model3D);
+	
+	add("res/models/vengabus.obj",texMgr, *p);
+	add("res/models/vengabus_hq.obj",texMgr, *p);
+	add("res/models/ship1.obj",texMgr, *p);
+	add("res/models/sphere.obj",texMgr, *p);
+	add("res/models/main_menu_title.obj",texMgr, *p);
+	add("res/models/turret_base.obj",texMgr, *p);
+	add("res/models/turret_head.obj",texMgr, *p);
+	add("res/models/money.obj",texMgr, *p);
+	add("res/models/finger.obj",texMgr, *p);
 }
 
 bool ModelManager::exists(const std::string path) {
 	return m_models.find(path) != m_models.end();
 }
 
-Model3D& const ModelManager::getModel(const std::string path) {
+const Model3D& ModelManager::getModel(const std::string path) {
 	if (!exists(path))
 		throw;
 
-	return m_models[path];
+	return m_models.at(path);
 }

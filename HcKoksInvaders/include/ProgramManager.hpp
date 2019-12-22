@@ -15,12 +15,13 @@ public:
 		MainMenuBackground,
 		Bullet,
 		Button,
-		AmmunitionIcon
+		AmmunitionIcon,
+		Text
 	};
 
 	ProgramManager();
 	~ProgramManager();
 
-	bool exists(const ProgramEntry se);
-	Program& get(const ProgramEntry se) const;
+	bool exists(const ProgramEntry se) const;
+	const Program& get(const ProgramEntry se) const;
 };

@@ -27,5 +27,5 @@ public:
 		TextureManager& texMgr,
 		sf::Window& const window);
 
-	void draw(float percentageFull,Program& const program);
+	void draw(float percentageFull,const Program& program);
 };

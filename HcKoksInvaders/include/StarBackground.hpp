@@ -9,5 +9,5 @@ public:
 	StarBackground();
 	~StarBackground();
 
-	void draw(Program* const program,float pastTime);
+	void draw(const Program& program,float pastTime) const;
 };

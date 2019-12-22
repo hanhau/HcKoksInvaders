@@ -4,7 +4,7 @@
 
 Shader::Shader() : glID(0), m_shaderType(ShaderType::Unitialized) {}
 Shader::~Shader() {
-	glDeleteShader(glID);
+	//glDeleteShader(glID);
 }
 
 bool Shader::loadFromFile(const std::string path,Shader::ShaderType shaderType) {

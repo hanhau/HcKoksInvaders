@@ -32,10 +32,10 @@ Program::Program(Shader const& vertex,Shader const& fragment) :
 	util::checkGlCalls(__FUNCSIG__);
 }
 Program::~Program() {
-	glDeleteProgram(glID);
+	//glDeleteProgram(glID);
 }
 
-unsigned int Program::getID() const {
+const unsigned int Program::getID() const {
 	return glID;
 }
 
