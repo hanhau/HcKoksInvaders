@@ -23,6 +23,13 @@ Model3D::~Model3D() {
 	
 }
 
+const BoundingBall& Model3D::getOuterBB() const {
+	return m_outerBall;
+}
+const std::vector<BoundingBall>& Model3D::getInnerBBs() const {
+	return m_innerBalls;
+}
+
 bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
 {
 	try {
@@ -38,6 +45,20 @@ bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
 		// Load Vertices
 		processAiMesh(scene->mMeshes[0],scene,m_mesh);
 		importer.FreeScene();
+
+		// Generate BoundingBalls
+		float max_rad = 0.0f;
+		for (const auto& iter : m_mesh.m_vertices) {
+			glm::vec3 vec3(
+				iter.m_position.x,
+				iter.m_position.y,
+				iter.m_position.z
+			);
+			
+			if (glm::length(vec3) > max_rad)
+				max_rad = glm::length(vec3);
+		}
+		m_outerBall = std::move(BoundingBall(glm::vec3(), max_rad));
 
 		// Load Textures (if availiable)
 		std::filesystem::path filepath(path);
@@ -66,7 +87,7 @@ bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
 		glGenBuffers(1, &m_mesh.gl_ssbo);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_mesh.gl_ssbo);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_mesh.gl_ssbo);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::mat4) * m_maxInstances, (void*)0, GL_STATIC_DRAW);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::mat4) * MaxInstances, (void*)0, GL_STATIC_DRAW);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
 		glGenVertexArrays(1, &m_mesh.gl_vao);
@@ -205,7 +226,7 @@ void processAiMesh(aiMesh* ai_mesh, const aiScene* scene, Mesh& mesh) {
 }
 
 void Model3D::drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& cam,Cubemap &cubemap) const {
-	static std::array<glm::mat4, m_maxInstances> instances;
+	static std::array<glm::mat4, MaxInstances> instances;
 	
 	m_progRef.bind();
 
@@ -216,7 +237,7 @@ void Model3D::drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& ca
 	m_progRef.setUniform("matView", view);
 
 	const unsigned int pos_count = pos.size();
-	if (pos_count > m_maxInstances)
+	if (pos_count > MaxInstances)
 		throw "FUCK IT";
 
 	for (unsigned int i = 0; i < pos_count; i++)

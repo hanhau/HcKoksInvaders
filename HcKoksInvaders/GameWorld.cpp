@@ -76,9 +76,14 @@ void GameWorld::init(int stageheight, int seed) {
 		}
 	}
 	
+	// distance between each center of tile
+	const float dist = 2.0f / (float)WidthInTiles;
+
 	// Fill rest
+	float py = 0.0f;
 	for (int y = 0; y < stageheight; y++)
 	{
+		float px = -2.0;
 		for (int x = 0; x < WidthInTiles; x++)
 		{
 			if (m_tiles[y][x] == nullptr) {
@@ -89,14 +94,21 @@ void GameWorld::init(int stageheight, int seed) {
 					m_tiles[y][x] = (TileEntityBase*)new EmptyTile(m_gameRef);
 					break;
 				case 5: 
-					m_tiles[y][x] = (TileEntityBase*)new EnemySpaceShipTile(m_gameRef,seed);
+					m_tiles[y][x] = (TileEntityBase*)new EnemySpaceShipTile(m_gameRef,rand());
 					break;
 				case 6: 
-					m_tiles[y][x] = (TileEntityBase*)new EnemyTurretTile(m_gameRef);
+					m_tiles[y][x] = (TileEntityBase*)new EnemyTurretTile(
+						m_gameRef,
+						rand(),
+						glm::vec3(px,py,0.0f),
+						0.5f
+					);
 					break;
 				}
 			}
+			px += dist;
 		}
+		py += dist;
 	}
 }
 
@@ -109,23 +121,23 @@ void GameWorld::update(const double deltaTime) {
 }
 
 void GameWorld::draw(const Camera& camera) {
-	static std::vector<ModelPosition> turretBasePos(150);
-	static std::vector<ModelPosition> turretHeadPos(150);
-	static std::vector<ModelPosition> enemyPos(150);
+	static std::vector<ModelPosition> turretBasePos(Model3D::MaxInstances);
+	static std::vector<ModelPosition> turretHeadPos(Model3D::MaxInstances);
+	static std::vector<ModelPosition> enemyPos(Model3D::MaxInstances);
 
-	static std::vector<TileEntityBase*> visibleTiles(300);
+	static std::vector<TileEntityBase*> visibleTiles(Model3D::MaxInstances * 3);
 
-	const Model3D& enemyShip = m_modelMgrRef->getModel("res/models/ship1.obj");
-	const Model3D& turretHead = m_modelMgrRef->getModel("res/models/turret_head.obj");
-	const Model3D& turretBase = m_modelMgrRef->getModel("res/models/turret_base.obj");
-	const Model3D& playerShip = m_modelMgrRef->getModel("res/models/vengabus.obj");
+	static const Model3D& enemyShip = m_modelMgrRef->getModel("res/models/ship1.obj");
+	static const Model3D& turretHead = m_modelMgrRef->getModel("res/models/turret_head.obj");
+	static const Model3D& turretBase = m_modelMgrRef->getModel("res/models/turret_base.obj");
+	static const Model3D& playerShip = m_modelMgrRef->getModel("res/models/vengabus.obj");
 
 	for (size_t y = 0; y < m_tiles.size(); y++) {
 		for (size_t x = 0; x < WidthInTiles; x++) {
 			TileEntityBase* base = m_tiles[y][x];
 
 			if (EnemySpaceShipTile * spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base)) {
-					
+				enemyShip.getOuterBB().transform(spaceShipTile->getSpaceshipPos()).isInViewport(camera);
 			}
 			else if (EnemyTurretTile * enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base)) {
 				

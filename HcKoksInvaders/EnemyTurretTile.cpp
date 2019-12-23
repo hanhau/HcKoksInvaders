@@ -1,9 +1,23 @@
 #include "include/EnemyTurretTile.hpp"
 
-EnemyTurretTile::EnemyTurretTile(Game* const ref_game) :
+EnemyTurretTile::EnemyTurretTile(Game* const ref_game,int seed,
+								 const glm::vec3 pos,const float scale) :
 	TileEntityBase(ref_game)
 {
+	switch (seed % 3) {
+	case 0: m_gunType = GunType::Pistol; break;
+	case 1: m_gunType = GunType::Shotgun; break;
+	case 2: m_gunType = GunType::SMG; break;
+	default: m_gunType = GunType::Pistol; break;
+	}
+	m_health = 100.f;
 
+	m_basePos = std::move(ModelPosition(
+		pos, 0.0f, glm::vec3(FLT_MIN), glm::vec3(scale)
+	));
+	m_headPos = std::move(ModelPosition(
+		pos, 0.0f, glm::vec3(FLT_MIN), glm::vec3(scale)
+	));
 }
 
 void EnemyTurretTile::fire()

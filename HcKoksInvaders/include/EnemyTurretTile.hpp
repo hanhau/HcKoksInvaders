@@ -24,7 +24,8 @@ class EnemyTurretTile : TileEntityBase
 	void fireShotgunShot(std::vector<Bullet>& bullets);
 
 public:
-	EnemyTurretTile(Game* const ref_game);
+	EnemyTurretTile(Game* const ref_game,int seed,
+					const glm::vec3 pos,const float scale);
 
 	void update(double deltaTime);
 	void draw();

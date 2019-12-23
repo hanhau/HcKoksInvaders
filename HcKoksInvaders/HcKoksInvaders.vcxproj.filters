@@ -75,9 +75,6 @@
     <ClCompile Include="Cubemap.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="BoundingBox.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="GameWorld.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -190,9 +187,6 @@
     </ClInclude>
     <ClInclude Include="include\AmmunitionIcon.hpp">
       <Filter>Headerdateien\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BoundingBox.hpp">
-      <Filter>Headerdateien\Models</Filter>
     </ClInclude>
     <ClInclude Include="include\Bullet.hpp">
       <Filter>Headerdateien\GameWorld</Filter>

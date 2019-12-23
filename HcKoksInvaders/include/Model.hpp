@@ -10,6 +10,7 @@
 #include "Program.hpp"
 #include <array>
 #include "Camera.hpp"
+#include "BoundingBall.hpp"
 
 class Vertex {
 public:
@@ -42,13 +43,20 @@ private:
 	Mesh m_mesh;
 	const Program& m_progRef;
 
-	static const size_t m_maxInstances = 256;
+	BoundingBall m_outerBall;
+	std::vector<BoundingBall> m_innerBalls;
 public:
 	Model3D(const Program& m_progRef);
 	~Model3D();
 
+	// Bounding Balls
+	const BoundingBall& getOuterBB() const;
+	const std::vector<BoundingBall>& getInnerBBs() const;
+
+	// Loading
 	bool loadFromFile(const std::string path,const TextureManager& texMgr);
 
 	// Instanced Rendering
+	static const size_t MaxInstances = 256;
 	void drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& cam,Cubemap& cubemap) const;
 };

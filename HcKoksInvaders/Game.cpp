@@ -157,6 +157,8 @@ void Game::run() {
 	cam.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f));
 	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
 
+	bool wireframe = false;
+
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -164,6 +166,20 @@ void Game::run() {
 			if (event.type == sf::Event::Closed) {
 				this->exit();
 				break;
+			}
+
+			if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == sf::Keyboard::F5)
+				{
+					if (!wireframe) {
+						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+						wireframe = true;
+					}
+					else if(wireframe) {
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+						wireframe = false;
+					}
+				}
 			}
 
 			if (gameState == GameState::MainMenu) {
@@ -196,6 +212,8 @@ void Game::run() {
 		ingameMunitionIconSMG->draw(50.f, prog);
 		ingameMunitionIconRocket->draw(50.f, prog);
 		ingameMunitionIconShotgun->draw(50.f, prog);
+
+		gameWorld.draw(cam);
 
 		//br.drawInstances(bullets,cam);
 		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
@@ -232,7 +250,7 @@ void Game::drawCredits() {
 	const Model3D& head = modelManager->getModel("res/models/turret_head.obj");
 
 	static Camera cam;
-	cam.setCameraPos(glm::vec3(0.0f, 0.0f, 1.0f));
+	cam.setCameraPos(glm::vec3(sinf(secs)*0.25f, cos(secs)*0.25f, 1.0f));
 	cam.setCameraFront(glm::vec3(0.0f + sinf(secs) * 0.05, 0.0f + cosf(secs) * 0.05, -1.0f));
 	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
 	cam.setProjectionMatrix(glm::perspective(glm::radians(65.f), 640.f / 960.f, 1.f, 500.f));
@@ -240,7 +258,7 @@ void Game::drawCredits() {
 	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs*3.0);
 
 	for (double i = 0, j = 0; i < 1000.0; i += 10.0,j+=1.0) {
-		float s = 0.2 + abs(cosf(secs + i)) * 0.1f;
+		float s = 0.2f + abs(cosf(secs + i)) * 0.1f;
 		moneyPos[(int)j] = 
 			ModelPosition(
 				sf::Vector3f(
