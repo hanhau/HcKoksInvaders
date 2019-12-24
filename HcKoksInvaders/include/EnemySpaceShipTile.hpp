@@ -2,7 +2,7 @@
 #include "TileEntityBase.hpp"
 #include <glm/vec3.hpp>
 
-class EnemySpaceShipTile : TileEntityBase
+class EnemySpaceShipTile : public TileEntityBase
 {
 private:
 	ModelPosition m_shipPos;
@@ -12,7 +12,7 @@ private:
 	};
 	MovementPattern m_movementPattern;
 
-	void moveInPattern(MovementPattern mp);
+	//void moveInPattern(MovementPattern mp);
 public:
 	EnemySpaceShipTile(Game* const ref_game, int seed);
 

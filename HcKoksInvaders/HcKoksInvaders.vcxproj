@@ -87,6 +87,8 @@
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);SFML_STATIC</PreprocessorDefinitions>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +150,7 @@
     <ClCompile Include="BoundingBall.cpp" />
     <ClCompile Include="BulletRenderer.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="EmptyTile.cpp" />
     <ClCompile Include="EnemySpaceShipTile.cpp" />
@@ -164,6 +167,7 @@
     <ClCompile Include="StarBackground.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TileEntityBase.cpp" />
     <ClCompile Include="Turret.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,7 @@
 #include <SFML/System/Clock.hpp>
 #include "Bullet.hpp"
 
-class EnemyTurretTile : TileEntityBase
+class EnemyTurretTile : public TileEntityBase
 {
 	ModelPosition m_basePos;
 	ModelPosition m_headPos;

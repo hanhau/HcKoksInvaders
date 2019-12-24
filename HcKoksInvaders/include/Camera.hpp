@@ -10,44 +10,20 @@ private:
 
 	glm::mat4 m_projectionMat;
 public:
-	inline Camera() : m_projectionMat(glm::identity<glm::mat4>()) {}
-	inline Camera(
-		const glm::vec3 pos, 
-		const glm::vec3 front, 
-		const glm::vec3 up, 
-		const glm::mat4 projectionMatrix) 
-	{
-		setCameraPos(pos);
-		setCameraFront(front);
-		setCameraUp(up);
-		setProjectionMatrix(projectionMatrix);
-	}
+	Camera();
+	Camera(
+		const glm::vec3 pos,
+		const glm::vec3 front,
+		const glm::vec3 up,
+		const glm::mat4 projectionMatrix
+	);
 
-	inline void setCameraPos(const glm::vec3 pos) {
-		m_cameraPos = pos;
-	}
+	void setCameraPos(const glm::vec3 pos);
+	void setCameraFront(const glm::vec3 front);
+	void setCameraUp(const glm::vec3 up);
 
-	inline void setCameraFront(const glm::vec3 front) {
-		m_cameraFront = front;
-	}
+	void setProjectionMatrix(const glm::mat4 proj);
 
-	inline void setCameraUp(const glm::vec3 up) {
-		m_cameraUp = up;
-	}
-
-	inline void setProjectionMatrix(const glm::mat4 proj) {
-		m_projectionMat = proj;
-	}
-
-	inline const glm::mat4& getProjectionMatrix() const {
-		return m_projectionMat;
-	}
-
-	inline const glm::mat4&& getViewMatrix() const {
-		return std::move(glm::lookAt(
-			m_cameraPos, 
-			m_cameraPos + m_cameraFront,
-			m_cameraUp
-		));
-	}
+	const glm::mat4& getProjectionMatrix() const;
+	const glm::mat4&& getViewMatrix() const;
 };

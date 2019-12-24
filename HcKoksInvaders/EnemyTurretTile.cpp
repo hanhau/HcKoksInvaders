@@ -13,10 +13,10 @@ EnemyTurretTile::EnemyTurretTile(Game* const ref_game,int seed,
 	m_health = 100.f;
 
 	m_basePos = std::move(ModelPosition(
-		pos, 0.0f, glm::vec3(FLT_MIN), glm::vec3(scale)
+		pos, glm::radians(90.f), glm::vec3(1.f,0.f,0.f), glm::vec3(scale)
 	));
 	m_headPos = std::move(ModelPosition(
-		pos, 0.0f, glm::vec3(FLT_MIN), glm::vec3(scale)
+		pos, glm::radians(90.f), glm::vec3(1.f,0.f,0.f), glm::vec3(scale)
 	));
 }
 

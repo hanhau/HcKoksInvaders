@@ -30,6 +30,12 @@ TextureManager::TextureManager() {
 
 	add("res/models/money_diffuse.png");
 	add("res/models/money_glossy.png");
+
+	add("res/models/turret_base_diffuse.png");
+	add("res/models/turret_base_glossy.png");
+	
+	add("res/models/turret_head_diffuse.png");
+	add("res/models/turret_head_glossy.png");
 }
 
 void TextureManager::add(std::string path) {

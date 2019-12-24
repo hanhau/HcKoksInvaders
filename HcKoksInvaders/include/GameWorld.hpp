@@ -4,6 +4,7 @@
 #include "Game.hpp"
 #include "ProgramManager.hpp"
 #include "ModelManager.hpp"
+#include "Cubemap.hpp"
 
 class GameWorld {
 	std::vector<std::vector<TileEntityBase*>> m_tiles;
@@ -20,7 +21,7 @@ public:
 
 	void init(int stageheight,int seed);
 	void update(const double deltaTime);
-	void draw(const Camera& camera);
+	void draw(const Camera& camera,Cubemap& cubemap);
 
 	void saveToFileAsImage(const std::string path);
 };

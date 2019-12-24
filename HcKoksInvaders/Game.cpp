@@ -151,11 +151,16 @@ void Game::run() {
 	sf::Clock fpsClock;
 	std::vector<long long> frametimes;
 
-	Camera cam;
-	cam.setProjectionMatrix(glm::perspective(glm::radians(95.f), 640.f / 960.f, 1.f, 100.f));
-	cam.setCameraPos(glm::vec3(0.0f, 0.0f, 2.0f));
+	Camera cam1 = Camera(
+		glm::vec3(0.0f, 0.0f, 5.0f),
+		glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::perspective(glm::radians(45.f), 640.f / 960.f, 1.f, 100.f)
+	);
+	/*cam.setCameraPos(glm::vec3(0.0f, 0.0f, 2.0f));
 	cam.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f));
 	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
+	cam.setProjectionMatrix(glm::perspective(glm::radians(45.f), 640.f / 960.f, 1.f, 100.f));*/
 
 	bool wireframe = false;
 
@@ -205,15 +210,15 @@ void Game::run() {
 
 		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform("matProgressCubemap", glm::rotate(glm::identity<glm::mat4>(), gameClock.getElapsedTime().asSeconds() * 2, glm::vec3(0.1, 0.1, 1.0)));
 
-		drawCredits();
+		//drawCredits();
 
-		const Program& prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
+		/*const Program& prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
 		ingameMunitionIconPistol->draw(50.f, prog);
 		ingameMunitionIconSMG->draw(50.f, prog);
 		ingameMunitionIconRocket->draw(50.f, prog);
-		ingameMunitionIconShotgun->draw(50.f, prog);
+		ingameMunitionIconShotgun->draw(50.f, prog);*/
 
-		gameWorld.draw(cam);
+		gameWorld.draw(cam1,*cubeMap);
 
 		//br.drawInstances(bullets,cam);
 		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
@@ -272,13 +277,13 @@ void Game::drawCredits() {
 	}
 
 	fingerPos[0] = ModelPosition(
-		sf::Vector3f(0.0,-0.2 + cos(secs*3)*0.4,-1.0f-abs(cosf(secs))*40.0f),
+		sf::Vector3f(0.0,-0.2 + cos(secs*3)*0.4,-1.0f-abs(cosf(secs*0.5f))*40.0f),
 		glm::radians(180.f+(sin(secs*1.2)+1.0)*90.f), sf::Vector3f(0.0001f,1.0,0.0001f),
 		sf::Vector3f(0.35,0.35,0.35)
 	);
 
 	busPos[0] = ModelPosition(
-		sf::Vector3f(0.0, -0.2 + cos(secs * 3) * 0.4, -1.0f - abs(sinf(secs)) * 40.0f),
+		sf::Vector3f(0.0, -0.2 + cos(secs * 3) * 0.4, -1.0f - abs(sinf(secs*0.5f)) * 40.0f),
 		glm::radians(90.f + (sin(secs*1.1) + 1.0) * 90.f), sf::Vector3f(0.0001f, 1.0, 0.0001f),
 		sf::Vector3f(0.35, 0.35, 0.35)
 	);

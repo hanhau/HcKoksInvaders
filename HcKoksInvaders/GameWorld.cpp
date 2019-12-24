@@ -25,7 +25,7 @@ GameWorld::GameWorld(
 {}
 
 enum MoveDirection {
-	Left, Down, Right
+	Left = 0, Down = 1, Right = 2
 };
 
 void GameWorld::init(int stageheight, int seed) {
@@ -83,7 +83,7 @@ void GameWorld::init(int stageheight, int seed) {
 	float py = 0.0f;
 	for (int y = 0; y < stageheight; y++)
 	{
-		float px = -2.0;
+		float px = -1.0;
 		for (int x = 0; x < WidthInTiles; x++)
 		{
 			if (m_tiles[y][x] == nullptr) {
@@ -101,7 +101,7 @@ void GameWorld::init(int stageheight, int seed) {
 						m_gameRef,
 						rand(),
 						glm::vec3(px,py,0.0f),
-						0.5f
+						0.125f
 					);
 					break;
 				}
@@ -120,32 +120,49 @@ void GameWorld::update(const double deltaTime) {
 	}
 }
 
-void GameWorld::draw(const Camera& camera) {
+void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 	static std::vector<ModelPosition> turretBasePos(Model3D::MaxInstances);
 	static std::vector<ModelPosition> turretHeadPos(Model3D::MaxInstances);
 	static std::vector<ModelPosition> enemyPos(Model3D::MaxInstances);
 
+	int turretBasePosCount = 0;
+	int turretHeadPosCount = 0;
+	int enemyPosCount = 0;
+
 	static std::vector<TileEntityBase*> visibleTiles(Model3D::MaxInstances * 3);
 
-	static const Model3D& enemyShip = m_modelMgrRef->getModel("res/models/ship1.obj");
-	static const Model3D& turretHead = m_modelMgrRef->getModel("res/models/turret_head.obj");
-	static const Model3D& turretBase = m_modelMgrRef->getModel("res/models/turret_base.obj");
-	static const Model3D& playerShip = m_modelMgrRef->getModel("res/models/vengabus.obj");
+	const Model3D& enemyShip = m_modelMgrRef->getModel("res/models/ship1.obj");
+	const Model3D& turretHead = m_modelMgrRef->getModel("res/models/turret_head.obj");
+	const Model3D& turretBase = m_modelMgrRef->getModel("res/models/turret_base.obj");
+	const Model3D& playerShip = m_modelMgrRef->getModel("res/models/vengabus.obj");
 
 	for (size_t y = 0; y < m_tiles.size(); y++) {
 		for (size_t x = 0; x < WidthInTiles; x++) {
 			TileEntityBase* base = m_tiles[y][x];
 
-			if (EnemySpaceShipTile * spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base)) {
-				enemyShip.getOuterBB().transform(spaceShipTile->getSpaceshipPos()).isInViewport(camera);
+			auto spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base);
+			auto enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base);
+
+			if (spaceShipTile != nullptr) {
+				if (enemyShip.getOuterBB().transform(spaceShipTile->getSpaceshipPos()).isInViewport(camera)) {
+					enemyPosCount++;
+				}
 			}
-			else if (EnemyTurretTile * enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base)) {
-				
+			else if (enemyTurretTile != nullptr) {
+				if (turretBase.getOuterBB().transform(enemyTurretTile->getBasePos()).isInViewport(camera)) {
+					turretBasePos[(int)std::clamp(turretBasePosCount, 0, (int)Model3D::MaxInstances-1)] =
+						enemyTurretTile->getBasePos();
+
+					turretBasePosCount++;
+					turretHeadPosCount++;
+				}
 			}
 		}
 	}
 
-
+	turretBase.drawInstanceQueue(turretBasePos,camera,cubemap);
+	turretHead.drawInstanceQueue(turretBasePos, camera, cubemap);
+	//std::cout << turretBasePosCount << " " << enemyPosCount << "\n";
 }
 
 void GameWorld::saveToFileAsImage(std::string path) {
