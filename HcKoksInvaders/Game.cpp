@@ -210,13 +210,13 @@ void Game::run() {
 
 		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform("matProgressCubemap", glm::rotate(glm::identity<glm::mat4>(), gameClock.getElapsedTime().asSeconds() * 2, glm::vec3(0.1, 0.1, 1.0)));
 
-		//drawCredits();
+		drawCredits();
 
-		/*const Program& prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
+		const Program& prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
 		ingameMunitionIconPistol->draw(50.f, prog);
 		ingameMunitionIconSMG->draw(50.f, prog);
 		ingameMunitionIconRocket->draw(50.f, prog);
-		ingameMunitionIconShotgun->draw(50.f, prog);*/
+		ingameMunitionIconShotgun->draw(50.f, prog);
 
 		gameWorld.draw(cam1,*cubeMap);
 
@@ -243,9 +243,9 @@ void Game::drawMainMenu() {
 
 void Game::drawCredits() {
 	static StarBackground starBkg;
-	static std::vector<ModelPosition> moneyPos(100);
-	static std::vector<ModelPosition> fingerPos(1);
-	static std::vector<ModelPosition> busPos(1);
+	static InstanceBuffer moneyPos(100);
+	static InstanceBuffer fingerPos(1);
+	static InstanceBuffer busPos(1);
 
 	const float secs = m_gameClock.getElapsedTime().asSeconds()*2*(60.f/130.f);
 	const Model3D& money = modelManager->getModel("res/models/money.obj");
@@ -287,6 +287,10 @@ void Game::drawCredits() {
 		glm::radians(90.f + (sin(secs*1.1) + 1.0) * 90.f), sf::Vector3f(0.0001f, 1.0, 0.0001f),
 		sf::Vector3f(0.35, 0.35, 0.35)
 	);
+
+	moneyPos.transferToGpu();
+	fingerPos.transferToGpu();
+	busPos.transferToGpu();
 
 	money.drawInstanceQueue(moneyPos, cam, *cubeMap);
 	finger.drawInstanceQueue(fingerPos, cam, *cubeMap);

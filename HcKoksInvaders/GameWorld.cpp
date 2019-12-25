@@ -4,6 +4,7 @@
 #include "include/EmptyTile.hpp"
 #include "include/EnemySpaceShipTile.hpp"
 #include "include/EnemyTurretTile.hpp"
+#include "include/InstanceBuffer.hpp"
 #include <thread>
 #include <iostream>
 
@@ -110,6 +111,30 @@ void GameWorld::init(int stageheight, int seed) {
 		}
 		py += dist;
 	}
+
+	// Set Vectors
+	m_enemySpaceshipTilesPtrs.clear();
+	m_enemyTurretTilesPtrs.clear();
+	m_mpTurretHead.clear();
+	m_mpTurretBase.clear();
+	m_mpEnemyShip.clear();
+
+	for(const auto& row : m_tiles)
+		for (const auto& column : row) {
+			TileEntityBase* base = column;
+
+			auto spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base);
+			auto enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base);
+
+			if (spaceShipTile != nullptr)
+				m_enemySpaceshipTilesPtrs.push_back(spaceShipTile);
+			else if (enemyTurretTile != nullptr)
+				m_enemyTurretTilesPtrs.push_back(enemyTurretTile);
+		}
+
+	m_mpTurretHead.resize(m_enemyTurretTilesPtrs.size());
+	m_mpTurretBase.resize(m_enemyTurretTilesPtrs.size());
+	m_mpEnemyShip.resize(m_enemySpaceshipTilesPtrs.size());
 }
 
 void GameWorld::update(const double deltaTime) {
@@ -121,15 +146,15 @@ void GameWorld::update(const double deltaTime) {
 }
 
 void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
-	static std::vector<ModelPosition> turretBasePos(Model3D::MaxInstances);
-	static std::vector<ModelPosition> turretHeadPos(Model3D::MaxInstances);
-	static std::vector<ModelPosition> enemyPos(Model3D::MaxInstances);
+	static InstanceBuffer turretBasePos(512);
+	static InstanceBuffer turretHeadPos(512);
+	static InstanceBuffer enemyPos(512);
 
 	int turretBasePosCount = 0;
 	int turretHeadPosCount = 0;
 	int enemyPosCount = 0;
 
-	static std::vector<TileEntityBase*> visibleTiles(Model3D::MaxInstances * 3);
+	static std::vector<TileEntityBase*> visibleTiles(256 * 3);
 
 	const Model3D& enemyShip = m_modelMgrRef->getModel("res/models/ship1.obj");
 	const Model3D& turretHead = m_modelMgrRef->getModel("res/models/turret_head.obj");
@@ -140,25 +165,30 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 		for (size_t x = 0; x < WidthInTiles; x++) {
 			TileEntityBase* base = m_tiles[y][x];
 
-			auto spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base);
+			//auto spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base);
 			auto enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base);
 
-			if (spaceShipTile != nullptr) {
+			/*if (spaceShipTile != nullptr) {
 				if (enemyShip.getOuterBB().transform(spaceShipTile->getSpaceshipPos()).isInViewport(camera)) {
 					enemyPosCount++;
 				}
 			}
-			else if (enemyTurretTile != nullptr) {
-				if (turretBase.getOuterBB().transform(enemyTurretTile->getBasePos()).isInViewport(camera)) {
-					turretBasePos[(int)std::clamp(turretBasePosCount, 0, (int)Model3D::MaxInstances-1)] =
-						enemyTurretTile->getBasePos();
+			else*/ if (enemyTurretTile != nullptr) {
+				turretBasePos[(int)turretBasePosCount] =
+					enemyTurretTile->getBasePos();
 
-					turretBasePosCount++;
-					turretHeadPosCount++;
-				}
+				turretBasePosCount++;
+				turretHeadPosCount++;
 			}
 		}
 	}
+
+	turretBasePos.setInnerCount(turretBasePosCount);
+	turretBasePos.transferToGpu();
+	
+	turretHeadPos.setInnerCount(turretHeadPosCount);
+	turretHeadPos.transferToGpu();
+	//enemyPos.transferToGpu();
 
 	turretBase.drawInstanceQueue(turretBasePos,camera,cubemap);
 	turretHead.drawInstanceQueue(turretBasePos, camera, cubemap);

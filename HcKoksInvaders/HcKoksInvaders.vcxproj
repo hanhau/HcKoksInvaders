@@ -157,6 +157,7 @@
     <ClCompile Include="EnemyTurretTile.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameWorld.cpp" />
+    <ClCompile Include="InstanceBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelManager.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\GameObject.hpp" />
     <ClInclude Include="include\GameWorld.hpp" />
+    <ClInclude Include="include\InstanceBuffer.hpp" />
     <ClInclude Include="include\Model.hpp" />
     <ClInclude Include="include\ModelManager.hpp" />
     <ClInclude Include="include\ModelPosition.hpp" />

@@ -11,6 +11,7 @@
 #include <array>
 #include "Camera.hpp"
 #include "BoundingBall.hpp"
+#include "InstanceBuffer.hpp"
 
 class Vertex {
 public:
@@ -57,6 +58,5 @@ public:
 	bool loadFromFile(const std::string path,const TextureManager& texMgr);
 
 	// Instanced Rendering
-	static const size_t MaxInstances = 256;
-	void drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& cam,Cubemap& cubemap) const;
+	void drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cubemap& cubemap) const;
 };

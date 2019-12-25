@@ -5,13 +5,22 @@
 #include "ProgramManager.hpp"
 #include "ModelManager.hpp"
 #include "Cubemap.hpp"
+#include "EnemyTurretTile.hpp"
+#include "EnemySpaceShipTile.hpp"
 
 class GameWorld {
-	std::vector<std::vector<TileEntityBase*>> m_tiles;
 	Game * const m_gameRef;	
 	ModelManager* const m_modelMgrRef;
 
-	bool isTileVisible(int x, int y, const Camera& cam);
+	std::vector<std::vector<TileEntityBase*>> m_tiles;
+
+	std::vector<EnemyTurretTile*> m_enemyTurretTilesPtrs;
+	std::vector<EnemySpaceShipTile*> m_enemySpaceshipTilesPtrs;
+
+	std::vector<ModelPosition> m_mpTurretHead;
+	std::vector<ModelPosition> m_mpTurretBase;
+	std::vector<ModelPosition> m_mpEnemyShip;
+
 public:
 	GameWorld(Game * const game_ref,
 			  ModelManager * const modelMgrPtr);

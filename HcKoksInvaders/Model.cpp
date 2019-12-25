@@ -84,12 +84,6 @@ bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
 		// Setup OpenGL Buffers
 		glBindVertexArray(0);
 
-		glGenBuffers(1, &m_mesh.gl_ssbo);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_mesh.gl_ssbo);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_mesh.gl_ssbo);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::mat4) * MaxInstances, (void*)0, GL_STATIC_DRAW);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-
 		glGenVertexArrays(1, &m_mesh.gl_vao);
 		glGenBuffers(1, &m_mesh.gl_vbo);
 		glGenBuffers(1, &m_mesh.gl_ebo);
@@ -113,7 +107,6 @@ bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
 
 		glBindVertexArray(0);
 
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
@@ -225,9 +218,9 @@ void processAiMesh(aiMesh* ai_mesh, const aiScene* scene, Mesh& mesh) {
 	}
 }
 
-void Model3D::drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& cam,Cubemap &cubemap) const {
-	static std::array<glm::mat4, MaxInstances> instances;
-	
+// TODO INSTANCE BUFFER AUSLAGERN
+
+void Model3D::drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cubemap &cubemap) const {
 	m_progRef.bind();
 
 	glm::mat4x4 view = cam.getViewMatrix();
@@ -236,16 +229,7 @@ void Model3D::drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& ca
 	m_progRef.setUniform("matProjection", perspective);
 	m_progRef.setUniform("matView", view);
 
-	const unsigned int pos_count = pos.size();
-	if (pos_count > MaxInstances)
-		throw "FUCK IT";
-
-	for (unsigned int i = 0; i < pos_count; i++)
-		instances[i] = pos[i].getTransformationMatrix();	
-
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_mesh.gl_ssbo);
-	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::mat4) * pos_count, &instances[0]);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_mesh.gl_ssbo);
+	instances.bind(0);
 
 	bindTextures(
 		m_mesh.m_texDiffuse.getNativeHandle(),
@@ -258,17 +242,17 @@ void Model3D::drawInstanceQueue(std::vector<ModelPosition>& pos,const Camera& ca
 	glBindVertexArray(m_mesh.gl_vao);
 
 	glDrawElementsInstanced(
-		GL_TRIANGLES, 
-		m_mesh.m_numIndices, 
+		GL_TRIANGLES,
+		m_mesh.m_numIndices,
 		GL_UNSIGNED_INT,
-		0, 
-		pos_count
+		0,
+		instances.getInnerCount()
 	);
 	glBindVertexArray(0);
 
 	unbindTextures();
 
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	instances.unbind();
 
 	glUseProgram(0);
 

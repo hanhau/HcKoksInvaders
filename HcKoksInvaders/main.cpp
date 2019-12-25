@@ -5,7 +5,7 @@
 #include <SFML/Audio.hpp>
 
 #ifdef RELEASE_BUILD
-int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
 #else
 int main()
 #endif

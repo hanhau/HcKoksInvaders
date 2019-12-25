@@ -123,6 +123,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="InstanceBuffer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -207,6 +210,9 @@
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="include\TextRenderer.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InstanceBuffer.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
