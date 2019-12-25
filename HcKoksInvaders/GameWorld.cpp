@@ -102,7 +102,7 @@ void GameWorld::init(int stageheight, int seed) {
 						m_gameRef,
 						rand(),
 						glm::vec3(px,py,0.0f),
-						0.125f
+						0.075f
 					);
 					break;
 				}

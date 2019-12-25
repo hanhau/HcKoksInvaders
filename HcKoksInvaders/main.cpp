@@ -5,7 +5,7 @@
 #include <SFML/Audio.hpp>
 
 #ifdef RELEASE_BUILD
-int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
 #else
 int main()
 #endif
@@ -14,4 +14,6 @@ int main()
 	game.init();
 	game.run();
 	game.exit();
+
+	return 0;
 }

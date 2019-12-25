@@ -153,14 +153,10 @@ void Game::run() {
 
 	Camera cam1 = Camera(
 		glm::vec3(0.0f, 0.0f, 5.0f),
-		glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(0.0f, 0.45f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::perspective(glm::radians(45.f), 640.f / 960.f, 1.f, 100.f)
+		glm::perspective(glm::radians(47.5f), 640.f / 960.f, 1.f, 100.f)
 	);
-	/*cam.setCameraPos(glm::vec3(0.0f, 0.0f, 2.0f));
-	cam.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f));
-	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
-	cam.setProjectionMatrix(glm::perspective(glm::radians(45.f), 640.f / 960.f, 1.f, 100.f));*/
 
 	bool wireframe = false;
 
@@ -210,19 +206,20 @@ void Game::run() {
 
 		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform("matProgressCubemap", glm::rotate(glm::identity<glm::mat4>(), gameClock.getElapsedTime().asSeconds() * 2, glm::vec3(0.1, 0.1, 1.0)));
 
-		drawCredits();
+		//drawCredits();
+
+		cam1.setCameraPos(glm::vec3(0.0f,m_gameClock.getElapsedTime().asSeconds(),4.5f));
+		gameWorld.draw(cam1,*cubeMap);
+
+		//br.drawInstances(bullets,cam);
+		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
+		fpsClock.restart();
 
 		const Program& prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
 		ingameMunitionIconPistol->draw(50.f, prog);
 		ingameMunitionIconSMG->draw(50.f, prog);
 		ingameMunitionIconRocket->draw(50.f, prog);
 		ingameMunitionIconShotgun->draw(50.f, prog);
-
-		gameWorld.draw(cam1,*cubeMap);
-
-		//br.drawInstances(bullets,cam);
-		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
-		fpsClock.restart();
 
 		window.display();
 	}
@@ -248,11 +245,9 @@ void Game::drawCredits() {
 	static InstanceBuffer busPos(1);
 
 	const float secs = m_gameClock.getElapsedTime().asSeconds()*2*(60.f/130.f);
-	const Model3D& money = modelManager->getModel("res/models/money.obj");
-	const Model3D& finger = modelManager->getModel("res/models/finger.obj");
-	const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
-	const Model3D& base = modelManager->getModel("res/models/turret_base.obj");
-	const Model3D& head = modelManager->getModel("res/models/turret_head.obj");
+	static const Model3D& money = modelManager->getModel("res/models/money.obj");
+	static const Model3D& finger = modelManager->getModel("res/models/finger.obj");
+	static const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
 
 	static Camera cam;
 	cam.setCameraPos(glm::vec3(sinf(secs)*0.25f, cos(secs)*0.25f, 1.0f));
