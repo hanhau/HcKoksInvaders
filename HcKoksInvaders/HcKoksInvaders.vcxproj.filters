@@ -114,9 +114,6 @@
     <ClCompile Include="BoundingBall.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TextRenderer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TileEntityBase.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -124,6 +121,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="InstanceBuffer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="TextRenderer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,13 +206,10 @@
     <ClInclude Include="include\BoundingBall.hpp">
       <Filter>Headerdateien\Models</Filter>
     </ClInclude>
-    <ClInclude Include="include\Text.hpp">
+    <ClInclude Include="include\InstanceBuffer.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="include\TextRenderer.hpp">
-      <Filter>Headerdateien\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="include\InstanceBuffer.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
@@ -389,5 +386,10 @@
     <Text Include="res\models\ship1.obj">
       <Filter>res\models</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="res\fonts\PressStart2P-Regular.ttf">
+      <Filter>res\fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>

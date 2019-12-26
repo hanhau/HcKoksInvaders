@@ -129,9 +129,13 @@ void GameWorld::init(int stageheight, int seed) {
 				m_enemyTurretTilesPtrs.push_back(enemyTurretTile);
 		}
 
+	// Init InstanceBuffers with correct capcity
 	m_instTurretBase = new InstanceBuffer(m_enemyTurretTilesPtrs.size());
 	m_instTurretHead = new InstanceBuffer(m_enemyTurretTilesPtrs.size());
 	m_instEnemyShip = new InstanceBuffer(m_enemySpaceshipTilesPtrs.size());
+
+	// Insert static positions
+
 }
 
 void GameWorld::update(const double deltaTime) {

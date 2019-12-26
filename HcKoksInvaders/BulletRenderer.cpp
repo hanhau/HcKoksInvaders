@@ -69,8 +69,8 @@ void BulletRenderer::drawInstances(std::vector<Bullet>& bullets, const Camera& c
 	prog.setUniform("proj", cam.getProjectionMatrix());
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, gl_ssbo);
-	glBindBufferBaseEXT(GL_SHADER_STORAGE_BUFFER, 0, gl_ssbo);
-	glBufferSubDataARB(GL_SHADER_STORAGE_BUFFER, 0, sizeof(BulletPosData) * bulletCount, bulletPos.data());
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, gl_ssbo);
+	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(BulletPosData) * bulletCount, bulletPos.data());
 
 	glBindVertexArray(gl_vao);
 

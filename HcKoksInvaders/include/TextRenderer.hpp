@@ -1,16 +1,21 @@
 #pragma once
-#include "Text.hpp"
-#include "ProgramManager.hpp"
-#include <SFML/Window.hpp>
+#include <string>
+#include <memory>
+
+#include <glm/vec2.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 class TextRenderer {
-	unsigned int gl_vao;
-	unsigned int gl_vbo;
-	unsigned int gl_textureID;
-
-	const Program& m_progRef;
+	static sf::RenderTexture sf_renderTex;
+	sf::Text sf_text;
+	sf::Font sf_font;
 public:
-	TextRenderer(const ProgramManager& progMgr,const sf::Window& win);
+	static void drawToOverlay();
 
-	void draw(const Text& text) const;
+	static void init(const sf::Window& win);
+
+	static void drawToOverlay();
+	static void clearOverlay();
+	static void drawOverlay();
 };

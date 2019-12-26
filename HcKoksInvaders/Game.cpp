@@ -296,6 +296,25 @@ void Game::drawCredits() {
 
 void Game::drawGameOverScreen() {
 	static StarBackground starBkg;
+	static const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
+	static InstanceBuffer busPos(1);
+	static Camera cam;
 
-	//starBkg.draw();
+	const float secs = m_gameClock.getElapsedTime().asSeconds();
+
+	cam.setCameraPos(glm::vec3(0.0f,10.0f,10.0f));
+	cam.setCameraFront(glm::vec3(0.0f, -0.5f, -1.0f));
+	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
+	cam.setProjectionMatrix(glm::perspective(glm::radians(65.f), 640.f / 960.f, 1.f, 500.f));	
+
+	busPos[0] = std::move(ModelPosition(
+		glm::vec3(0.0f,0.0f,0.0f),
+		secs,glm::vec3(0.000001f,1.0f,0.000001f),
+		glm::vec3(0.75f,0.75f,0.75f)
+	));
+	busPos.transferToGpu();
+
+	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground),secs);
+
+	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 }
