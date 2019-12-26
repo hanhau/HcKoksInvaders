@@ -9,7 +9,7 @@
 #include <iostream>
 
 const int GameWorld::MinHeightInTiles = 15;
-const int GameWorld::WidthInTiles = 10;
+const int GameWorld::WidthInTiles = 8;
 
 enum TileType {
 	Empty,
@@ -115,9 +115,6 @@ void GameWorld::init(int stageheight, int seed) {
 	// Set Vectors
 	m_enemySpaceshipTilesPtrs.clear();
 	m_enemyTurretTilesPtrs.clear();
-	m_mpTurretHead.clear();
-	m_mpTurretBase.clear();
-	m_mpEnemyShip.clear();
 
 	for(const auto& row : m_tiles)
 		for (const auto& column : row) {
@@ -132,9 +129,9 @@ void GameWorld::init(int stageheight, int seed) {
 				m_enemyTurretTilesPtrs.push_back(enemyTurretTile);
 		}
 
-	m_mpTurretHead.resize(m_enemyTurretTilesPtrs.size());
-	m_mpTurretBase.resize(m_enemyTurretTilesPtrs.size());
-	m_mpEnemyShip.resize(m_enemySpaceshipTilesPtrs.size());
+	m_instTurretBase = new InstanceBuffer(m_enemyTurretTilesPtrs.size());
+	m_instTurretHead = new InstanceBuffer(m_enemyTurretTilesPtrs.size());
+	m_instEnemyShip = new InstanceBuffer(m_enemySpaceshipTilesPtrs.size());
 }
 
 void GameWorld::update(const double deltaTime) {
@@ -146,10 +143,6 @@ void GameWorld::update(const double deltaTime) {
 }
 
 void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
-	static InstanceBuffer turretBasePos(512);
-	static InstanceBuffer turretHeadPos(512);
-	static InstanceBuffer enemyPos(512);
-
 	int turretBasePosCount = 0;
 	int turretHeadPosCount = 0;
 	int enemyPosCount = 0;
@@ -174,7 +167,7 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 				}
 			}
 			else*/ if (enemyTurretTile != nullptr) {
-				turretBasePos[(int)turretBasePosCount] =
+				(*m_instTurretBase)[(int)turretBasePosCount] =
 					enemyTurretTile->getBasePos();
 
 				turretBasePosCount++;
@@ -183,16 +176,16 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 		}
 	}
 
-	turretBasePos.setInnerCount(turretBasePosCount);
-	turretBasePos.transferToGpu();
+	m_instTurretBase->setInnerCount(turretBasePosCount);
+	m_instTurretBase->transferToGpu();
 	
-	turretHeadPos.setInnerCount(turretHeadPosCount);
-	turretHeadPos.transferToGpu();
+	m_instTurretHead->setInnerCount(turretHeadPosCount);
+	m_instTurretHead->transferToGpu();
 	//enemyPos.transferToGpu();
 
-	turretBase.drawInstanceQueue(turretBasePos,camera,cubemap);
-	turretHead.drawInstanceQueue(turretBasePos, camera, cubemap);
-	//std::cout << turretBasePosCount << " " << enemyPosCount << "\n";
+	turretBase.drawInstanceQueue(*m_instTurretBase,camera,cubemap);
+	turretHead.drawInstanceQueue(*m_instTurretBase, camera, cubemap);
+	//std::cout << turretBasePosCount << " " << enuemyPosCount << "\n";
 }
 
 void GameWorld::saveToFileAsImage(std::string path) {

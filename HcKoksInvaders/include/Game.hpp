@@ -75,4 +75,5 @@ private:
 	void drawFpsCounter(sf::Time timeElapsed);
 	void drawMainMenu();
 	void drawCredits();
+	void drawGameOverScreen();
 };

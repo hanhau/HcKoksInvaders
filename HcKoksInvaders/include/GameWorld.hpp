@@ -7,6 +7,7 @@
 #include "Cubemap.hpp"
 #include "EnemyTurretTile.hpp"
 #include "EnemySpaceShipTile.hpp"
+#include "InstanceBuffer.hpp"
 
 class GameWorld {
 	Game * const m_gameRef;	
@@ -17,10 +18,9 @@ class GameWorld {
 	std::vector<EnemyTurretTile*> m_enemyTurretTilesPtrs;
 	std::vector<EnemySpaceShipTile*> m_enemySpaceshipTilesPtrs;
 
-	std::vector<ModelPosition> m_mpTurretHead;
-	std::vector<ModelPosition> m_mpTurretBase;
-	std::vector<ModelPosition> m_mpEnemyShip;
-
+	InstanceBuffer * m_instTurretHead;
+	InstanceBuffer * m_instTurretBase;
+	InstanceBuffer * m_instEnemyShip;
 public:
 	GameWorld(Game * const game_ref,
 			  ModelManager * const modelMgrPtr);

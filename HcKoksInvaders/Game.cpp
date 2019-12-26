@@ -25,6 +25,7 @@ void Game::init() {
 	sf::ContextSettings cs(24,8,2,4,3,0U,false);
 	window.create(sf::VideoMode(640, 960), "HcKoksInvaders", sf::Style::Close,cs);
 	window.setActive(true);
+	window.setVerticalSyncEnabled(true);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -136,7 +137,7 @@ void Game::run() {
 	GameState gameState = GameState::MainMenu;
 
 	GameWorld gameWorld(this,modelManager);
-	gameWorld.init(256, 2);
+	gameWorld.init(1024, 2);
 	gameWorld.saveToFileAsImage("demo.bmp");
 
 	BulletRenderer br(*programManager);
@@ -206,12 +207,12 @@ void Game::run() {
 
 		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform("matProgressCubemap", glm::rotate(glm::identity<glm::mat4>(), gameClock.getElapsedTime().asSeconds() * 2, glm::vec3(0.1, 0.1, 1.0)));
 
-		//drawCredits();
+		drawCredits();
 
-		cam1.setCameraPos(glm::vec3(0.0f,m_gameClock.getElapsedTime().asSeconds(),4.5f));
+		cam1.setCameraPos(glm::vec3(0.0f,m_gameClock.getElapsedTime().asSeconds()*0.33f,4.5f));
 		gameWorld.draw(cam1,*cubeMap);
 
-		//br.drawInstances(bullets,cam);
+		br.drawInstances(bullets,cam1);
 		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
 		fpsClock.restart();
 
@@ -291,4 +292,10 @@ void Game::drawCredits() {
 	finger.drawInstanceQueue(fingerPos, cam, *cubeMap);
 	
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
+}
+
+void Game::drawGameOverScreen() {
+	static StarBackground starBkg;
+
+	//starBkg.draw();
 }
