@@ -25,6 +25,9 @@ TextureManager::TextureManager() {
 	add("res/models/vengabus_glossy.png");
 	add("res/models/vengabus_normal.png");
 
+	add("res/models/vengabus_hq_diffuse.png");
+	add("res/models/vengabus_hq_glossy.png");
+
 	add("res/models/finger_diffuse.png");
 	add("res/models/finger_glossy.png");
 

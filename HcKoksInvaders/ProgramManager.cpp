@@ -51,9 +51,9 @@ ProgramManager::ProgramManager()
 	// Text
 	Shader text_vert, text_frag;
 	text_vert.loadFromFile("res/shaders/Text.vert", Shader::ShaderType::Vertex);
-	text_vert.loadFromFile("res/shaders/Text.frag", Shader::ShaderType::Fragment);
+	text_frag.loadFromFile("res/shaders/Text.frag", Shader::ShaderType::Fragment);
 
-	add(ProgramEntry::Text, text_frag, text_frag);
+	add(ProgramEntry::Text, text_vert, text_frag);
 }
 
 ProgramManager::~ProgramManager() {

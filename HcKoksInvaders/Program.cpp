@@ -7,6 +7,9 @@
 Program::Program(Shader const& vertex,Shader const& fragment) : 
 	glID(glCreateProgram())
 {
+	assert(vertex.getType() == Shader::ShaderType::Vertex);
+	assert(fragment.getType() == Shader::ShaderType::Fragment);
+
 	glAttachShader(glID, vertex.getID());
 	glAttachShader(glID, fragment.getID());
 	glLinkProgram(glID);

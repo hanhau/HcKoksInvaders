@@ -16,6 +16,7 @@
 #include "include/StarBackground.hpp"
 #include "include/AmmunitionIcon.hpp"
 #include "include/BulletRenderer.hpp"
+#include "include/TextRenderer.hpp"
 
 sf::Font* m_fpsTextFont;
 sf::Text* m_fpsText;
@@ -25,10 +26,16 @@ void Game::init() {
 	sf::ContextSettings cs(24,8,2,4,3,0U,false);
 	window.create(sf::VideoMode(640, 960), "HcKoksInvaders", sf::Style::Close,cs);
 	window.setActive(true);
-	window.setVerticalSyncEnabled(true);
+	//window.setVerticalSyncEnabled(true);
 
+	// set OpenGL Function Ptrs
+	glewExperimental = GL_TRUE;
+	glewInit();
+
+	// global depth test
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	glClearColor(0.5, 0.75, 0.25, 1.0);
 
 	// fps counter
 	m_fpsTextFont = new sf::Font();
@@ -36,21 +43,6 @@ void Game::init() {
 	m_fpsText = new sf::Text("awd",*m_fpsTextFont,12);
 	m_fpsText->setFillColor(sf::Color::Magenta);
 	m_fpsText->setPosition(sf::Vector2f(10,10));
-
-	sf::RenderTexture tx;
-	//tx.getTexture().
-
-	// Init View Matrix
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	
-	matView = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	matPerspective = glm::perspective(1.f, (float)window.getSize().x/(float)window.getSize().y, 0.01f, 100.f);
-
-	// set OpenGL Function Ptrs
-	glewExperimental = GL_TRUE;
-	glewInit();
 
 	// Initialize ResourceManagers
 	textureManager = new TextureManager();
@@ -75,7 +67,7 @@ void Game::init() {
 
 	// Load IngameUI
 	{
-		ingameMunitionIconPistol = new AmmunitionIcon(
+		sIngame.MunitionIconPistol = new AmmunitionIcon(
 			"res/images/icon_munition_pistol.png",
 			sf::Color::Blue,
 			0.1f,
@@ -83,7 +75,7 @@ void Game::init() {
 			*textureManager,
 			window
 		);
-		ingameMunitionIconSMG = new AmmunitionIcon(
+		sIngame.MunitionIconSMG = new AmmunitionIcon(
 			"res/images/icon_munition_smg.png",
 			sf::Color::Yellow,
 			0.1f,
@@ -91,7 +83,7 @@ void Game::init() {
 			*textureManager,
 			window
 		);
-		ingameMunitionIconRocket = new AmmunitionIcon(
+		sIngame.MunitionIconRocket = new AmmunitionIcon(
 			"res/images/icon_munition_rocket.png",
 			sf::Color::Green,
 			0.1f,
@@ -99,7 +91,7 @@ void Game::init() {
 			*textureManager,
 			window
 		);
-		ingameMunitionIconShotgun = new AmmunitionIcon(
+		sIngame.MunitionIconShotgun = new AmmunitionIcon(
 			"res/images/icon_munition_shotgun.png",
 			sf::Color::Red,
 			0.1f,
@@ -202,26 +194,47 @@ void Game::run() {
 			}
 		}
 
-		glClearColor(0.5, 0.75, 0.25, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform("matProgressCubemap", glm::rotate(glm::identity<glm::mat4>(), gameClock.getElapsedTime().asSeconds() * 2, glm::vec3(0.1, 0.1, 1.0)));
+		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform(
+			"matProgressCubemap",
+			glm::rotate(glm::identity<glm::mat4>(), glm::radians(gameClock.getElapsedTime().asSeconds()), glm::vec3(1.0, 0.1, 0.1))
+		);
 
-		drawCredits();
+		switch (gameState) {
+			// INGAME // -------------------------------
+			case GameState::Ingame:
+			{
+				
+			}
+			break;
+			// CREDITS // ------------------------------
+			case GameState::Credits:
+			{
+				drawCredits();
+			}
+			break;
+			// MAINMENU // -----------------------------
+			case GameState::MainMenu:
+			{
+				drawMainMenu();
+			}
+			break;
+			// GAMEOVER // -----------------------------
+			case GameState::GameOver:
+			{
+				drawGameOverScreen();
+			}
+			break;
+			// -----------------------------------------
+			default: 
+				throw; 
+			break;
+		}
 
-		cam1.setCameraPos(glm::vec3(0.0f,m_gameClock.getElapsedTime().asSeconds()*0.33f,4.5f));
-		gameWorld.draw(cam1,*cubeMap);
-
-		br.drawInstances(bullets,cam1);
+		// End of Frame
 		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
 		fpsClock.restart();
-
-		const Program& prog = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
-		ingameMunitionIconPistol->draw(50.f, prog);
-		ingameMunitionIconSMG->draw(50.f, prog);
-		ingameMunitionIconRocket->draw(50.f, prog);
-		ingameMunitionIconShotgun->draw(50.f, prog);
-
 		window.display();
 	}
 }
@@ -236,7 +249,27 @@ void Game::drawFpsCounter(sf::Time timeElapsed) {
 }
 
 void Game::drawMainMenu() {
-	
+	static StarBackground starBkg;
+	static InstanceBuffer busPos(1);
+
+	const float secs = m_gameClock.getElapsedTime().asSeconds() * 3.0f;
+	static const Model3D& bus = modelManager->getModel("res/models/vengabus_hq.obj");
+
+	static Camera cam;
+	cam.setCameraPos(glm::vec3(0.0f, 0.0f, 3.0f));
+	cam.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f));
+	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
+	cam.setProjectionMatrix(glm::perspective(glm::radians(85.f), 640.f / 960.f, 1.f, 500.f));
+
+	busPos[0] = ModelPosition(
+		glm::vec3(),
+		glm::radians(5.f), glm::vec3(cosf(secs*0.33f),sinf(secs*0.25f),cosf(secs*0.15f+3.33f)),
+		glm::vec3(2.0f,2.0f,2.0f)
+	);
+	busPos.transferToGpu();
+
+	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs);
+	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 }
 
 void Game::drawCredits() {

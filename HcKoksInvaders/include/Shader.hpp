@@ -19,6 +19,8 @@ public:
 	};
 
 	bool loadFromFile(const std::string path,ShaderType shaderType);
+	bool loadFromString(const std::string str, ShaderType shaderType);
+
 	const ShaderType& getType() const;
 	unsigned int getID() const;
 };

@@ -17,17 +17,8 @@ private:
 	
 	sf::Window window;
 	
-	// global Matrices
-	glm::mat4x4 matView;
-	glm::mat4x4 matPerspective;
-
 	// global Game Clock
 	sf::Clock m_gameClock;
-
-	// Cameras
-	Camera cam_MainMenu;
-	Camera cam_Ingame;
-	Camera cam_Credits;
 
 	// Resource Managers
 	TextureManager* textureManager;
@@ -38,14 +29,12 @@ private:
 	// Global Default Cubemap
 	Cubemap* cubeMap;
 
-	// Ingame UI
-	AmmunitionIcon* ingameMunitionIconPistol;
-	AmmunitionIcon* ingameMunitionIconSMG;
-	AmmunitionIcon* ingameMunitionIconRocket;
-	AmmunitionIcon* ingameMunitionIconShotgun;
-
+	// Ingame
 	struct {
-
+		AmmunitionIcon* MunitionIconPistol;
+		AmmunitionIcon* MunitionIconSMG;
+		AmmunitionIcon* MunitionIconRocket;
+		AmmunitionIcon* MunitionIconShotgun;
 	} sIngame;
 
 	struct {
@@ -64,7 +53,8 @@ public:
 	enum class GameState {
 		MainMenu,
 		Ingame,
-		Credits
+		Credits,
+		GameOver
 	};
 
 	void init();

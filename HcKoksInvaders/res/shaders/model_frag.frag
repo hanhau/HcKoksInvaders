@@ -4,6 +4,8 @@ in vec2 vUV;
 in vec3 vNormal;
 in vec3 vPos;
 
+out vec4 res;
+
 layout (binding = 0) uniform sampler2D texDiffuse;
 layout (binding = 1) uniform sampler2D texGlossy;
 layout (binding = 2) uniform sampler2D texNormal;
@@ -20,5 +22,5 @@ void main(){
 	vec4 col = texture(texDiffuse,vUV); 
 	vec4 col_ = texture(texCubemap, R).gbra;
 
-	gl_FragColor = vec4(mix(col.rgb,col_.bgr,length(texture(texGlossy,vUV).rgb)),col.a);
+	res = vec4(mix(col.rgb,col_.bgr,length(texture(texGlossy,vUV).rgb)),col.a);
 }
