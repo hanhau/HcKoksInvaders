@@ -12,6 +12,7 @@ public:
 
 	const unsigned int getID() const;
 	void bind() const;
+	void unbind() const;
 
 	void setUniform(const std::string name, glm::mat4x4 mat4) const;
 	void setUniform(const std::string name, sf::Vector3f vec3) const;

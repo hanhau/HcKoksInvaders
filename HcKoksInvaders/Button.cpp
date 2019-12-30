@@ -3,28 +3,25 @@
 #include <Util.hpp>
 
 struct ButtonVertex {
-	sf::Vector3f pos;
-	float col[4];
-	sf::Vector2f uv;
+	glm::vec3 pos;
+	glm::vec4 col;
+	glm::vec2 uv;
 
-	inline ButtonVertex(const sf::Vector3f pos, const float* col) : 
-		pos(pos) 
-	{
-		memcpy(this->col, col, 4 * sizeof(float));
-	}
-
-	inline ButtonVertex(const sf::Vector3f pos, const float* col, const sf::Vector2f uv)
-	{
-		ButtonVertex(pos, col);
-		this->uv = uv;
-	}
+	inline ButtonVertex(const glm::vec3 pos, const glm::vec4 col) : 
+		pos(pos), col(col)
+	{}
+	inline ButtonVertex(const glm::vec3 pos, const glm::vec4, const glm::vec2 uv) :
+		pos(pos), col(col), uv(uv)
+	{}
 };
 
-std::vector<ButtonVertex> createButtonMesh(sf::Vector2f size);
+std::vector<ButtonVertex> createButtonMesh(glm::vec2 size);
 
-Button::Button(std::string title, sf::Vector2f pos, sf::Vector2f size) :
-	m_title(title), m_position(pos), m_size(size) 
+Button::Button(std::string title, glm::vec2 pos, int fontHeight) :
+	m_title(title), m_position(pos)
 {
+	glm::vec2 size = glm::vec2(0.0f,0.0f);
+
 	std::vector<ButtonVertex> vertices = createButtonMesh(size);
 
 	glGenVertexArrays(1, &gl_vao);
@@ -49,19 +46,18 @@ Button::Button(std::string title, sf::Vector2f pos, sf::Vector2f size) :
 	util::checkGlCalls(__FUNCSIG__);
 }
 
-void Button::draw(sf::RenderWindow& rw,sf::Shader * shader) const
+void Button::draw(const Program& program) const
 {
-	rw.setActive();
-	sf::Shader::bind(shader);
+	
 
-	auto mat = glm::translate(glm::identity<glm::mat4x4>(), glm::vec3(-1.0, -1.0, 0.0));
+	/*auto mat = glm::translate(glm::identity<glm::mat4x4>(), glm::vec3(-1.0, -1.0, 0.0));
 	util::setUniformMat(shader, "translate", mat);
 
 	auto pos = glm::translate(glm::identity<glm::mat4x4>(), glm::vec3(m_position.x*2.0, m_position.y*2.0, 0.0));
 	util::setUniformMat(shader, "position", pos);
 
 	auto scale = glm::scale(glm::identity<glm::mat4x4>(), glm::vec3(2.0, 2.0, 1.0));
-	util::setUniformMat(shader, "scale", scale);
+	util::setUniformMat(shader, "scale", scale);*/
 
 	glDepthFunc(GL_ALWAYS);
 	glBindVertexArray(gl_vao);
@@ -72,40 +68,42 @@ void Button::draw(sf::RenderWindow& rw,sf::Shader * shader) const
 	sf::Shader::bind(nullptr);
 }
 
-bool Button::containsPoint(const sf::Vector2f& p) const
+bool Button::containsPoint(const glm::vec2 point) const
 {
-	return (p.x > m_position.x && p.x < m_position.x + m_size.x) &&
-		   (p.y > m_position.y && p.y < m_position.y + m_size.y);
+	return true;
+
+	/*return (point.x > m_position.x && point.x < m_position.x + m_size.x) &&
+		   (point.y > m_position.y && point.y < m_position.y + m_size.y);*/
 }
 
-std::vector<ButtonVertex> createButtonMesh(sf::Vector2f size) 
+std::vector<ButtonVertex> createButtonMesh(glm::vec2 size) 
 {
 	// border-radius
 	float bor = size.y * 0.10f;
 	
-	static const std::array<float, 4> gray = { 0.5,0.5,0.5,1.0 };
-	static const std::array<float, 4> outline = {247.f/255.f,108.f/255.f,205.f/255.f,0.0f};
+	static const glm::vec4 gray = glm::vec4(0.5,0.5,0.5,1.0);
+	static const glm::vec4 outline = glm::vec4(247.f/255.f,108.f/255.f,205.f/255.f,0.0f);
 
 	std::vector<ButtonVertex> v = {
 		// top left triangle
-		ButtonVertex(sf::Vector3f(bor,bor,0.0),gray.data(),sf::Vector2f(0,0)), // 0
-		ButtonVertex(sf::Vector3f(0.0,bor,0.0),outline.data()), // 1
-		ButtonVertex(sf::Vector3f(bor,0.0,0.0),outline.data()), // 2
+		ButtonVertex(glm::vec3(bor,bor,0.0),gray,glm::vec2(0,0)), // 0
+		ButtonVertex(glm::vec3(0.0,bor,0.0),outline), // 1
+		ButtonVertex(glm::vec3(bor,0.0,0.0),outline), // 2
 
 		// top right triangle
-		ButtonVertex(sf::Vector3f(size.x-bor,bor,0.0),gray.data(),sf::Vector2f(0,0)), // 3
-		ButtonVertex(sf::Vector3f(size.x-bor,0.0,0.0),outline.data()), // 4
-		ButtonVertex(sf::Vector3f(size.x,bor,0.0),outline.data()), // 5
+		ButtonVertex(glm::vec3(size.x-bor,bor,0.0),gray,glm::vec2(0,0)), // 3
+		ButtonVertex(glm::vec3(size.x-bor,0.0,0.0),outline), // 4
+		ButtonVertex(glm::vec3(size.x,bor,0.0),outline), // 5
 
 		// bottom right triangle
-		ButtonVertex(sf::Vector3f(size.x-bor,size.y-bor,0.0),gray.data(),sf::Vector2f(0,0)), // 6
-		ButtonVertex(sf::Vector3f(size.x,size.y-bor,0.0),outline.data()), // 7
-		ButtonVertex(sf::Vector3f(size.x-bor,size.y,0.0),outline.data()), // 8
+		ButtonVertex(glm::vec3(size.x-bor,size.y-bor,0.0),gray,glm::vec2(0,0)), // 6
+		ButtonVertex(glm::vec3(size.x,size.y-bor,0.0),outline), // 7
+		ButtonVertex(glm::vec3(size.x-bor,size.y,0.0),outline), // 8
 
 		// bottom left triangle
-		ButtonVertex(sf::Vector3f(bor,size.y-bor,0.0),gray.data(),sf::Vector2f(0,0)), // 9
-		ButtonVertex(sf::Vector3f(bor,size.y,0.0),outline.data()), // 10
-		ButtonVertex(sf::Vector3f(0.0,size.y-bor,0.0),outline.data()) // 11
+		ButtonVertex(glm::vec3(bor,size.y-bor,0.0),gray,glm::vec2(0,0)), // 9
+		ButtonVertex(glm::vec3(bor,size.y,0.0),outline), // 10
+		ButtonVertex(glm::vec3(0.0,size.y-bor,0.0),outline) // 11
 	};
 
 	return {

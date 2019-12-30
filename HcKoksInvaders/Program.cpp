@@ -47,6 +47,11 @@ void Program::bind() const {
 
 	util::checkGlCalls(__FUNCSIG__);
 }
+void Program::unbind() const {
+	glUseProgram(0);
+
+	util::checkGlCalls(__FUNCSIG__);
+}
 
 // Uniform Operations
 void Program::setUniform(const std::string name, glm::mat4x4 mat4) const {

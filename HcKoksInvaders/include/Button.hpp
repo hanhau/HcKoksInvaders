@@ -1,24 +1,23 @@
 #pragma once
 #include <string>
-#include <SFML/Graphics.hpp>
 #include <functional>
 #include <array>
+#include <glm/vec2.hpp>
+#include "Program.hpp"
 
 class Button
 {
 private:
 	std::string m_title;
-	sf::Vector2f m_size;
-	sf::Vector2f m_position;
-	sf::Text m_text;
+	glm::vec2 m_position;
 
 	unsigned int gl_vao;
 	unsigned int gl_vbo;
 public:
-	Button(std::string title, sf::Vector2f pos, sf::Vector2f size);
+	Button(std::string title, glm::vec2 pos, int fontHeight);
 
-	void draw(sf::RenderWindow& win,sf::Shader * shader) const;
-	bool containsPoint(const sf::Vector2f& p) const;
+	void draw(const Program& program) const;
+	bool containsPoint(const glm::vec2 point) const;
 
 	std::function<void(const Button&)> onHover;
 	bool onHoverActive;

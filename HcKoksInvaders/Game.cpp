@@ -16,7 +16,7 @@
 #include "include/StarBackground.hpp"
 #include "include/AmmunitionIcon.hpp"
 #include "include/BulletRenderer.hpp"
-#include "include/TextRenderer.hpp"
+#include "include/Text.hpp"
 
 sf::Font* m_fpsTextFont;
 sf::Text* m_fpsText;
@@ -31,6 +31,11 @@ void Game::init() {
 	// set OpenGL Function Ptrs
 	glewExperimental = GL_TRUE;
 	glewInit();
+
+	// check GL Compatibility
+	GLint max_layers;
+	glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &max_layers);
+	assert(max_layers >= 128);
 
 	// global depth test
 	glEnable(GL_DEPTH_TEST);
@@ -108,7 +113,7 @@ void handleButtons_MouseMoved(const std::vector<Button> &buttons,
 	std::cout << "Left Mouse moved\n";
 	for (auto& button : buttons) {
 		if (button.onHoverActive == false) {
-			if (button.containsPoint(sf::Vector2f(mouseMoveEvent.x, mouseMoveEvent.y))) {
+			if (button.containsPoint(glm::vec2(mouseMoveEvent.x, mouseMoveEvent.y))) {
 				button.onHover(button);
 			}
 		}
@@ -118,7 +123,7 @@ void handleButtons_MouseLeftClicked(const std::vector<Button>& buttons,
 									const sf::Event::MouseButtonEvent& mouseButtonEvent) 
 {
 	for (auto& button : buttons) {
-		if (button.containsPoint(sf::Vector2f(mouseButtonEvent.x, mouseButtonEvent.y))) {
+		if (button.containsPoint(glm::vec2(mouseButtonEvent.x, mouseButtonEvent.y))) {
 			std::cout << "Left Mouse clicked\n";
 			button.onClick(button);
 		}
@@ -150,6 +155,8 @@ void Game::run() {
 		glm::vec3(0.0f, 1.0f, 0.0f),
 		glm::perspective(glm::radians(47.5f), 640.f / 960.f, 1.f, 100.f)
 	);
+
+	Text text = Text("test", 48, glm::ivec2(0,0));
 
 	bool wireframe = false;
 
@@ -205,7 +212,7 @@ void Game::run() {
 			// INGAME // -------------------------------
 			case GameState::Ingame:
 			{
-				
+				gameWorld.draw(cam1, *cubeMap);
 			}
 			break;
 			// CREDITS // ------------------------------
@@ -218,6 +225,7 @@ void Game::run() {
 			case GameState::MainMenu:
 			{
 				drawMainMenu();
+				text.draw(window, programManager->get(ProgramManager::ProgramEntry::Text));
 			}
 			break;
 			// GAMEOVER // -----------------------------

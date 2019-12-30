@@ -123,7 +123,7 @@
     <ClCompile Include="InstanceBuffer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TextRenderer.cpp">
+    <ClCompile Include="Text.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -209,7 +209,7 @@
     <ClInclude Include="include\InstanceBuffer.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="include\TextRenderer.hpp">
+    <ClInclude Include="include\Text.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
@@ -389,6 +389,9 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\fonts\PressStart2P-Regular.ttf">
+      <Filter>res\fonts</Filter>
+    </Font>
+    <Font Include="res\fonts\CabinSketch-Bold.ttf">
       <Filter>res\fonts</Filter>
     </Font>
   </ItemGroup>

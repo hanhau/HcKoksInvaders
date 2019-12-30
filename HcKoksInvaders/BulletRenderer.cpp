@@ -80,6 +80,6 @@ void BulletRenderer::drawInstances(std::vector<Bullet>& bullets, const Camera& c
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
-	glUseProgram(0);
+	prog.unbind();
 	glDepthMask(GL_TRUE);
 }

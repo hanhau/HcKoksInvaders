@@ -218,8 +218,6 @@ void processAiMesh(aiMesh* ai_mesh, const aiScene* scene, Mesh& mesh) {
 	}
 }
 
-// TODO INSTANCE BUFFER AUSLAGERN
-
 void Model3D::drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cubemap &cubemap) const {
 	m_progRef.bind();
 
@@ -254,7 +252,7 @@ void Model3D::drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cube
 
 	instances.unbind();
 
-	glUseProgram(0);
+	m_progRef.unbind();
 
 	util::checkGlCalls(__FUNCSIG__);
 }

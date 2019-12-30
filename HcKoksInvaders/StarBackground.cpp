@@ -47,7 +47,7 @@ void StarBackground::draw(const Program& program,float pastTime) const {
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 
-	glUseProgram(0);
+	program.unbind();
 
 	glDepthMask(GL_TRUE);
 }
