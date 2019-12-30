@@ -156,7 +156,7 @@ void Game::run() {
 		glm::perspective(glm::radians(47.5f), 640.f / 960.f, 1.f, 100.f)
 	);
 
-	Text text = Text("test", 48, glm::ivec2(0,0));
+	Text text = Text("test", 128, glm::ivec2(0,0));
 
 	bool wireframe = false;
 

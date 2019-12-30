@@ -29,7 +29,7 @@ ProgramManager::ProgramManager()
 	
 	// MainMenuBackground
 	Shader mm_vert, mm_frag;
-	mm_vert.loadFromFile("res/shaders/background_star_shader.ve rt",Shader::ShaderType::Vertex);
+	mm_vert.loadFromFile("res/shaders/background_star_shader.vert",Shader::ShaderType::Vertex);
 	mm_frag.loadFromFile("res/shaders/main_menu_frag.frag",Shader::ShaderType::Fragment);
 
 	add(ProgramEntry::MainMenuBackground, mm_vert, mm_frag);

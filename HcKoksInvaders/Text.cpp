@@ -80,6 +80,8 @@ constexpr static unsigned int _maxChars = 64 * 4;
 
 Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel) 
 {
+	util::checkGlCalls("");
+
 	m_impl = new Text::impl();
 	m_impl->pos = posInPixel;
 	m_impl->text = text;
@@ -102,15 +104,16 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 	FT_Set_Pixel_Sizes(face, 0, pixelheight);
 
 	unsigned char* clearBuffer = new unsigned char[pixelheight * pixelheight]{ 0 };
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	glGenTextures(1, &m_impl->gl_tex2DArray);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, m_impl->gl_tex2DArray);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_ALPHA, pixelheight, pixelheight, 128);
-	/*glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1,GL_R8, pixelheight, pixelheight, 128);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);*/
+	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 	for (unsigned char c = 0; c <= 127; c++) {
 		FT_Load_Char(face, c, FT_LOAD_RENDER);
@@ -130,7 +133,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 			GL_TEXTURE_2D_ARRAY,
 			0,0,0,c,
 			pixelheight, pixelheight,
-			1, GL_ALPHA, GL_UNSIGNED_BYTE,
+			1, GL_RED, GL_UNSIGNED_BYTE,
 			clearBuffer
 		);
 
@@ -144,7 +147,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 			m_impl->chars[c].size.x, // width
 			m_impl->chars[c].size.y, // height
 			1, // depth
-			GL_ALPHA, // format
+			GL_RED, // format
 			GL_UNSIGNED_BYTE, // type
 			face->glyph->bitmap.buffer // data
 		);
@@ -167,7 +170,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(CharVertex), (void*)0);
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(CharVertex), (void*)offsetof(CharVertex,pos));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(CharVertex), (void*)offsetof(CharVertex,uv));
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -184,6 +187,8 @@ void Text::setPos(const glm::ivec2 posInPixel) {
 
 void Text::draw(const sf::Window& win, const Program& program) {
 	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	const glm::vec2 ps = glm::vec2(
 		2.0f / (float)win.getSize().x,
@@ -211,5 +216,6 @@ void Text::draw(const sf::Window& win, const Program& program) {
 	glBindVertexArray(0);
 	program.unbind();
 
+	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 }
