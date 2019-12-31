@@ -131,7 +131,7 @@ void handleButtons_MouseLeftClicked(const std::vector<Button>& buttons,
 }
 
 void Game::run() {
-	GameState gameState = GameState::MainMenu;
+	GameState gameState = GameState::Credits;
 
 	GameWorld gameWorld(this,modelManager);
 	gameWorld.init(1024, 2);
@@ -156,9 +156,15 @@ void Game::run() {
 		glm::perspective(glm::radians(47.5f), 640.f / 960.f, 1.f, 100.f)
 	);
 
-	Text text = Text("test", 128, glm::ivec2(0,0));
+	Text text = Text("fuck it", 48, glm::ivec2(0,0));
 
 	bool wireframe = false;
+	double lastFrameTime = 0.0f;
+
+	float xxx = 0.0f;	
+	float rx = 0.0f;
+
+	window.setKeyRepeatEnabled(false);
 
 	while (window.isOpen())
 	{
@@ -192,12 +198,19 @@ void Game::run() {
 						//handleButtons_MouseLeftClicked(std::vector<Button>{button}, event.mouseButton);
 					}
 				}
+			}			
+		}
+
+		if (gameState == GameState::Ingame) {
+			xxx += lastFrameTime;
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+				rx -= lastFrameTime * 2.0f;
+				rx = std::clamp(rx, -1.0f, 1.0f);
 			}
-
-			if (gameState == GameState::Ingame) {
-				if (event.type == sf::Event::KeyPressed) {
-
-				}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+				rx += lastFrameTime * 2.0f;
+				rx = std::clamp(rx, -1.0f, 1.0f);
 			}
 		}
 
@@ -212,7 +225,20 @@ void Game::run() {
 			// INGAME // -------------------------------
 			case GameState::Ingame:
 			{
+				cam1.setCameraPos(glm::vec3(0.0f,xxx,5.0f));
 				gameWorld.draw(cam1, *cubeMap);
+
+				static InstanceBuffer busPos(1);
+				const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
+
+				busPos[0] = ModelPosition(
+					glm::vec3(rx,xxx+0.4,0.0),
+					glm::radians(90.f),glm::vec3(1.0,0.0001,0.0001),
+					glm::vec3(0.050)
+				);
+				busPos.transferToGpu();
+
+				bus.drawInstanceQueue(busPos, cam1, *cubeMap);
 			}
 			break;
 			// CREDITS // ------------------------------
@@ -242,6 +268,8 @@ void Game::run() {
 
 		// End of Frame
 		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
+		lastFrameTime = fpsClock.getElapsedTime().asMicroseconds() / 1'000'000.0;
+		//drawFpsCounter(fpsClock.getElapsedTime());
 		fpsClock.restart();
 		window.display();
 	}
@@ -253,7 +281,11 @@ void Game::exit() {
 
 // private functions
 void Game::drawFpsCounter(sf::Time timeElapsed) {
-	
+	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+	static Text text = Text("",18,glm::ivec2(2,2));
+
+	text.setText(std::to_string((int)(1000.0/timeElapsed.asMilliseconds())));
+	text.draw(window, textProg);
 }
 
 void Game::drawMainMenu() {
@@ -290,6 +322,10 @@ void Game::drawCredits() {
 	static const Model3D& money = modelManager->getModel("res/models/money.obj");
 	static const Model3D& finger = modelManager->getModel("res/models/finger.obj");
 	static const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
+
+	static Text textCreatedBy = Text("created by",48,glm::ivec2(20,800));
+	static Text textHannes = Text("Hannes H.",64,glm::ivec2(20,856));
+	static Text textEhrenMann = Text("HCKOKSINVADERS V1.0",24,glm::ivec2(20,774));
 
 	static Camera cam;
 	cam.setCameraPos(glm::vec3(sinf(secs)*0.25f, cos(secs)*0.25f, 1.0f));
@@ -331,8 +367,16 @@ void Game::drawCredits() {
 
 	money.drawInstanceQueue(moneyPos, cam, *cubeMap);
 	finger.drawInstanceQueue(fingerPos, cam, *cubeMap);
-	
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
+
+	const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+	textCreatedBy.draw(window, textProg);
+	textHannes.draw(window, textProg);
+	textEhrenMann.draw(window, textProg, glm::vec3(
+		abs(cosf(secs*2.0f)),
+		abs(cosf(secs*2.0f + glm::radians(120.f))),
+		abs(cosf(secs*2.0f + glm::radians(240.f)))
+	));
 }
 
 void Game::drawGameOverScreen() {

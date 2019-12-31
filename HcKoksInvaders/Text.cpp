@@ -39,8 +39,9 @@ public:
 		for (const auto& c : text) {
 			Char& cRef = chars[c];
 
-			float xpos = x + (cRef.size.x * pxsize.x);
-			float ypos = y + ((pixelHeight - cRef.size.y - cRef.bearing.y) * pxsize.y);
+			float xpos = x + (cRef.bearing.x * pxsize.x);
+			//float ypos = y + ((pixelHeight - cRef.size.y + cRef.bearing.y) * pxsize.y);
+			float ypos = y - ((cRef.size.y - cRef.bearing.y) * pxsize.y);
 
 			float w = cRef.size.x * pxsize.x;
 			float h = cRef.size.y * pxsize.y;
@@ -69,7 +70,7 @@ public:
 				glm::vec3(glm::vec2(0, 0),c)
 			});
 
-			x += (cRef.advance / 64) * pxsize.x;
+			x += ((float)(cRef.advance >> 6)) * pxsize.x;
 		}
 
 		return std::move(verts);
@@ -83,7 +84,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 	util::checkGlCalls("");
 
 	m_impl = new Text::impl();
-	m_impl->pos = posInPixel;
+	m_impl->pos = posInPixel + glm::ivec2(0,pixelheight);
 	m_impl->text = text;
 	m_impl->pixelHeight = pixelheight;
 
@@ -95,13 +96,13 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 	if (FT_Init_FreeType(&ft))
 		std::cout << "Error initializing FT @ " << std::string(__FUNCSIG__) << "\n";
 
-	if (FT_New_Face(ft, "res/fonts/CabinSketch-Bold.ttf", 0, &face))
+	if (FT_New_Face(ft, "res/fonts/PressStart2P-Regular.ttf", 0, &face))
 		std::cout << "Error opening Face @ " << std::string(__FUNCSIG__) << "\n";
 
 	if ((face->face_flags & FT_FACE_FLAG_SCALABLE) != FT_FACE_FLAG_SCALABLE) {
 		std::cout << "Error: font is not scalable.";
 	}
-	FT_Set_Pixel_Sizes(face, 0, pixelheight);
+	FT_Set_Pixel_Sizes(face, pixelheight, pixelheight);
 
 	unsigned char* clearBuffer = new unsigned char[pixelheight * pixelheight]{ 0 };
 
@@ -127,6 +128,9 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 			face->glyph->bitmap_top
 		);
 		m_impl->chars[c].advance = face->glyph->advance.x;
+		// assert fits bitmap
+		//assert(face->glyph->bitmap.width <= pixelheight);
+		//assert(face->glyph->bitmap.rows <= pixelheight);
 
 		// clear layer
 		glTexSubImage3D(
@@ -181,11 +185,50 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 void Text::setText(const std::string text) {
 	m_impl->text = text;
 }
+glm::vec2 Text::getSizeNDC(const sf::Window& win) {
+	const glm::vec2 ps = glm::vec2(
+		2.0f / (float)win.getSize().x,
+		2.0f / (float)win.getSize().y
+	);
+
+	auto verts = m_impl->createVertices(ps);
+
+	float minx = 0.0f;
+	float miny = 0.0f;
+	float maxx = 0.0f;
+	float maxy = 0.0f;
+
+	for (auto& iter : verts) {
+		minx = std::min(minx,iter.pos.x);
+		miny = std::min(minx,iter.pos.y);
+		maxx = std::max(maxx, iter.pos.x);
+		maxy = std::max(maxy, iter.pos.y);
+	}
+
+	return glm::vec2(
+		abs(maxx-minx),
+		abs(maxy-miny)
+	);
+}
+glm::ivec2 Text::getSizePixels(const sf::Window& win) {
+	const glm::vec2 ps = glm::vec2(
+		2.0f / (float)win.getSize().x,
+		2.0f / (float)win.getSize().y
+	);
+
+	glm::vec2 ndcSize = getSizeNDC(win);
+
+	return glm::ivec2(
+		(int)std::round(ndcSize.x/ps.x),
+		(int)std::round(ndcSize.y/ps.y)
+	);
+}
+
 void Text::setPos(const glm::ivec2 posInPixel) {
 	m_impl->pos = posInPixel;
 }
 
-void Text::draw(const sf::Window& win, const Program& program) {
+void Text::draw(const sf::Window& win, const Program& program, glm::vec3 col) {
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -195,13 +238,14 @@ void Text::draw(const sf::Window& win, const Program& program) {
 		2.0f / (float)win.getSize().y
 	);
 
-	const float tx = .0f + (m_impl->pos.x * ps.x);
-	const float ty = .0f + (m_impl->pos.y * ps.y);
+	const float tx = -1.0f + (m_impl->pos.x * ps.x);
+	const float ty = 1.0f - (m_impl->pos.y * ps.y);
 
 	auto verts = m_impl->createVertices(ps);
 
 	program.bind();
 	program.setUniform("translate", glm::translate(glm::identity<glm::mat4>(), glm::vec3(tx,ty,0.0)));
+	program.setUniform("texColor", sf::Vector3f(col.x,col.y,col.z));
 
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, m_impl->gl_tex2DArray);
@@ -218,4 +262,6 @@ void Text::draw(const sf::Window& win, const Program& program) {
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
+
+	util::checkGlCalls(__FUNCSIG__);
 }

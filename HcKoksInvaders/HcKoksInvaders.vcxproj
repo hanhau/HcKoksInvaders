@@ -166,6 +166,7 @@
     <ClCompile Include="ProgramManager.cpp" />
     <ClCompile Include="SoundBufferManager.cpp" />
     <ClCompile Include="StarBackground.cpp" />
+    <ClCompile Include="StarShip.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TileEntityBase.cpp" />
