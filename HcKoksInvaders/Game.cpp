@@ -110,24 +110,12 @@ void Game::init() {
 void handleButtons_MouseMoved(const std::vector<Button> &buttons,
 							  const sf::Event::MouseMoveEvent mouseMoveEvent) 
 {
-	std::cout << "Left Mouse moved\n";
-	for (auto& button : buttons) {
-		if (button.onHoverActive == false) {
-			if (button.containsPoint(glm::vec2(mouseMoveEvent.x, mouseMoveEvent.y))) {
-				button.onHover(button);
-			}
-		}
-	}
+	
 }
 void handleButtons_MouseLeftClicked(const std::vector<Button>& buttons,
 									const sf::Event::MouseButtonEvent& mouseButtonEvent) 
 {
-	for (auto& button : buttons) {
-		if (button.containsPoint(glm::vec2(mouseButtonEvent.x, mouseButtonEvent.y))) {
-			std::cout << "Left Mouse clicked\n";
-			button.onClick(button);
-		}
-	}
+	
 }
 
 void Game::run() {
@@ -312,6 +300,8 @@ void Game::drawMainMenu() {
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 }
 
+Button* button = nullptr;
+
 void Game::drawCredits() {
 	static StarBackground starBkg;
 	static InstanceBuffer moneyPos(100);
@@ -326,6 +316,8 @@ void Game::drawCredits() {
 	static Text textCreatedBy = Text("created by",48,glm::ivec2(20,800));
 	static Text textHannes = Text("Hannes H.",64,glm::ivec2(20,856));
 	static Text textEhrenMann = Text("HCKOKSINVADERS V1.0",24,glm::ivec2(20,774));
+
+	static Button buttonBack = Button(window, "BACK", glm::ivec2(25,25), 44);
 
 	static Camera cam;
 	cam.setCameraPos(glm::vec3(sinf(secs)*0.25f, cos(secs)*0.25f, 1.0f));
@@ -377,6 +369,8 @@ void Game::drawCredits() {
 		abs(cosf(secs*2.0f + glm::radians(120.f))),
 		abs(cosf(secs*2.0f + glm::radians(240.f)))
 	));
+
+	buttonBack.draw(window,*programManager);
 }
 
 void Game::drawGameOverScreen() {

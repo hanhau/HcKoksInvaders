@@ -6,6 +6,7 @@
 #include "Program.hpp"
 
 class Text {
+protected:
 	class impl;
 	impl* m_impl;
 public:

@@ -81,6 +81,9 @@ constexpr static unsigned int _maxChars = 64 * 4;
 
 Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel) 
 {
+	for (auto& iter : text)
+		std::cout << "Text contains invalid char '" << iter << "'\n";
+
 	util::checkGlCalls("");
 
 	m_impl = new Text::impl();
@@ -247,7 +250,7 @@ void Text::draw(const sf::Window& win, const Program& program, glm::vec3 col) {
 	program.setUniform("translate", glm::translate(glm::identity<glm::mat4>(), glm::vec3(tx,ty,0.0)));
 	program.setUniform("texColor", sf::Vector3f(col.x,col.y,col.z));
 
-	glActiveTexture(0);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, m_impl->gl_tex2DArray);
 
 	glBindVertexArray(m_impl->gl_vao);

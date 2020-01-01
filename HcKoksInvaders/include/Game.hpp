@@ -8,6 +8,7 @@
 #include "SoundBufferManager.hpp"
 #include "Camera.hpp"
 #include "AmmunitionIcon.hpp"
+#include "Button.hpp"
 
 class TileEntityBase;
 
@@ -42,7 +43,7 @@ private:
 	} sMenu;
 
 	struct {
-
+		
 	} sCredits;
 
 	struct {
