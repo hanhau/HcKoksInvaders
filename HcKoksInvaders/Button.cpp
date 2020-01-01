@@ -108,6 +108,7 @@ Button::Button(const sf::Window& win,const std::string title, const glm::ivec2 p
 void Button::draw(const sf::Window& window,const ProgramManager& progMgr)
 {
 	static sf::Clock clock;
+	const float clockSecs = clock.getElapsedTime().asSeconds();
 
 	const Program& textProg = progMgr.get(ProgramManager::ProgramEntry::Text);
 	const Program& buttonProg = progMgr.get(ProgramManager::ProgramEntry::Button);
@@ -118,7 +119,7 @@ void Button::draw(const sf::Window& window,const ProgramManager& progMgr)
 	const float ty = 1.0f - (m_position.y * m_pixelSize.y);
 
 	buttonProg.setUniform("translate", glm::translate(glm::identity<glm::mat4>(),glm::vec3(tx,ty,0.0f)));
-	buttonProg.setUniform("time", clock.getElapsedTime().asSeconds());
+	buttonProg.setUniform("time", clockSecs);
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
@@ -136,8 +137,16 @@ void Button::draw(const sf::Window& window,const ProgramManager& progMgr)
 	auto mousePosSf = sf::Mouse::getPosition(window);
 	glm::ivec2 mousePos = glm::ivec2(mousePosSf.x,mousePosSf.y);
 
-	if(containsPoint(mousePos))
-		Text::draw(window,textProg,glm::vec3);
+	glm::vec3 drawCol = glm::vec3(
+		abs(cosf(clockSecs*5.0f)),
+		abs(cosf(clockSecs*5.0f+2.094)),
+		abs(cosf(clockSecs*5.0f-2.094))
+	);
+
+	if (containsPoint(mousePos))
+		Text::draw(window, textProg, drawCol);
+	else
+		Text::draw(window, textProg);
 }
 
 bool Button::containsPoint(const glm::ivec2 pointInPixel) const

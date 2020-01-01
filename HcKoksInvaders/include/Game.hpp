@@ -30,7 +30,6 @@ private:
 	// Global Default Cubemap
 	Cubemap* cubeMap;
 
-	// Ingame
 	struct {
 		AmmunitionIcon* MunitionIconPistol;
 		AmmunitionIcon* MunitionIconSMG;
@@ -39,11 +38,15 @@ private:
 	} sIngame;
 
 	struct {
-
+		Button* buttonPlay;
+		Button* buttonCredits;
+		Button* buttonExit;
+		std::vector<Button*> buttonVec;
 	} sMenu;
 
 	struct {
-		
+		Button* buttonBack;
+		std::vector<Button*> buttonVec;
 	} sCredits;
 
 	struct {
@@ -63,6 +66,8 @@ public:
 	void exit();
 
 private:
+	GameState m_gameState;
+
 	void drawFpsCounter(sf::Time timeElapsed);
 	void drawMainMenu();
 	void drawCredits();

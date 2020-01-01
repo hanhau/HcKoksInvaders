@@ -23,7 +23,5 @@ public:
 	void draw(const sf::Window& window,const ProgramManager& progMgr);
 	bool containsPoint(const glm::ivec2 pointInPixel) const;
 
-	std::function<void(Button&)> onHoverEnter;
-	std::function<void(Button&)> onHoverLeave;
-	std::function<void(Button&)> onClick;
+	std::function<void()> onClick;
 };

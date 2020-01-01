@@ -7,6 +7,6 @@ out vec3 vUV;
 uniform mat4 translate;
 
 void main(){
-	gl_Position = translate * vec4(aPos.x,aPos.y,0.0,1.0);
+	gl_Position = translate * vec4(aPos.x,aPos.y,-1.0f,1.0f);
 	vUV = aUV;
 }

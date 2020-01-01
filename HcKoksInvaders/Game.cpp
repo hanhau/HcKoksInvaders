@@ -18,8 +18,18 @@
 #include "include/BulletRenderer.hpp"
 #include "include/Text.hpp"
 
-sf::Font* m_fpsTextFont;
-sf::Text* m_fpsText;
+void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
+	const sf::Event::MouseButtonEvent& mbEvent)
+{
+	if (mbEvent.button != sf::Mouse::Button::Left)
+		return;
+
+	for (auto& iter : buttons) {
+		if (iter->containsPoint(glm::ivec2(mbEvent.x, mbEvent.y))) {
+			iter->onClick();
+		}
+	}
+}
 
 void Game::init() {
 	// Init window with Context
@@ -41,13 +51,6 @@ void Game::init() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glClearColor(0.5, 0.75, 0.25, 1.0);
-
-	// fps counter
-	m_fpsTextFont = new sf::Font();
-	m_fpsTextFont->loadFromFile("res/fonts/PressStart2P-Regular.ttf");
-	m_fpsText = new sf::Text("awd",*m_fpsTextFont,12);
-	m_fpsText->setFillColor(sf::Color::Magenta);
-	m_fpsText->setPosition(sf::Vector2f(10,10));
 
 	// Initialize ResourceManagers
 	textureManager = new TextureManager();
@@ -105,33 +108,45 @@ void Game::init() {
 			window
 		);
 	}
-}
 
-void handleButtons_MouseMoved(const std::vector<Button> &buttons,
-							  const sf::Event::MouseMoveEvent mouseMoveEvent) 
-{
-	
-}
-void handleButtons_MouseLeftClicked(const std::vector<Button>& buttons,
-									const sf::Event::MouseButtonEvent& mouseButtonEvent) 
-{
-	
+	// Load MainMenu UI
+	{
+		sMenu.buttonPlay = new Button(window, "SPIELEN", glm::ivec2(50, 700), 48);
+		sMenu.buttonPlay->onClick = std::function<void()>([&]() {
+			m_gameState = GameState::Ingame;
+		});
+
+		sMenu.buttonCredits = new Button(window, "CREDITS", glm::ivec2(50, 780), 48);
+		sMenu.buttonCredits->onClick = std::function<void()>([&]() {
+			m_gameState = GameState::Credits;
+		});
+
+		sMenu.buttonExit = new Button(window, "VERLASSEN", glm::ivec2(50, 860), 48);
+		sMenu.buttonExit->onClick = std::function<void()>([&]() {
+			this->exit();
+		});
+
+		sMenu.buttonVec = { sMenu.buttonPlay,sMenu.buttonCredits, sMenu.buttonExit };
+	}
+
+	// Load Credits UI
+	{
+		sCredits.buttonBack = new Button(window, "Z'RUCK", glm::ivec2(25, 25), 44);
+		sCredits.buttonBack->onClick = std::function<void()>([&]() {
+			m_gameState = GameState::MainMenu;
+		});
+
+		sCredits.buttonVec = { sCredits.buttonBack };
+	}
+
+	// Init GameState
+	m_gameState = GameState::MainMenu;
 }
 
 void Game::run() {
-	GameState gameState = GameState::Credits;
-
 	GameWorld gameWorld(this,modelManager);
 	gameWorld.init(1024, 2);
 	gameWorld.saveToFileAsImage("demo.bmp");
-
-	BulletRenderer br(*programManager);
-	std::vector<Bullet> bullets(1000);
-	for (int i = 0; i < 1000;i++) {
-		bullets[i].m_pos.x = std::cosf(i);
-		bullets[i].m_pos.y = std::sinf(i);
-		bullets[i].m_pos.z = std::cosf(i*0.33f);
-	}
 
 	sf::Clock gameClock;
 	sf::Clock fpsClock;
@@ -144,13 +159,19 @@ void Game::run() {
 		glm::perspective(glm::radians(47.5f), 640.f / 960.f, 1.f, 100.f)
 	);
 
-	Text text = Text("fuck it", 48, glm::ivec2(0,0));
-
 	bool wireframe = false;
 	double lastFrameTime = 0.0f;
 
 	float xxx = 0.0f;	
 	float rx = 0.0f;
+
+	BulletRenderer br(*programManager);
+	std::vector<Bullet> bullets(1000);
+	for (int i = 0; i < 1000; i++) {
+		bullets[i].m_pos.x = std::cosf(i) + rx;
+		bullets[i].m_pos.y = std::sinf(i);
+		bullets[i].m_pos.z = std::cosf(i * 0.33f);
+	}
 
 	window.setKeyRepeatEnabled(false);
 
@@ -159,7 +180,6 @@ void Game::run() {
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
-				this->exit();
 				break;
 			}
 
@@ -177,19 +197,20 @@ void Game::run() {
 				}
 			}
 
-			if (gameState == GameState::MainMenu) {
-				if (event.type == sf::Event::MouseMoved) {
-					//handleButtons_MouseMoved(std::vector<Button>{button}, event.mouseMove);
+			if (event.type == sf::Event::MouseButtonPressed) {
+				switch (m_gameState) {
+					case GameState::MainMenu :
+						handleButtons_MouseLeftClicked(sMenu.buttonVec, event.mouseButton);
+						break;
+					case GameState::Credits:
+						handleButtons_MouseLeftClicked(sCredits.buttonVec, event.mouseButton);
+						break;
+					default: break;
 				}
-				if (event.type == sf::Event::MouseButtonPressed) {
-					if (event.mouseButton.button == sf::Mouse::Left) {
-						//handleButtons_MouseLeftClicked(std::vector<Button>{button}, event.mouseButton);
-					}
-				}
-			}			
+			}
 		}
 
-		if (gameState == GameState::Ingame) {
+		if (m_gameState == GameState::Ingame) {
 			xxx += lastFrameTime;
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
@@ -209,7 +230,7 @@ void Game::run() {
 			glm::rotate(glm::identity<glm::mat4>(), glm::radians(gameClock.getElapsedTime().asSeconds()), glm::vec3(1.0, 0.1, 0.1))
 		);
 
-		switch (gameState) {
+		switch (m_gameState) {
 			// INGAME // -------------------------------
 			case GameState::Ingame:
 			{
@@ -227,6 +248,19 @@ void Game::run() {
 				busPos.transferToGpu();
 
 				bus.drawInstanceQueue(busPos, cam1, *cubeMap);
+
+				for (int i = 0; i < 1000; i++) {
+					bullets[i].m_pos.x = std::cosf(i) + rx;
+					bullets[i].m_pos.y = std::sinf(i) + xxx;
+					bullets[i].m_pos.z = 0.0f;
+				}
+				br.drawInstances(bullets, cam1);
+
+				const Program& aiProg = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
+				sIngame.MunitionIconPistol->draw(40.f, aiProg);
+				sIngame.MunitionIconRocket->draw(40.f, aiProg);
+				sIngame.MunitionIconShotgun->draw(40.f, aiProg);
+				sIngame.MunitionIconSMG->draw(40.f, aiProg);
 			}
 			break;
 			// CREDITS // ------------------------------
@@ -239,7 +273,6 @@ void Game::run() {
 			case GameState::MainMenu:
 			{
 				drawMainMenu();
-				text.draw(window, programManager->get(ProgramManager::ProgramEntry::Text));
 			}
 			break;
 			// GAMEOVER // -----------------------------
@@ -298,9 +331,10 @@ void Game::drawMainMenu() {
 
 	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs);
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
-}
 
-Button* button = nullptr;
+	for (auto& iter : sMenu.buttonVec)
+		iter->draw(window, *programManager);
+}
 
 void Game::drawCredits() {
 	static StarBackground starBkg;
@@ -316,8 +350,6 @@ void Game::drawCredits() {
 	static Text textCreatedBy = Text("created by",48,glm::ivec2(20,800));
 	static Text textHannes = Text("Hannes H.",64,glm::ivec2(20,856));
 	static Text textEhrenMann = Text("HCKOKSINVADERS V1.0",24,glm::ivec2(20,774));
-
-	static Button buttonBack = Button(window, "BACK", glm::ivec2(25,25), 44);
 
 	static Camera cam;
 	cam.setCameraPos(glm::vec3(sinf(secs)*0.25f, cos(secs)*0.25f, 1.0f));
@@ -370,7 +402,8 @@ void Game::drawCredits() {
 		abs(cosf(secs*2.0f + glm::radians(240.f)))
 	));
 
-	buttonBack.draw(window,*programManager);
+	for (auto& iter : sCredits.buttonVec)
+		iter->draw(window, *programManager);
 }
 
 void Game::drawGameOverScreen() {
