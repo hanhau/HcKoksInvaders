@@ -111,22 +111,23 @@ void Game::init() {
 
 	// Load MainMenu UI
 	{
+		// Buttons
 		sMenu.buttonPlay = new Button(window, "SPIELEN", glm::ivec2(50, 700), 48);
 		sMenu.buttonPlay->onClick = std::function<void()>([&]() {
 			m_gameState = GameState::Ingame;
 		});
-
 		sMenu.buttonCredits = new Button(window, "CREDITS", glm::ivec2(50, 780), 48);
 		sMenu.buttonCredits->onClick = std::function<void()>([&]() {
 			m_gameState = GameState::Credits;
 		});
-
 		sMenu.buttonExit = new Button(window, "VERLASSEN", glm::ivec2(50, 860), 48);
 		sMenu.buttonExit->onClick = std::function<void()>([&]() {
 			this->exit();
 		});
-
 		sMenu.buttonVec = { sMenu.buttonPlay,sMenu.buttonCredits, sMenu.buttonExit };
+
+		// Text
+		sMenu.textTitle = new Text("HCKOKSINVADERS", 43, glm::ivec2(20,20));
 	}
 
 	// Load Credits UI
@@ -177,6 +178,7 @@ void Game::run() {
 
 	while (window.isOpen())
 	{
+		// Event Polling
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
@@ -210,6 +212,7 @@ void Game::run() {
 			}
 		}
 
+		// Input Processing
 		if (m_gameState == GameState::Ingame) {
 			xxx += lastFrameTime;
 
@@ -223,6 +226,7 @@ void Game::run() {
 			}
 		}
 
+		// Start of Frame
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform(
@@ -315,6 +319,7 @@ void Game::drawMainMenu() {
 
 	const float secs = m_gameClock.getElapsedTime().asSeconds() * 3.0f;
 	static const Model3D& bus = modelManager->getModel("res/models/vengabus_hq.obj");
+	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
 
 	static Camera cam;
 	cam.setCameraPos(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -334,6 +339,13 @@ void Game::drawMainMenu() {
 
 	for (auto& iter : sMenu.buttonVec)
 		iter->draw(window, *programManager);
+
+	
+	sMenu.textTitle->draw(window, textProg, glm::vec3(
+		abs(cosf(secs * 2.0f)),
+		abs(cosf(secs * 2.0f + glm::radians(120.f))),
+		abs(cosf(secs * 2.0f + glm::radians(240.f)))
+	));
 }
 
 void Game::drawCredits() {
@@ -429,4 +441,9 @@ void Game::drawGameOverScreen() {
 	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground),secs);
 
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
+}
+
+// struct funcs
+void Game::__sIngame::updateBullets() {
+
 }

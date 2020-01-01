@@ -9,6 +9,7 @@
 #include "Camera.hpp"
 #include "AmmunitionIcon.hpp"
 #include "Button.hpp"
+#include "Bullet.hpp"
 
 class TileEntityBase;
 
@@ -30,26 +31,31 @@ private:
 	// Global Default Cubemap
 	Cubemap* cubeMap;
 
-	struct {
+	struct __sIngame {
 		AmmunitionIcon* MunitionIconPistol;
 		AmmunitionIcon* MunitionIconSMG;
 		AmmunitionIcon* MunitionIconRocket;
 		AmmunitionIcon* MunitionIconShotgun;
+
+		std::list<Bullet> bullets;
+		void updateBullets();
 	} sIngame;
 
-	struct {
+	struct __sMenu {
 		Button* buttonPlay;
 		Button* buttonCredits;
 		Button* buttonExit;
 		std::vector<Button*> buttonVec;
+
+		Text* textTitle;
 	} sMenu;
 
-	struct {
+	struct __sCredits {
 		Button* buttonBack;
 		std::vector<Button*> buttonVec;
 	} sCredits;
 
-	struct {
+	struct __sGameOverScreen {
 
 	} sGameOverScreen;
 
