@@ -12,6 +12,7 @@ class Button : private Text
 private:
 	std::string m_title;
 	glm::ivec2 m_position;
+	glm::ivec2 m_sizeInPixel;
 	glm::vec2 m_pixelSize;
 
 	unsigned int gl_vao;

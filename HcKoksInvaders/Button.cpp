@@ -14,6 +14,8 @@ Button::Button(const sf::Window& win,const std::string title, const glm::ivec2 p
 	Text(title,fontHeight,glm::ivec2(posPixel.x+5,posPixel.y+5))
 {
 	glm::vec2 size = this->getSizeNDC(win);
+	m_sizeInPixel = this->getSizePixels(win);
+
 	m_pixelSize = glm::vec2(
 		2.0f / (float)win.getSize().x,
 		2.0f / (float)win.getSize().y
@@ -131,13 +133,18 @@ void Button::draw(const sf::Window& window,const ProgramManager& progMgr)
 
 	buttonProg.unbind();
 
-	Text::draw(window,textProg);
+	auto mousePosSf = sf::Mouse::getPosition(window);
+	glm::ivec2 mousePos = glm::ivec2(mousePosSf.x,mousePosSf.y);
+
+	if(containsPoint(mousePos))
+		Text::draw(window,textProg,glm::vec3);
 }
 
 bool Button::containsPoint(const glm::ivec2 pointInPixel) const
 {
-	return true;
-
-	/*return (point.x > m_position.x && point.x < m_position.x + m_size.x) &&
-		   (point.y > m_position.y && point.y < m_position.y + m_size.y);*/
+	return
+		pointInPixel.x >= m_position.x && 
+		pointInPixel.x <= m_position.x + m_sizeInPixel.x &&
+		pointInPixel.y >= m_position.y &&
+		pointInPixel.y <= m_position.y + m_sizeInPixel.y;
 }

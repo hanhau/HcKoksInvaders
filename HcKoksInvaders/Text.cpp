@@ -82,7 +82,8 @@ constexpr static unsigned int _maxChars = 64 * 4;
 Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel) 
 {
 	for (auto& iter : text)
-		std::cout << "Text contains invalid char '" << iter << "'\n";
+		if(iter > 127)
+			std::cout << "Text contains invalid char '" << iter << "'\n";
 
 	util::checkGlCalls("");
 
