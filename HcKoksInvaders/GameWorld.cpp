@@ -22,7 +22,11 @@ GameWorld::GameWorld(
 	ModelManager * const modelMgrPtr
 ) :
 	m_gameRef(game_ref),
-	m_modelMgrRef(modelMgrPtr)
+	m_modelMgrRef(modelMgrPtr),
+	m_instEnemyShip(nullptr),
+	m_instTurretBase(nullptr),
+	m_instTurretHead(nullptr),
+	m_ndcHeight(0.0f)
 {}
 
 enum MoveDirection {
@@ -30,6 +34,9 @@ enum MoveDirection {
 };
 
 void GameWorld::init(int stageheight, int seed) {
+	// clear everything
+
+
 	// Create empty Map
 	for (int y = 0; y < stageheight; y++) {
 		std::vector<TileEntityBase*> row;
@@ -112,6 +119,8 @@ void GameWorld::init(int stageheight, int seed) {
 		py += dist;
 	}
 
+	m_ndcHeight = py + dist;
+
 	// Set Vectors
 	m_enemySpaceshipTilesPtrs.clear();
 	m_enemyTurretTilesPtrs.clear();
@@ -151,44 +160,41 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 	int turretHeadPosCount = 0;
 	int enemyPosCount = 0;
 
-	static std::vector<TileEntityBase*> visibleTiles(256 * 3);
-
 	const Model3D& enemyShip = m_modelMgrRef->getModel("res/models/ship1.obj");
 	const Model3D& turretHead = m_modelMgrRef->getModel("res/models/turret_head.obj");
 	const Model3D& turretBase = m_modelMgrRef->getModel("res/models/turret_base.obj");
 	const Model3D& playerShip = m_modelMgrRef->getModel("res/models/vengabus.obj");
 
-	for (size_t y = 0; y < m_tiles.size(); y++) {
-		for (size_t x = 0; x < WidthInTiles; x++) {
-			TileEntityBase* base = m_tiles[y][x];
+	static sf::Clock clock;
+	float secs = clock.getElapsedTime().asSeconds();
 
-			//auto spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base);
-			auto enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base);
+	const glm::vec3 spaceShipPos = glm::vec3(0,secs,0);
 
-			/*if (spaceShipTile != nullptr) {
-				if (enemyShip.getOuterBB().transform(spaceShipTile->getSpaceshipPos()).isInViewport(camera)) {
-					enemyPosCount++;
-				}
-			}
-			else*/ if (enemyTurretTile != nullptr) {
-				(*m_instTurretBase)[(int)turretBasePosCount] =
-					enemyTurretTile->getBasePos();
+	for (int i = 0; i < m_enemyTurretTilesPtrs.size(); i++) {
+		const float dy = abs(spaceShipPos.y - m_enemyTurretTilesPtrs[i]->getPos().y);
+		const float dx = spaceShipPos.x - m_enemyTurretTilesPtrs[i]->getPos().x;
 
-				turretBasePosCount++;
-				turretHeadPosCount++;
-			}
-		}
+		const float ratio = dx / dy;
+		const float angle = glm::degrees(atanf(ratio));
+		
+		m_enemyTurretTilesPtrs[i]->getHeadPos().setRotationMatrix(
+			glm::rotate(
+				glm::rotate(
+					glm::identity<glm::mat4>(),
+					glm::radians(90.f), glm::vec3(1.f, 0.f, 0.f)
+				),
+				glm::radians(angle),glm::vec3(.0f,1.f,.0f)
+			)
+		);
+		(*m_instTurretHead)[i] = m_enemyTurretTilesPtrs[i]->getHeadPos();
 	}
 
-	m_instTurretBase->setInnerCount(turretBasePosCount);
-	m_instTurretBase->transferToGpu();
-	
-	m_instTurretHead->setInnerCount(turretHeadPosCount);
 	m_instTurretHead->transferToGpu();
 	//enemyPos.transferToGpu();
 
-	turretBase.drawInstanceQueue(*m_instTurretBase,camera,cubemap);
-	turretHead.drawInstanceQueue(*m_instTurretBase, camera, cubemap);
+	turretBase.drawInstanceQueue(*m_instTurretHead,camera,cubemap);
+	turretHead.drawInstanceQueue(*m_instTurretHead, camera, cubemap);
+	enemyShip.drawInstanceQueue(*m_instTurretHead, camera, cubemap);
 	//std::cout << turretBasePosCount << " " << enuemyPosCount << "\n";
 }
 

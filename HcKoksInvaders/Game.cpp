@@ -182,7 +182,7 @@ void Game::run() {
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
-				break;
+				window.close();
 			}
 
 			if (event.type == sf::Event::KeyPressed) {
@@ -294,7 +294,7 @@ void Game::run() {
 		// End of Frame
 		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
 		lastFrameTime = fpsClock.getElapsedTime().asMicroseconds() / 1'000'000.0;
-		//drawFpsCounter(fpsClock.getElapsedTime());
+		drawFpsCounter(fpsClock.getElapsedTime());
 		fpsClock.restart();
 		window.display();
 	}

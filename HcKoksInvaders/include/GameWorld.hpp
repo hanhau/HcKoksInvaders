@@ -21,6 +21,8 @@ class GameWorld {
 	InstanceBuffer * m_instTurretHead;
 	InstanceBuffer * m_instTurretBase;
 	InstanceBuffer * m_instEnemyShip;
+
+	float m_ndcHeight;
 public:
 	GameWorld(Game * const game_ref,
 			  ModelManager * const modelMgrPtr);
@@ -31,6 +33,8 @@ public:
 	void init(int stageheight,int seed);
 	void update(const double deltaTime);
 	void draw(const Camera& camera,Cubemap& cubemap);
+
+	float getNDCHeight();
 
 	void saveToFileAsImage(const std::string path);
 };

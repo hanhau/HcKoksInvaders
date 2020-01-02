@@ -297,13 +297,7 @@
     <Image Include="res\models\ship1_diffuse.png">
       <Filter>res\models</Filter>
     </Image>
-    <Image Include="res\models\ship1_emit.png">
-      <Filter>res\models</Filter>
-    </Image>
     <Image Include="res\models\ship1_glossy.png">
-      <Filter>res\models</Filter>
-    </Image>
-    <Image Include="res\models\ship1_normal.png">
       <Filter>res\models</Filter>
     </Image>
     <Image Include="res\images\icon_munition_pistol.png">

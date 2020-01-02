@@ -65,6 +65,12 @@ public:
 
 		calcTransform();
 	}
+	inline void setRotationMatrix(glm::mat4 rotationMatrix)
+	{
+		m_rotation = rotationMatrix;
+
+		calcTransform();
+	}
 	inline void setScalingMatrix(sf::Vector3f scale) {
 		m_scale = glm::scale(
 			glm::identity<glm::mat4x4>(),

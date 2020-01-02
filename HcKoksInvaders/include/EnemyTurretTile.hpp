@@ -17,6 +17,7 @@ class EnemyTurretTile : public TileEntityBase
 	sf::Clock m_bulletInterval;
 	float m_health;
 	GunType m_gunType;
+	const glm::vec3 m_pos;
 
 	void fire();
 	void firePistolShot(std::vector<Bullet>& bullets);
@@ -30,6 +31,7 @@ public:
 	void update(double deltaTime);
 	void draw();
 
-	const ModelPosition& getBasePos();
-	const ModelPosition& getHeadPos();
+	const glm::vec3 getPos() const;
+	ModelPosition& getBasePos();
+	ModelPosition& getHeadPos();
 };

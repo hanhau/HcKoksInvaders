@@ -2,7 +2,8 @@
 
 EnemyTurretTile::EnemyTurretTile(Game* const ref_game,int seed,
 								 const glm::vec3 pos,const float scale) :
-	TileEntityBase(ref_game)
+	TileEntityBase(ref_game),
+	m_pos(pos)
 {
 	switch (seed % 3) {
 	case 0: m_gunType = GunType::Pistol; break;
@@ -50,9 +51,13 @@ void EnemyTurretTile::draw()
 
 }
 
-const ModelPosition& EnemyTurretTile::getBasePos() {
+const glm::vec3 EnemyTurretTile::getPos() const {
+	return m_pos;
+}
+
+ModelPosition& EnemyTurretTile::getBasePos() {
 	return m_basePos;
 }
-const ModelPosition& EnemyTurretTile::getHeadPos() {
+ModelPosition& EnemyTurretTile::getHeadPos() {
 	return m_headPos;
 }
