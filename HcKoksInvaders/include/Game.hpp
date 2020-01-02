@@ -38,7 +38,7 @@ private:
 		AmmunitionIcon* MunitionIconShotgun;
 
 		std::list<Bullet> bullets;
-		void updateBullets();
+		void updateBullets(float deltaTime);
 	} sIngame;
 
 	struct __sMenu {
@@ -71,6 +71,12 @@ public:
 	void run();
 	void exit();
 
+	const TextureManager& getTextureManager();
+	const ProgramManager& getProgramManager();
+	const ModelManager& getModelManager();
+	const SoundBufferManager& getSoundBufferManager();
+
+	void addBullet(Bullet&& bullet);
 private:
 	GameState m_gameState;
 

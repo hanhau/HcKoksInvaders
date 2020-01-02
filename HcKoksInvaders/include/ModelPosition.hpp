@@ -21,11 +21,11 @@ public:
 	{}
 	inline ModelPosition(
 		sf::Vector3f pos,
-		float deg, sf::Vector3f rot,
+		const float rad, sf::Vector3f rot,
 		sf::Vector3f scale)
 	{
 		setTranslationMatrix(pos);
-		setRotationMatrix(deg, rot);
+		setRotationMatrix(rad, rot);
 		setScalingMatrix(scale);
 	}
 	inline ModelPosition(
@@ -57,10 +57,10 @@ public:
 
 		calcTransform();
 	}
-	inline void setRotationMatrix(float deg, sf::Vector3f weight) {
+	inline void setRotationMatrix(const float rad, sf::Vector3f weight) {
 		m_rotation = glm::rotate(
 			glm::identity<glm::mat4x4>(),
-			deg, glm::vec3(weight.x, weight.y, weight.z)
+			rad, glm::vec3(weight.x, weight.y, weight.z)
 		);
 
 		calcTransform();

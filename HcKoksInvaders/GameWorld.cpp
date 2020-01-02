@@ -17,12 +17,8 @@ enum TileType {
 	EnemySpaceShip
 };
 
-GameWorld::GameWorld(
-	Game * const game_ref,
-	ModelManager * const modelMgrPtr
-) :
-	m_gameRef(game_ref),
-	m_modelMgrRef(modelMgrPtr),
+GameWorld::GameWorld(Game& game_ref) :
+	m_gameRef(game_ref),	
 	m_instEnemyShip(nullptr),
 	m_instTurretBase(nullptr),
 	m_instTurretHead(nullptr),
@@ -35,7 +31,12 @@ enum MoveDirection {
 
 void GameWorld::init(int stageheight, int seed) {
 	// clear everything
-
+	m_tiles.clear();
+	m_enemySpaceshipTilesPtrs.clear();
+	m_enemyTurretTilesPtrs.clear();
+	delete m_instTurretHead;
+	delete m_instTurretBase;
+	delete m_instEnemyShip;
 
 	// Create empty Map
 	for (int y = 0; y < stageheight; y++) {
@@ -54,7 +55,7 @@ void GameWorld::init(int stageheight, int seed) {
 
 	for (int r = 0; r < end_y;) {
 		// Create empty cell
-		m_tiles[r][pos_x] = (TileEntityBase*)new EmptyTile(m_gameRef);
+		m_tiles[r][pos_x] = (TileEntityBase*)new EmptyTile(&m_gameRef);
 
 		// move to next
 		std::vector<MoveDirection> possibleMoves;
@@ -99,14 +100,14 @@ void GameWorld::init(int stageheight, int seed) {
 				switch (type) {
 				case 0: case 1: case 2: case 3:
 				case 4:
-					m_tiles[y][x] = (TileEntityBase*)new EmptyTile(m_gameRef);
+					m_tiles[y][x] = (TileEntityBase*)new EmptyTile(&m_gameRef);
 					break;
 				case 5: 
-					m_tiles[y][x] = (TileEntityBase*)new EnemySpaceShipTile(m_gameRef,rand());
+					m_tiles[y][x] = (TileEntityBase*)new EnemySpaceShipTile(&m_gameRef,rand());
 					break;
 				case 6: 
 					m_tiles[y][x] = (TileEntityBase*)new EnemyTurretTile(
-						m_gameRef,
+						&m_gameRef,
 						rand(),
 						glm::vec3(px,py,0.0f),
 						0.075f
@@ -160,10 +161,11 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 	int turretHeadPosCount = 0;
 	int enemyPosCount = 0;
 
-	const Model3D& enemyShip = m_modelMgrRef->getModel("res/models/ship1.obj");
-	const Model3D& turretHead = m_modelMgrRef->getModel("res/models/turret_head.obj");
-	const Model3D& turretBase = m_modelMgrRef->getModel("res/models/turret_base.obj");
-	const Model3D& playerShip = m_modelMgrRef->getModel("res/models/vengabus.obj");
+	const ModelManager& mm = m_gameRef.getModelManager();
+	const Model3D& enemyShip = mm.getModel("res/models/ship1.obj");
+	const Model3D& turretHead = mm.getModel("res/models/turret_head.obj");
+	const Model3D& turretBase = mm.getModel("res/models/turret_base.obj");
+	const Model3D& playerShip = mm.getModel("res/models/vengabus.obj");
 
 	static sf::Clock clock;
 	float secs = clock.getElapsedTime().asSeconds();
@@ -196,6 +198,10 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 	turretHead.drawInstanceQueue(*m_instTurretHead, camera, cubemap);
 	enemyShip.drawInstanceQueue(*m_instTurretHead, camera, cubemap);
 	//std::cout << turretBasePosCount << " " << enuemyPosCount << "\n";
+}
+
+const float GameWorld::getNDCHeight() {
+	return m_ndcHeight;
 }
 
 void GameWorld::saveToFileAsImage(std::string path) {

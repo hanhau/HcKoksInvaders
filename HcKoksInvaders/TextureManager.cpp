@@ -16,9 +16,7 @@ TextureManager::TextureManager() {
 	add("res/images/cubemap/bot.png");
 
 	add("res/models/ship1_diffuse.png");
-	add("res/models/ship1_emit.png");
 	add("res/models/ship1_glossy.png");
-	add("res/models/ship1_normal.png");
 
 	add("res/models/vengabus_diffuse.png");
 	add("res/models/vengabus_emit.png");

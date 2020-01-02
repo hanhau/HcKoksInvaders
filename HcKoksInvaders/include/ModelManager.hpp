@@ -11,6 +11,6 @@ private:
 public:
 	ModelManager(const TextureManager& texMgr, const ProgramManager& progMgr);
 
-	bool exists(const std::string path);
-	const Model3D& getModel(const std::string path);
+	bool exists(const std::string path) const;
+	const Model3D& getModel(const std::string path) const;
 };

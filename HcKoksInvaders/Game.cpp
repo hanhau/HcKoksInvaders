@@ -17,6 +17,7 @@
 #include "include/AmmunitionIcon.hpp"
 #include "include/BulletRenderer.hpp"
 #include "include/Text.hpp"
+#include "include/StarShip.hpp"
 
 void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 	const sf::Event::MouseButtonEvent& mbEvent)
@@ -145,7 +146,7 @@ void Game::init() {
 }
 
 void Game::run() {
-	GameWorld gameWorld(this,modelManager);
+	GameWorld gameWorld(*this);
 	gameWorld.init(1024, 2);
 	gameWorld.saveToFileAsImage("demo.bmp");
 
@@ -163,18 +164,14 @@ void Game::run() {
 	bool wireframe = false;
 	double lastFrameTime = 0.0f;
 
-	float xxx = 0.0f;	
-	float rx = 0.0f;
+	StarShip* playerShip = new StarShip(*this);
+	playerShip->addRocketAmmo(100);
+	playerShip->addShotgunAmmo(100);
+	playerShip->addSMGAmmo(100);
 
 	BulletRenderer br(*programManager);
-	std::vector<Bullet> bullets(1000);
-	for (int i = 0; i < 1000; i++) {
-		bullets[i].m_pos.x = std::cosf(i) + rx;
-		bullets[i].m_pos.y = std::sinf(i);
-		bullets[i].m_pos.z = std::cosf(i * 0.33f);
-	}
 
-	window.setKeyRepeatEnabled(false);
+	window.setKeyRepeatEnabled(true);
 
 	while (window.isOpen())
 	{
@@ -212,20 +209,6 @@ void Game::run() {
 			}
 		}
 
-		// Input Processing
-		if (m_gameState == GameState::Ingame) {
-			xxx += lastFrameTime;
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-				rx -= lastFrameTime * 2.0f;
-				rx = std::clamp(rx, -1.0f, 1.0f);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
-				rx += lastFrameTime * 2.0f;
-				rx = std::clamp(rx, -1.0f, 1.0f);
-			}
-		}
-
 		// Start of Frame
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -238,33 +221,21 @@ void Game::run() {
 			// INGAME // -------------------------------
 			case GameState::Ingame:
 			{
-				cam1.setCameraPos(glm::vec3(0.0f,xxx,5.0f));
+				sIngame.updateBullets(lastFrameTime);
+				br.drawInstances(sIngame.bullets, cam1);
+
+				playerShip->updateOnUserInput(lastFrameTime);
+
+				cam1.setCameraPos(glm::vec3(0.0f,0.f,5.0f));
 				gameWorld.draw(cam1, *cubeMap);
 
-				static InstanceBuffer busPos(1);
-				const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
-
-				busPos[0] = ModelPosition(
-					glm::vec3(rx,xxx+0.4,0.0),
-					glm::radians(90.f),glm::vec3(1.0,0.0001,0.0001),
-					glm::vec3(0.050)
-				);
-				busPos.transferToGpu();
-
-				bus.drawInstanceQueue(busPos, cam1, *cubeMap);
-
-				for (int i = 0; i < 1000; i++) {
-					bullets[i].m_pos.x = std::cosf(i) + rx;
-					bullets[i].m_pos.y = std::sinf(i) + xxx;
-					bullets[i].m_pos.z = 0.0f;
-				}
-				br.drawInstances(bullets, cam1);
+				playerShip->draw(cam1, *cubeMap);
 
 				const Program& aiProg = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
-				sIngame.MunitionIconPistol->draw(40.f, aiProg);
-				sIngame.MunitionIconRocket->draw(40.f, aiProg);
-				sIngame.MunitionIconShotgun->draw(40.f, aiProg);
-				sIngame.MunitionIconSMG->draw(40.f, aiProg);
+				sIngame.MunitionIconPistol->draw(100.f, aiProg);
+				sIngame.MunitionIconRocket->draw(playerShip->getRocketAmmoPercent(), aiProg);
+				sIngame.MunitionIconShotgun->draw(playerShip->getShotgunAmmoPercent(), aiProg);
+				sIngame.MunitionIconSMG->draw(playerShip->getSMGAmmoPercent(), aiProg);
 			}
 			break;
 			// CREDITS // ------------------------------
@@ -304,12 +275,29 @@ void Game::exit() {
 	window.close();
 }
 
+const TextureManager& Game::getTextureManager() {
+	return *textureManager;
+}
+const ProgramManager& Game::getProgramManager() {
+	return *programManager;
+}
+const ModelManager& Game::getModelManager() {
+	return *modelManager;
+}
+const SoundBufferManager& Game::getSoundBufferManager() {
+	return *soundBufferManager;
+}
+
+void Game::addBullet(Bullet&& bullet) {
+	sIngame.bullets.push_back(bullet);
+}
+
 // private functions
 void Game::drawFpsCounter(sf::Time timeElapsed) {
 	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
 	static Text text = Text("",18,glm::ivec2(2,2));
 
-	text.setText(std::to_string((int)(1000.0/timeElapsed.asMilliseconds())));
+	text.setText(std::to_string((int)(1000.0/std::max(timeElapsed.asMilliseconds(),1))));
 	text.draw(window, textProg);
 }
 
@@ -444,6 +432,8 @@ void Game::drawGameOverScreen() {
 }
 
 // struct funcs
-void Game::__sIngame::updateBullets() {
-
+void Game::__sIngame::updateBullets(float deltaTime) {
+	for (auto& iter : bullets) {
+		iter.update(deltaTime);
+	}
 }

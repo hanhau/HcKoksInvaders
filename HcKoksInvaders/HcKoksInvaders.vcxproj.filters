@@ -271,9 +271,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="res\models\sphere.obj">
-      <Filter>res\models</Filter>
-    </Object>
     <Object Include="res\models\vengabus.obj">
       <Filter>res\models</Filter>
     </Object>
@@ -377,9 +374,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="res\models\main_menu_title.obj">
-      <Filter>res\models</Filter>
-    </Text>
     <Text Include="res\models\ship1.obj">
       <Filter>res\models</Filter>
     </Text>

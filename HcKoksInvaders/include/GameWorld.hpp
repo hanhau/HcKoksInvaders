@@ -10,8 +10,7 @@
 #include "InstanceBuffer.hpp"
 
 class GameWorld {
-	Game * const m_gameRef;	
-	ModelManager* const m_modelMgrRef;
+	Game& m_gameRef;	
 
 	std::vector<std::vector<TileEntityBase*>> m_tiles;
 
@@ -24,8 +23,7 @@ class GameWorld {
 
 	float m_ndcHeight;
 public:
-	GameWorld(Game * const game_ref,
-			  ModelManager * const modelMgrPtr);
+	GameWorld(Game& game_ref);
 
 	static const int MinHeightInTiles;
 	static const int WidthInTiles;
@@ -34,7 +32,7 @@ public:
 	void update(const double deltaTime);
 	void draw(const Camera& camera,Cubemap& cubemap);
 
-	float getNDCHeight();
+	const float getNDCHeight();
 
 	void saveToFileAsImage(const std::string path);
 };

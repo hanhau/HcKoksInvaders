@@ -8,8 +8,8 @@ struct BulletPosData {
 };
 
 std::vector<glm::vec3> getBulletVertices() {
-	constexpr float x_half = 1.5f * 1.f/320.f;
-	constexpr float y_half = 2.0f * 1.f/320.f;
+	constexpr float x_half = 2.5f * 1.f/320.f;
+	constexpr float y_half = 4.0f * 1.f/320.f;
 
 	return std::vector<glm::vec3>{
 		glm::vec3(-x_half, y_half,0.0f),
@@ -46,19 +46,23 @@ BulletRenderer::BulletRenderer(const ProgramManager& progMgr) :
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void BulletRenderer::drawInstances(std::vector<Bullet>& bullets, const Camera& cam) {
+void BulletRenderer::drawInstances(std::list<Bullet>& bullets, const Camera& cam) {
 	static const Program& prog = m_progMgr.get(ProgramManager::ProgramEntry::Bullet);
 	static std::vector<BulletPosData> bulletPos(MAX_BULLETS);
 
 	const unsigned int bulletCount = bullets.size();
 
-	for (unsigned int i = 0; i < bulletCount; i++)
-	{
+	assert(bulletCount <= MAX_BULLETS);
+
+	unsigned int i = 0;
+	for (auto& iter : bullets) {
 		bulletPos[i].translate = std::move(glm::translate(
 			glm::identity<glm::mat4>(),
-			bullets[i].m_pos
+			iter.m_pos
 		));
-		bulletPos[i].color = std::move(glm::vec4(cosf(i),sinf(i),sinf(i*cosf(i)),1.0));
+		bulletPos[i].color = std::move(glm::vec4(cosf(i), sinf(i), sinf(i * cosf(i)), 1.0));
+
+		i++;
 	}
 
 	glDepthMask(GL_FALSE);

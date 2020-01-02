@@ -2,7 +2,7 @@
 #include "Bullet.hpp"
 #include "ProgramManager.hpp"
 #include "Camera.hpp"
-#include <vector>
+#include <list>
 #include <memory>
 
 class BulletRenderer
@@ -15,5 +15,5 @@ class BulletRenderer
 public:
 	BulletRenderer(const ProgramManager& progMgr);
 
-	void drawInstances(std::vector<Bullet>& bullets, const Camera& cam);
+	void drawInstances(std::list<Bullet>& bullets, const Camera& cam);
 };

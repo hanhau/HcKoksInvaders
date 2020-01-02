@@ -4,8 +4,8 @@
 
 struct Bullet {
 	enum Owner {
-		Enemy,
-		Player
+		Enemy = 0,
+		Player = 1
 	};
 
 	glm::vec3 m_pos;

@@ -1,34 +1,64 @@
 #pragma once
 #include <glm/vec3.hpp>
+#include "InstanceBuffer.hpp"
+#include "Game.hpp"
+#include "Camera.hpp"
+#include "Cubemap.hpp"
+#include <SFML/System/Clock.hpp>
 
 class Game;
 
-class StarShip {
-	Game* const m_gamePtr;
+enum class WeaponType {
+	Pistol,
+	Shotgun,
+	Rocket,
+	SMG
+};
 
+class StarShip {
+	Game& m_gameRef;
+	void processShoot();
+	glm::vec3 m_pos;
+
+	// Max Ammo of a Weapon Type
 	static const int maxAmmoSMG;
 	static const int maxAmmoShotgun;
-	static const int maxRocketAmmo;
+	static const int maxAmmoRocket;
 
-	int ammoSMG;
-	int ammoShotgun;
-	int RocketAmmo;
+	// Cooldown Times in Seconds
+	static const float coolDownPistol;
+	static const float coolDownRocket;
+	static const float coolDownShotgun;
+	static const float coolDownSMG;
+
+	// Current Ammo
+	int m_ammoSMG;
+	int m_ammoShotgun;
+	int m_ammoRocket;
+
+	// Cooldown Clocks of Weapons
+	sf::Clock m_clockSMG;
+	sf::Clock m_clockShotgun;
+	sf::Clock m_clockRocket;
+	sf::Clock m_clockPistol;
+
+	// Currently selected Weapon
+	WeaponType m_activeWeapon;
 public:
-	StarShip(Game * const game);
+	StarShip(Game& game);
 
 	void updateOnUserInput(float deltaSeconds);
-	void checkBulletCollisions();
 
-	void addSMGAmmo();
-	void addShotgunAmmo();
-	void addRocketAmmo();
+	void addSMGAmmo(int shots);
+	void addShotgunAmmo(int shots);
+	void addRocketAmmo(int shots);
 
-	float getSMGAmmoPercent();
-	float getShotgunAmmoPercent();
-	float getRocketAmmoPercent();
+	const float getSMGAmmoPercent();
+	const float getShotgunAmmoPercent();
+	const float getRocketAmmoPercent();
 
-	void setPos(glm::vec3 pos);
-	void movePos(glm::vec3 length);
+	const glm::vec3& getPos();
+	void setPos(const glm::vec3 pos);
 
-	void draw();
+	void draw(const Camera& camera, Cubemap& cubemap);
 };

@@ -27,19 +27,17 @@ ModelManager::ModelManager(const TextureManager& texMgr,const ProgramManager& pr
 	add("res/models/vengabus.obj",texMgr, *p);
 	add("res/models/vengabus_hq.obj",texMgr, *p);
 	add("res/models/ship1.obj",texMgr, *p);
-	add("res/models/sphere.obj",texMgr, *p);
-	add("res/models/main_menu_title.obj",texMgr, *p);
 	add("res/models/turret_base.obj",texMgr, *p);
 	add("res/models/turret_head.obj",texMgr, *p);
 	add("res/models/money.obj",texMgr, *p);
 	add("res/models/finger.obj",texMgr, *p);
 }
 
-bool ModelManager::exists(const std::string path) {
+bool ModelManager::exists(const std::string path) const {
 	return m_models.find(path) != m_models.end();
 }
 
-const Model3D& ModelManager::getModel(const std::string path) {
+const Model3D& ModelManager::getModel(const std::string path) const {
 	if (!exists(path))
 		throw;
 
