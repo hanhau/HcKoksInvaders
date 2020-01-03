@@ -11,7 +11,7 @@ InstanceBuffer::InstanceBuffer(const int capacity) :
 	glCreateBuffers(1, &gl_ssbo);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER,gl_ssbo);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::mat4) * capacity, (void*)0, GL_DYNAMIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::mat4) * capacity, (void*)0, GL_STREAM_DRAW);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 

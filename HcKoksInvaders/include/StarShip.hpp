@@ -6,8 +6,6 @@
 #include "Cubemap.hpp"
 #include <SFML/System/Clock.hpp>
 
-class Game;
-
 enum class WeaponType {
 	Pistol,
 	Shotgun,
@@ -53,11 +51,11 @@ public:
 	void addShotgunAmmo(int shots);
 	void addRocketAmmo(int shots);
 
-	const float getSMGAmmoPercent();
-	const float getShotgunAmmoPercent();
-	const float getRocketAmmoPercent();
+	const float getSMGAmmoPercent() const;
+	const float getShotgunAmmoPercent() const;
+	const float getRocketAmmoPercent() const;
 
-	const glm::vec3& getPos();
+	const glm::vec3& getPos() const;
 	void setPos(const glm::vec3 pos);
 
 	void draw(const Camera& camera, Cubemap& cubemap);

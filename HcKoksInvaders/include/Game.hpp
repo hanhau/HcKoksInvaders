@@ -12,6 +12,8 @@
 #include "Bullet.hpp"
 
 class TileEntityBase;
+class GameWorld;
+class StarShip;
 
 class Game {
 private:
@@ -39,6 +41,9 @@ private:
 
 		std::list<Bullet> bullets;
 		void updateBullets(float deltaTime);
+
+		GameWorld* gameWorld;
+		StarShip* playerShip;
 	} sIngame;
 
 	struct __sMenu {
@@ -75,6 +80,8 @@ public:
 	const ProgramManager& getProgramManager();
 	const ModelManager& getModelManager();
 	const SoundBufferManager& getSoundBufferManager();
+
+	StarShip* getStarShip();
 
 	void addBullet(Bullet&& bullet);
 private:

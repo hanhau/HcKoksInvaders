@@ -75,17 +75,17 @@ const float _getAmmoPercent(int val, int max) {
 		return std::roundf(((float)val / (float)max) * 100.f);
 }
 
-const float StarShip::getSMGAmmoPercent() {
+const float StarShip::getSMGAmmoPercent() const {
 	return _getAmmoPercent(m_ammoSMG, maxAmmoSMG);
 }
-const float StarShip::getShotgunAmmoPercent() {
+const float StarShip::getShotgunAmmoPercent() const {
 	return _getAmmoPercent(m_ammoShotgun, maxAmmoShotgun);
 }
-const float StarShip::getRocketAmmoPercent() {
+const float StarShip::getRocketAmmoPercent() const {
 	return _getAmmoPercent(m_ammoRocket, maxAmmoRocket);
 }
 
-const glm::vec3& StarShip::getPos() {
+const glm::vec3& StarShip::getPos() const {
 	return m_pos;
 }
 void StarShip::setPos(const glm::vec3 pos) {
@@ -94,13 +94,14 @@ void StarShip::setPos(const glm::vec3 pos) {
 
 void StarShip::draw(const Camera& camera, Cubemap& cubemap) {
 	static InstanceBuffer shipPos(1);
-	static const Model3D& ship = m_gameRef.getModelManager().getModel("res/models/ship1.obj");
+	static const Model3D& ship = m_gameRef.getModelManager().getModel("res/models/vengabus.obj");
 
 	shipPos[0] = ModelPosition(
 		m_pos,
-		glm::radians(0.0f),glm::vec3(0.f),
-		glm::vec3(0.75f)
+		glm::radians(90.f),glm::vec3(1.f,0.0001f,0.0001f),
+		glm::vec3(0.075f)
 	);
+	shipPos.setInnerCount(1);
 	shipPos.transferToGpu();
 	ship.drawInstanceQueue(shipPos, camera, cubemap);
 }

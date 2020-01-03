@@ -5,6 +5,7 @@
 #include "include/EnemySpaceShipTile.hpp"
 #include "include/EnemyTurretTile.hpp"
 #include "include/InstanceBuffer.hpp"
+#include "include/StarShip.hpp"
 #include <thread>
 #include <iostream>
 
@@ -157,42 +158,53 @@ void GameWorld::update(const double deltaTime) {
 }
 
 void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
-	int turretBasePosCount = 0;
-	int turretHeadPosCount = 0;
-	int enemyPosCount = 0;
+	static const ModelManager& mm = m_gameRef.getModelManager();
+	static const Model3D& enemyShip = mm.getModel("res/models/ship1.obj");
+	static const Model3D& turretHead = mm.getModel("res/models/turret_head.obj");
+	static const Model3D& turretBase = mm.getModel("res/models/turret_base.obj");
+	static const Model3D& playerShip = mm.getModel("res/models/vengabus.obj");
 
-	const ModelManager& mm = m_gameRef.getModelManager();
-	const Model3D& enemyShip = mm.getModel("res/models/ship1.obj");
-	const Model3D& turretHead = mm.getModel("res/models/turret_head.obj");
-	const Model3D& turretBase = mm.getModel("res/models/turret_base.obj");
-	const Model3D& playerShip = mm.getModel("res/models/vengabus.obj");
+	static constexpr float aabb_relMiny = -1.0;
+	static constexpr float aabb_relMaxy = 3.0;
 
 	static sf::Clock clock;
-	float secs = clock.getElapsedTime().asSeconds();
 
-	const glm::vec3 spaceShipPos = glm::vec3(0,secs,0);
+	const float secs = clock.getElapsedTime().asSeconds();
+	const glm::vec3 spaceShipPos = m_gameRef.getStarShip()->getPos();
 
+	int drawnTurrets = 0;
 	for (int i = 0; i < m_enemyTurretTilesPtrs.size(); i++) {
 		const float dy = abs(spaceShipPos.y - m_enemyTurretTilesPtrs[i]->getPos().y);
 		const float dx = spaceShipPos.x - m_enemyTurretTilesPtrs[i]->getPos().x;
 
-		const float ratio = dx / dy;
-		const float angle = glm::degrees(atanf(ratio));
-		
-		m_enemyTurretTilesPtrs[i]->getHeadPos().setRotationMatrix(
-			glm::rotate(
+		if (dy >= aabb_relMiny && dy <= aabb_relMaxy) 
+		{
+			const float ratio = dx / dy;
+			const float angle = glm::degrees(atanf(ratio));
+
+			m_enemyTurretTilesPtrs[i]->getHeadPos().setRotationMatrix(
 				glm::rotate(
-					glm::identity<glm::mat4>(),
-					glm::radians(90.f), glm::vec3(1.f, 0.f, 0.f)
-				),
-				glm::radians(angle),glm::vec3(.0f,1.f,.0f)
-			)
-		);
-		(*m_instTurretHead)[i] = m_enemyTurretTilesPtrs[i]->getHeadPos();
+					glm::rotate(
+						glm::identity<glm::mat4>(),
+						glm::radians(90.f), glm::vec3(1.f, 0.f, 0.f)
+					),
+					glm::radians(angle), glm::vec3(.0f, 1.f, .0f)
+				)
+			);
+
+			(*m_instTurretHead)[drawnTurrets] = m_enemyTurretTilesPtrs[i]->getHeadPos();
+			drawnTurrets++;
+		}
+	}
+	m_instTurretHead->setInnerCount(drawnTurrets);
+
+	int drawnSpaceShips = 0;
+	for (int i = 0; i < m_enemySpaceshipTilesPtrs.size(); i++) {
+
 	}
 
 	m_instTurretHead->transferToGpu();
-	//enemyPos.transferToGpu();
+	m_instEnemyShip->transferToGpu();
 
 	turretBase.drawInstanceQueue(*m_instTurretHead,camera,cubemap);
 	turretHead.drawInstanceQueue(*m_instTurretHead, camera, cubemap);

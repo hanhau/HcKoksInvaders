@@ -34,7 +34,8 @@ void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 
 void Game::init() {
 	// Init window with Context
-	sf::ContextSettings cs(24,8,2,4,3,0U,false);
+	//sf::ContextSettings cs(24, 8, 2, 4, 3, 0U, false);
+	sf::ContextSettings cs(24, 0, 0, 4, 3, sf::ContextSettings::Attribute::Debug, false);
 	window.create(sf::VideoMode(640, 960), "HcKoksInvaders", sf::Style::Close,cs);
 	window.setActive(true);
 	//window.setVerticalSyncEnabled(true);
@@ -146,13 +147,8 @@ void Game::init() {
 }
 
 void Game::run() {
-	GameWorld gameWorld(*this);
-	gameWorld.init(1024, 2);
-	gameWorld.saveToFileAsImage("demo.bmp");
-
 	sf::Clock gameClock;
 	sf::Clock fpsClock;
-	std::vector<long long> frametimes;
 
 	Camera cam1 = Camera(
 		glm::vec3(0.0f, 0.0f, 5.0f),
@@ -164,10 +160,14 @@ void Game::run() {
 	bool wireframe = false;
 	double lastFrameTime = 0.0f;
 
-	StarShip* playerShip = new StarShip(*this);
-	playerShip->addRocketAmmo(100);
-	playerShip->addShotgunAmmo(100);
-	playerShip->addSMGAmmo(100);
+	sIngame.playerShip = new StarShip(*this);
+	sIngame.playerShip->addRocketAmmo(100);
+	sIngame.playerShip->addShotgunAmmo(100);
+	sIngame.playerShip->addSMGAmmo(100);
+
+	sIngame.gameWorld = new GameWorld(*this);
+	sIngame.gameWorld->init(1024, 2);
+	sIngame.gameWorld->saveToFileAsImage("demo.bmp");
 
 	BulletRenderer br(*programManager);
 
@@ -224,18 +224,18 @@ void Game::run() {
 				sIngame.updateBullets(lastFrameTime);
 				br.drawInstances(sIngame.bullets, cam1);
 
-				playerShip->updateOnUserInput(lastFrameTime);
+				sIngame.playerShip->updateOnUserInput(lastFrameTime);
 
-				cam1.setCameraPos(glm::vec3(0.0f,0.f,5.0f));
-				gameWorld.draw(cam1, *cubeMap);
+				cam1.setCameraPos(glm::vec3(0.0f,-1.f,5.0f));
+				sIngame.gameWorld->draw(cam1, *cubeMap);
 
-				playerShip->draw(cam1, *cubeMap);
+				sIngame.playerShip->draw(cam1, *cubeMap);
 
 				const Program& aiProg = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
 				sIngame.MunitionIconPistol->draw(100.f, aiProg);
-				sIngame.MunitionIconRocket->draw(playerShip->getRocketAmmoPercent(), aiProg);
-				sIngame.MunitionIconShotgun->draw(playerShip->getShotgunAmmoPercent(), aiProg);
-				sIngame.MunitionIconSMG->draw(playerShip->getSMGAmmoPercent(), aiProg);
+				sIngame.MunitionIconRocket->draw(sIngame.playerShip->getRocketAmmoPercent(), aiProg);
+				sIngame.MunitionIconShotgun->draw(sIngame.playerShip->getShotgunAmmoPercent(), aiProg);
+				sIngame.MunitionIconSMG->draw(sIngame.playerShip->getSMGAmmoPercent(), aiProg);
 			}
 			break;
 			// CREDITS // ------------------------------
@@ -263,10 +263,10 @@ void Game::run() {
 		}
 
 		// End of Frame
-		frametimes.push_back(fpsClock.getElapsedTime().asMicroseconds());
 		lastFrameTime = fpsClock.getElapsedTime().asMicroseconds() / 1'000'000.0;
 		drawFpsCounter(fpsClock.getElapsedTime());
 		fpsClock.restart();
+
 		window.display();
 	}
 }
@@ -288,6 +288,10 @@ const SoundBufferManager& Game::getSoundBufferManager() {
 	return *soundBufferManager;
 }
 
+StarShip* Game::getStarShip() {
+	return sIngame.playerShip;
+}
+
 void Game::addBullet(Bullet&& bullet) {
 	sIngame.bullets.push_back(bullet);
 }
@@ -297,7 +301,7 @@ void Game::drawFpsCounter(sf::Time timeElapsed) {
 	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
 	static Text text = Text("",18,glm::ivec2(2,2));
 
-	text.setText(std::to_string((int)(1000.0/std::max(timeElapsed.asMilliseconds(),1))));
+	text.setText(std::to_string((int)(1'000'000.0/(double)std::max((unsigned long long)timeElapsed.asMicroseconds(),1ull))));
 	text.draw(window, textProg);
 }
 

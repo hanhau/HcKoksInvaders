@@ -1,13 +1,10 @@
 #pragma once
-#include "TileEntityBase.hpp"
-#include <SFML/Graphics/RenderWindow.hpp>
 #include "Game.hpp"
-#include "ProgramManager.hpp"
-#include "ModelManager.hpp"
-#include "Cubemap.hpp"
-#include "EnemyTurretTile.hpp"
-#include "EnemySpaceShipTile.hpp"
-#include "InstanceBuffer.hpp"
+
+struct InstanceBuffer;
+struct TileEntityBase;
+struct EnemyTurretTile;
+struct EnemySpaceShipTile;
 
 class GameWorld {
 	Game& m_gameRef;	
