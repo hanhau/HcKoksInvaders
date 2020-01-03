@@ -34,9 +34,10 @@ void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 
 void Game::init() {
 	// Init window with Context
-	//sf::ContextSettings cs(24, 8, 2, 4, 3, 0U, false);
-	sf::ContextSettings cs(24, 0, 0, 4, 3, sf::ContextSettings::Attribute::Debug, false);
-	window.create(sf::VideoMode(640, 960), "HcKoksInvaders", sf::Style::Close,cs);
+	sf::ContextSettings cs(24, 0, 0, 4, 3, 0, false);
+	//window.create(sf::VideoMode(640, 960), "HcKoksInvaders", sf::Style::Close,cs);
+	window.create(sf::VideoMode(2560, 1440), "HcKoksInvaders", sf::Style::Fullscreen,cs);
+	//window.create(sf::VideoMode(1920, 1080), "HcKoksInvaders", sf::Style::Close,cs);
 	window.setActive(true);
 	//window.setVerticalSyncEnabled(true);
 
@@ -52,7 +53,7 @@ void Game::init() {
 	// global depth test
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-	glClearColor(0.5, 0.75, 0.25, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 
 	// Initialize ResourceManagers
 	textureManager = new TextureManager();
@@ -113,19 +114,52 @@ void Game::init() {
 
 	// Load MainMenu UI
 	{
-		// Buttons
-		sMenu.buttonPlay = new Button(window, "SPIELEN", glm::ivec2(50, 700), 48);
+		const int windowHeight = window.getSize().y;
+
+		// SPIELEN 
+		sMenu.buttonPlay = new Button(
+			window, "SPIELEN", 
+			glm::ivec2(50, windowHeight-260),
+		48);
 		sMenu.buttonPlay->onClick = std::function<void()>([&]() {
+			static sf::Sound s(soundBufferManager->get("res/audio/select.flac"));
+			s.play();
 			m_gameState = GameState::Ingame;
 		});
-		sMenu.buttonCredits = new Button(window, "CREDITS", glm::ivec2(50, 780), 48);
+
+		// CREDITS
+		sMenu.buttonCredits = new Button(
+			window, "CREDITS", 
+			glm::ivec2(50, windowHeight-180), 
+		48);
 		sMenu.buttonCredits->onClick = std::function<void()>([&]() {
+			sMenu.music.setVolume(0);
+			sCredits.music.setPlayingOffset(sf::Time());
+			sCredits.music.setVolume(100);
+			
+			static sf::Sound s(soundBufferManager->get("res/audio/select.flac"));
+			s.play();
 			m_gameState = GameState::Credits;
 		});
-		sMenu.buttonExit = new Button(window, "VERLASSEN", glm::ivec2(50, 860), 48);
+
+		// VERLASSEN
+		sMenu.buttonExit = new Button(
+			window, "VERLASSEN", 
+			glm::ivec2(50, windowHeight-100), 
+		48);
 		sMenu.buttonExit->onClick = std::function<void()>([&]() {
+			glClearColor(0, 0, 0, 1.0);
+			glClear(GL_COLOR_BUFFER_BIT);
+			window.display();
+			sMenu.music.setVolume(0);
+
+			static sf::Sound s(soundBufferManager->get("res/audio/hcDankeBye.wav"));
+			s.play();
+			sf::sleep(s.getBuffer()->getDuration());
+
 			this->exit();
 		});
+
 		sMenu.buttonVec = { sMenu.buttonPlay,sMenu.buttonCredits, sMenu.buttonExit };
 
 		// Text
@@ -136,10 +170,21 @@ void Game::init() {
 	{
 		sCredits.buttonBack = new Button(window, "Z'RUCK", glm::ivec2(25, 25), 44);
 		sCredits.buttonBack->onClick = std::function<void()>([&]() {
+			sCredits.music.setVolume(0);
+			sMenu.music.setVolume(100);
+
+			static sf::Sound s(soundBufferManager->get("res/audio/select.flac"));
+			s.play();
 			m_gameState = GameState::MainMenu;
 		});
 
 		sCredits.buttonVec = { sCredits.buttonBack };
+	}
+
+	// Load music
+	{
+		sMenu.music.openFromFile("res/audio/main_menu.ogg");
+		sCredits.music.openFromFile("res/audio/credits.flac");
 	}
 
 	// Init GameState
@@ -147,6 +192,14 @@ void Game::init() {
 }
 
 void Game::run() {
+	sMenu.music.setLoop(true);
+	sMenu.music.setVolume(100);
+	sMenu.music.play();
+
+	sCredits.music.setLoop(true);
+	sCredits.music.setVolume(0);
+	sCredits.music.play();
+
 	sf::Clock gameClock;
 	sf::Clock fpsClock;
 
@@ -154,7 +207,7 @@ void Game::run() {
 		glm::vec3(0.0f, 0.0f, 5.0f),
 		glm::vec3(0.0f, 0.45f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::perspective(glm::radians(47.5f), 640.f / 960.f, 1.f, 100.f)
+		glm::perspective(glm::radians(47.5f), window.getSize().x / (float)window.getSize().y, 1.f, 100.f)
 	);
 
 	bool wireframe = false;
@@ -212,11 +265,7 @@ void Game::run() {
 		// Start of Frame
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		programManager->get(ProgramManager::ProgramEntry::Model3D).setUniform(
-			"matProgressCubemap",
-			glm::rotate(glm::identity<glm::mat4>(), glm::radians(gameClock.getElapsedTime().asSeconds()), glm::vec3(1.0, 0.1, 0.1))
-		);
-
+		// Handle Frame
 		switch (m_gameState) {
 			// INGAME // -------------------------------
 			case GameState::Ingame:
@@ -224,6 +273,7 @@ void Game::run() {
 				sIngame.updateBullets(lastFrameTime);
 				br.drawInstances(sIngame.bullets, cam1);
 
+				sIngame.playerShip->updateSoundBuffers();
 				sIngame.playerShip->updateOnUserInput(lastFrameTime);
 
 				cam1.setCameraPos(glm::vec3(0.0f,-1.f,5.0f));
@@ -266,7 +316,6 @@ void Game::run() {
 		lastFrameTime = fpsClock.getElapsedTime().asMicroseconds() / 1'000'000.0;
 		drawFpsCounter(fpsClock.getElapsedTime());
 		fpsClock.restart();
-
 		window.display();
 	}
 }
@@ -317,7 +366,7 @@ void Game::drawMainMenu() {
 	cam.setCameraPos(glm::vec3(0.0f, 0.0f, 3.0f));
 	cam.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f));
 	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
-	cam.setProjectionMatrix(glm::perspective(glm::radians(85.f), 640.f / 960.f, 1.f, 500.f));
+	cam.setProjectionMatrix(glm::perspective(glm::radians(85.f), window.getSize().x / (float)window.getSize().y, 1.f, 500.f));
 
 	busPos[0] = ModelPosition(
 		glm::vec3(),
@@ -326,7 +375,7 @@ void Game::drawMainMenu() {
 	);
 	busPos.transferToGpu();
 
-	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs);
+	starBkg.draw(window,programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs);
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 
 	for (auto& iter : sMenu.buttonVec)
@@ -351,17 +400,26 @@ void Game::drawCredits() {
 	static const Model3D& finger = modelManager->getModel("res/models/finger.obj");
 	static const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
 
-	static Text textCreatedBy = Text("created by",48,glm::ivec2(20,800));
-	static Text textHannes = Text("Hannes H.",64,glm::ivec2(20,856));
-	static Text textEhrenMann = Text("HCKOKSINVADERS V1.0",24,glm::ivec2(20,774));
+	static Text textEhrenMann = Text(
+		"HCKOKSINVADERS V1.0", 24,
+		glm::ivec2(20, window.getSize().y - 200)
+	);
+	static Text textCreatedBy = Text(
+		"created by",48,
+		glm::ivec2(20, window.getSize().y - 160)
+	);
+	static Text textHannes = Text(
+		"Hannes H.",64,
+		glm::ivec2(20, window.getSize().y - 100)
+	);	
 
 	static Camera cam;
 	cam.setCameraPos(glm::vec3(sinf(secs)*0.25f, cos(secs)*0.25f, 1.0f));
 	cam.setCameraFront(glm::vec3(0.0f + sinf(secs) * 0.05, 0.0f + cosf(secs) * 0.05, -1.0f));
 	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
-	cam.setProjectionMatrix(glm::perspective(glm::radians(65.f), 640.f / 960.f, 1.f, 500.f));
+	cam.setProjectionMatrix(glm::perspective(glm::radians(65.f), window.getSize().x / (float)window.getSize().y, 1.f, 500.f));
 
-	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs*3.0);
+	starBkg.draw(window,programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs*3.0);
 
 	for (double i = 0, j = 0; i < 1000.0; i += 10.0,j+=1.0) {
 		float s = 0.2f + abs(cosf(secs + i)) * 0.1f;
@@ -430,7 +488,7 @@ void Game::drawGameOverScreen() {
 	));
 	busPos.transferToGpu();
 
-	starBkg.draw(programManager->get(ProgramManager::ProgramEntry::MainMenuBackground),secs);
+	starBkg.draw(window,programManager->get(ProgramManager::ProgramEntry::MainMenuBackground),secs);
 
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 }

@@ -4,14 +4,16 @@
 
 uniform float progress = 1.0f;
 uniform vec3 baseColor = vec3(1.0f,1.0f,1.0f);
-vec2 iResolution = vec2(640.0f,960.0f);
+uniform vec2 iResolution = vec2(640.0f,960.0f);
+
+out vec4 res;
 
 float vDrop(vec2 uv,float t)
 {
     uv.x = uv.x*128.0f;						// H-Count
     float dx = fract(uv.x);
     uv.x = floor(uv.x);
-    uv.y *= 0.05f;							// stretch
+    uv.y *= 0.125f;							// stretch
     float o=sin(uv.x*215.4f);				// offset
     float s=cos(uv.x*33.1f)*.3f +.7f;			// speed
     float trail = mix(95.0f,35.0f,s);			// trail length
@@ -37,7 +39,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 }
 
 void main(){
-	mainImage(gl_FragColor,gl_FragCoord.xy);
-	progress;
-	baseColor;
+	mainImage(res,gl_FragCoord.xy);
 }

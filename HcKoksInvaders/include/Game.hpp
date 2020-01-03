@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio/Music.hpp>
 #include <glm/mat4x4.hpp>
 
 #include "TextureManager.hpp"
@@ -53,11 +54,14 @@ private:
 		std::vector<Button*> buttonVec;
 
 		Text* textTitle;
+		sf::Music music;
 	} sMenu;
 
 	struct __sCredits {
 		Button* buttonBack;
 		std::vector<Button*> buttonVec;
+
+		sf::Music music;
 	} sCredits;
 
 	struct __sGameOverScreen {

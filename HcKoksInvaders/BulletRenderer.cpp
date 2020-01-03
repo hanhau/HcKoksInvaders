@@ -60,7 +60,11 @@ void BulletRenderer::drawInstances(std::list<Bullet>& bullets, const Camera& cam
 			glm::identity<glm::mat4>(),
 			iter.m_pos
 		));
-		bulletPos[i].color = std::move(glm::vec4(cosf(i), sinf(i), sinf(i * cosf(i)), 1.0));
+
+		if(iter.m_owner == Bullet::Owner::Enemy)
+			bulletPos[i].color = std::move(glm::vec4(cosf(i), sinf(i), sinf(i * cosf(i)), 1.0));
+		if(iter.m_owner == Bullet::Owner::Player)
+			bulletPos[i].color = std::move(glm::vec4(0.0f,1.0f,0.5f, 1.0));
 
 		i++;
 	}

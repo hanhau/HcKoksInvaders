@@ -5,6 +5,7 @@
 #include "include/Util.hpp"
 
 #include <ft2build.h>
+#include <glm\ext\matrix_transform.hpp>
 #include FT_FREETYPE_H
 
 struct Char {

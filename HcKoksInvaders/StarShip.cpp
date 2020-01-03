@@ -1,6 +1,9 @@
 #include "include/StarShip.hpp"
 #include "include/Model.hpp"
 
+#include <deque>
+#include <SFML/Audio/Sound.hpp>
+
 const int StarShip::maxAmmoSMG = 100;
 const int StarShip::maxAmmoShotgun = 100;
 const int StarShip::maxAmmoRocket = 3;
@@ -9,6 +12,8 @@ const float StarShip::coolDownPistol = 0.2f;
 const float StarShip::coolDownRocket = 5.0f;
 const float StarShip::coolDownShotgun = 0.5f;
 const float StarShip::coolDownSMG = 0.10f;
+
+static std::deque<sf::Sound> _soundQueue = std::deque<sf::Sound>();
 
 StarShip::StarShip(Game& game) :
 	m_gameRef(game),
@@ -54,6 +59,16 @@ void StarShip::updateOnUserInput(float deltaSeconds) {
 	}
 
 	m_pos.x = std::clamp(m_pos.x, _minx, _miny);
+}
+
+void StarShip::updateSoundBuffers() {
+	if (_soundQueue.size() == 0)
+		return;
+
+	if (_soundQueue.front().getStatus() == sf::Sound::Stopped) {
+		_soundQueue.pop_front();
+		updateSoundBuffers();
+	}
 }
 
 // Add Ammunition
@@ -107,6 +122,12 @@ void StarShip::draw(const Camera& camera, Cubemap& cubemap) {
 }
 
 void StarShip::processShoot() {
+	static const SoundBufferManager& sbm = m_gameRef.getSoundBufferManager();
+	static const sf::SoundBuffer& soundBufPistol = sbm.get("res/audio/gunPistol.wav");
+	static const sf::SoundBuffer& soundBufShotgun = sbm.get("res/audio/gunShotgun.wav");
+	static const sf::SoundBuffer& soundBufSMG = sbm.get("res/audio/gunSMG.wav");
+	static const sf::SoundBuffer& soundBufRocket = sbm.get("res/audio/gunSMG.wav");
+	
 	const glm::vec3 bulletStartPos = m_pos + glm::vec3(0.0f, 0.1f, 0.0f);
 
 	switch (m_activeWeapon) {
@@ -114,12 +135,18 @@ void StarShip::processShoot() {
 			if (m_clockPistol.getElapsedTime().asSeconds() >= coolDownPistol) {
 				m_clockPistol.restart();
 
+				// Add Bullet
 				m_gameRef.addBullet(Bullet{
 					bulletStartPos,
 					glm::vec3(0.f,2.0f,0.f),
 					20.f,
 					Bullet::Owner::Player
 				});
+
+				// Add Sound
+				_soundQueue.push_back(sf::Sound(soundBufPistol));
+				_soundQueue.back().setPitch(1.0f + (cosf(m_pos.y * 1000.f)) * 0.1f);
+				_soundQueue.back().play();
 			}
 			break;
 		case WeaponType::Rocket:
@@ -127,6 +154,7 @@ void StarShip::processShoot() {
 				if (m_clockRocket.getElapsedTime().asSeconds() >= coolDownRocket) {
 					m_clockRocket.restart();
 
+					// Add Bullet
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
 						glm::vec3(0.f,1.2f,0.f),
@@ -134,6 +162,7 @@ void StarShip::processShoot() {
 						Bullet::Owner::Player
 					});
 
+					// Subtract from Ammo
 					m_ammoRocket--;
 				}
 			}
@@ -143,6 +172,32 @@ void StarShip::processShoot() {
 				if (m_clockShotgun.getElapsedTime().asSeconds() >= coolDownShotgun) {
 					m_clockShotgun.restart();
 
+					// Add Bullet
+					m_gameRef.addBullet(Bullet{
+						bulletStartPos,
+						glm::vec3(0.f,1.2f,0.f),
+						13.f,
+						Bullet::Owner::Player
+						});
+					m_gameRef.addBullet(Bullet{
+						bulletStartPos,
+						glm::vec3(0.2f,1.2f,0.f),
+						13.f,
+						Bullet::Owner::Player
+						});
+					m_gameRef.addBullet(Bullet{
+						bulletStartPos,
+						glm::vec3(-0.2f,1.2f,0.f),
+						13.f,
+						Bullet::Owner::Player
+						});
+
+					// Add Sound
+					_soundQueue.push_back(sf::Sound(soundBufShotgun));
+					_soundQueue.back().setPitch(1.0f + (cosf(m_pos.x * 1000.f)) * 0.1f);
+					_soundQueue.back().play();
+
+					// Subtract from Ammo
 					m_ammoShotgun--;
 				}
 			}
@@ -152,6 +207,7 @@ void StarShip::processShoot() {
 				if (m_clockSMG.getElapsedTime().asSeconds() >= coolDownSMG) {
 					m_clockSMG.restart();
 
+					// Add Bullet
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
 						glm::vec3(0.f,2.2f,0.f),
@@ -159,6 +215,12 @@ void StarShip::processShoot() {
 						Bullet::Owner::Player
 					});
 
+					// Add Sound
+					_soundQueue.push_back(sf::Sound(soundBufSMG));
+					_soundQueue.back().setPitch(1.0f + (cosf(m_pos.y * 1000.f)) * 0.1f);
+					_soundQueue.back().play();
+
+					// Subtract from Ammo
 					m_ammoSMG--;
 				}
 			}

@@ -137,9 +137,6 @@
     <ClInclude Include="include\Button.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="include\StarShip.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="include\GameObject.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -215,6 +212,9 @@
     <ClInclude Include="include\Text.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="include\StarShip.hpp">
+      <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\frag_shader.frag">
@@ -268,6 +268,12 @@
     </None>
     <None Include="res\shaders\Text.frag">
       <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\audio\credits.flac">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="res\audio\main_menu.ogg">
+      <Filter>Audio</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -385,5 +391,19 @@
     <Font Include="res\fonts\CabinSketch-Bold.ttf">
       <Filter>res\fonts</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\audio\hcDankeBye.wav">
+      <Filter>Audio</Filter>
+    </Media>
+    <Media Include="res\audio\gunPistol.wav">
+      <Filter>Audio</Filter>
+    </Media>
+    <Media Include="res\audio\gunSMG.wav">
+      <Filter>Audio</Filter>
+    </Media>
+    <Media Include="res\audio\gunShotgun.wav">
+      <Filter>Audio</Filter>
+    </Media>
   </ItemGroup>
 </Project>

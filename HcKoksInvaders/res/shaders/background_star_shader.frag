@@ -3,9 +3,11 @@
 #define M_PI 3.14159265358979323846
 
 uniform float progress = 1 ;
-uniform float screenWidth = 640;
-uniform float screenHeight = 960;
+uniform float screenWidth;
+uniform float screenHeight;
 uniform vec3 baseColor = vec3(1.0,1.0,1.0);
+
+out vec4 res;
 
 float rand(vec2 c){
 	return fract(sin(dot(c.xy ,vec2(12.9898,78.233))) * 43758.5453);
@@ -50,5 +52,5 @@ void main( void )
 	float n = pNoise(vec2(gl_FragCoord.x,gl_FragCoord.y+progress),1024);
 	float n_far = pNoise(vec2(gl_FragCoord.x+640.f,gl_FragCoord.y+progress*0.67),256);
 	
-	gl_FragColor = mix(vec4(baseColor*n,1.0),vec4(vec3(1.0)*n_far,1.0),0.3);
+	res = mix(vec4(baseColor*n,1.0),vec4(vec3(1.0)*n_far,1.0),0.3);
 }

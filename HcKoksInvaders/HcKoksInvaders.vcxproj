@@ -213,9 +213,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="res\audio\credits.flac" />
     <None Include="res\audio\main_menu.flac">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
     </None>
+    <None Include="res\audio\main_menu.ogg" />
     <None Include="res\audio\select.flac" />
     <None Include="res\shaders\AmmunitionIcon.frag" />
     <None Include="res\shaders\AmmunitionIcon.vert" />
@@ -404,6 +406,12 @@
   <ItemGroup>
     <Font Include="res\fonts\CabinSketch-Bold.ttf" />
     <Font Include="res\fonts\PressStart2P-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\audio\gunPistol.wav" />
+    <Media Include="res\audio\gunShotgun.wav" />
+    <Media Include="res\audio\gunSMG.wav" />
+    <Media Include="res\audio\hcDankeBye.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

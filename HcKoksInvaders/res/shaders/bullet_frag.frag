@@ -1,7 +1,8 @@
 #version 330 core
 
 in vec4 vCol;
+out vec4 res;
 
 void main(){
-	gl_FragColor = vCol;
+	res = vCol;
 }

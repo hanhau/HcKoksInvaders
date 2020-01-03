@@ -1,6 +1,7 @@
 #pragma once
 #include <Program.hpp>
 #include <TextureManager.hpp>
+#include <SFML/Window/Window.hpp>
 
 class StarBackground {
 	unsigned int gl_vao;
@@ -9,5 +10,5 @@ public:
 	StarBackground();
 	~StarBackground();
 
-	void draw(const Program& program,float pastTime) const;
+	void draw(const sf::Window& window,const Program& program,float pastTime) const;
 };

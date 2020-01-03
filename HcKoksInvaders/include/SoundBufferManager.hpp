@@ -9,6 +9,6 @@ class SoundBufferManager {
 public:
 	SoundBufferManager();
 
-	sf::SoundBuffer& get(std::string path);
-	bool exists(std::string path);
+	const sf::SoundBuffer& get(std::string path) const;
+	bool exists(std::string path) const;
 };

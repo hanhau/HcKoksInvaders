@@ -20,15 +20,20 @@ void SoundBufferManager::add(std::string path)
 
 SoundBufferManager::SoundBufferManager() {
 	add("res/audio/select.flac");
+	add("res/audio/hcDankeBye.wav");
+
+	add("res/audio/gunShotgun.wav");
+	add("res/audio/gunPistol.wav");
+	add("res/audio/gunSMG.wav");
 }
 
-sf::SoundBuffer& SoundBufferManager::get(std::string path)
+const sf::SoundBuffer& SoundBufferManager::get(std::string path) const
 {
 	try {
 		if (!exists(path))
 			throw "SoundBuffer does not exist @ SoundBufferManager::get(path)";
 
-		return m_soundBuffers[path];
+		return m_soundBuffers.at(path);
 	}
 	catch (std::string e) {
 		std::cout << e << std::endl;
@@ -36,6 +41,6 @@ sf::SoundBuffer& SoundBufferManager::get(std::string path)
 	}
 }
 
-bool SoundBufferManager::exists(std::string path) {
+bool SoundBufferManager::exists(std::string path) const {
 	return m_soundBuffers.find(path) != m_soundBuffers.end();
 }
