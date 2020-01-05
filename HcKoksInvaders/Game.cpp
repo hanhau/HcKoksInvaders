@@ -588,3 +588,17 @@ void Game::__sIngame::drawHUDText(const sf::Window& win,const Program& program) 
 	textHealth->draw(win, program, healthCol);
 	textStage->draw(win, program);
 }
+
+void Game::__sIngame::prepareStage(int stage) {
+	gameWorld->init(1024, stage);
+}
+
+bool Game::__sIngame::isStageFinished() {
+	return currentProgressY > gameWorld->getNDCHeight() + stageOffsetEndY;
+}
+void Game::__sIngame::startStage() {
+	currentProgressY = stageOffsetStartY;
+}
+
+const float Game::__sIngame::stageOffsetEndY = 3.f;
+const float Game::__sIngame::stageOffsetStartY = 3.f;

@@ -58,11 +58,16 @@ private:
 		int currentPoints;
 		int currentHealth;
 
-		float currentProgressY;
-
 		void drawHUDText(const sf::Window& win, const Program& program);
 		void prepareStage(int stage);
+
 		bool isStageFinished();
+		void startStage();
+
+		float currentProgressY;
+		static const float stageOffsetStartY;
+		static const float stageOffsetEndY;
+
 	} sIngame;
 
 	struct __sMenu {
