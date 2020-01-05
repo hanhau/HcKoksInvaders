@@ -131,12 +131,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Game.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Button.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="include\GameObject.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -213,6 +207,12 @@
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="include\StarShip.hpp">
+      <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Button.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game.hpp">
       <Filter>Headerdateien\Game</Filter>
     </ClInclude>
   </ItemGroup>

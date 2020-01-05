@@ -190,6 +190,10 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 void Text::setText(const std::string text) {
 	m_impl->text = text;
 }
+void Text::setPos(const glm::ivec2 posInPixel) {
+	m_impl->pos = posInPixel;
+}
+
 glm::vec2 Text::getSizeNDC(const sf::Window& win) {
 	const glm::vec2 ps = glm::vec2(
 		2.0f / (float)win.getSize().x,
@@ -229,8 +233,17 @@ glm::ivec2 Text::getSizePixels(const sf::Window& win) {
 	);
 }
 
-void Text::setPos(const glm::ivec2 posInPixel) {
-	m_impl->pos = posInPixel;
+void Text::centerHorizontally(const sf::Window& win) {
+	int winHalfX = (int)std::round(win.getSize().x / 2.f);
+	int textHalfWidth = (int)std::round(getSizePixels(win).x / 2.f);
+
+	m_impl->pos.x = winHalfX - textHalfWidth;
+}
+void Text::centerVertically(const sf::Window& win) {
+	int winHalfY = (int)std::round(win.getSize().y / 2.f);
+	int textHalfHeight = (int)std::round(getSizePixels(win).y / 2.f);
+
+	m_impl->pos.y = winHalfY - textHalfHeight;
 }
 
 void Text::draw(const sf::Window& win, const Program& program, glm::vec3 col) {

@@ -45,14 +45,12 @@ private:
 	const Program& m_progRef;
 
 	BoundingBall m_outerBall;
-	std::vector<BoundingBall> m_innerBalls;
 public:
 	Model3D(const Program& m_progRef);
 	~Model3D();
 
 	// Bounding Balls
 	const BoundingBall& getOuterBB() const;
-	const std::vector<BoundingBall>& getInnerBBs() const;
 
 	// Loading
 	bool loadFromFile(const std::string path,const TextureManager& texMgr);

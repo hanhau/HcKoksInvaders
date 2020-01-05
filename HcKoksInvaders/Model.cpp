@@ -26,9 +26,6 @@ Model3D::~Model3D() {
 const BoundingBall& Model3D::getOuterBB() const {
 	return m_outerBall;
 }
-const std::vector<BoundingBall>& Model3D::getInnerBBs() const {
-	return m_innerBalls;
-}
 
 bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
 {

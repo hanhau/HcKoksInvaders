@@ -18,10 +18,16 @@ private:
 	unsigned int gl_vao;
 	unsigned int gl_vbo;
 public:
-	Button(const sf::Window& win,const std::string title, const glm::ivec2 posPixel, int fontHeight);
+	Button(
+		const sf::Window& win,
+		const std::string title, 
+		const glm::ivec2 posPixel, 
+		int fontHeight,
+		bool centerHorizontally = false
+	);
 
 	void draw(const sf::Window& window,const ProgramManager& progMgr);
-	bool containsPoint(const glm::ivec2 pointInPixel) const;
+	bool containsPoint(const glm::ivec2 pointInPixel) const;	
 
 	std::function<void()> onClick;
 };

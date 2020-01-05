@@ -3,6 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <SFML/System/Vector3.hpp>
 
+class Model3D;
+
 class ModelPosition {
 	glm::mat4x4 m_translation;
 	glm::mat4x4 m_rotation;
@@ -92,5 +94,9 @@ public:
 
 	inline const glm::mat4x4& getTransformationMatrix() const {
 		return m_transform;
+	}
+
+	inline const bool isPointInModel(const Model3D* const model, glm::vec3 point) {
+		return false;//return glm::distance(model->getOuterBB().transform(*this).getPos(), point) < model->getOuterBB().getRadius();
 	}
 };

@@ -8,8 +8,8 @@ struct BulletPosData {
 };
 
 std::vector<glm::vec3> getBulletVertices() {
-	constexpr float x_half = 2.5f * 1.f/320.f;
-	constexpr float y_half = 4.0f * 1.f/320.f;
+	constexpr float x_half = 1.0f * 2.f/320.f;
+	constexpr float y_half = 8.0f * 2.f/640.f;
 
 	return std::vector<glm::vec3>{
 		glm::vec3(-x_half, y_half,0.0f),

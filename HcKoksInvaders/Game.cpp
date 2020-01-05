@@ -32,14 +32,17 @@ void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 	}
 }
 
-void Game::init() {
+void Game::init(const GameLaunchOptions& glo) {
 	// Init window with Context
 	sf::ContextSettings cs(24, 0, 0, 4, 3, 0, false);
-	//window.create(sf::VideoMode(640, 960), "HcKoksInvaders", sf::Style::Close,cs);
-	window.create(sf::VideoMode(2560, 1440), "HcKoksInvaders", sf::Style::Fullscreen,cs);
-	//window.create(sf::VideoMode(1920, 1080), "HcKoksInvaders", sf::Style::Close,cs);
+
+	window.create(
+		sf::VideoMode(glo.res.x, glo.res.y), 
+		"HcKoksInvaders", 
+		glo.fullscreen ? sf::Style::Fullscreen : sf::Style::Close,
+		cs
+	);
 	window.setActive(true);
-	//window.setVerticalSyncEnabled(true);
 
 	// set OpenGL Function Ptrs
 	glewExperimental = GL_TRUE;
@@ -78,6 +81,7 @@ void Game::init() {
 
 	// Load IngameUI
 	{
+		// AmmunitionIcons
 		sIngame.MunitionIconPistol = new AmmunitionIcon(
 			"res/images/icon_munition_pistol.png",
 			sf::Color::Blue,
@@ -110,6 +114,11 @@ void Game::init() {
 			*textureManager,
 			window
 		);
+
+		// Texts
+		sIngame.textHealth = new Text("HP: 100", 20, glm::ivec2());
+		sIngame.textPoints = new Text("Pts: 1.000.000", 20, glm::ivec2());
+		sIngame.textStage = new Text("Stage: 999", 20, glm::ivec2());
 	}
 
 	// Load MainMenu UI
@@ -122,6 +131,7 @@ void Game::init() {
 			glm::ivec2(50, windowHeight-260),
 		48);
 		sMenu.buttonPlay->onClick = std::function<void()>([&]() {
+			m_gameClock.restart();
 			static sf::Sound s(soundBufferManager->get("res/audio/select.flac"));
 			s.play();
 			m_gameState = GameState::Ingame;
@@ -181,6 +191,30 @@ void Game::init() {
 		sCredits.buttonVec = { sCredits.buttonBack };
 	}
 
+	// Load GameOver UI
+	{
+		// NOCHMAL
+		sGameOver.buttonNewGame = new Button(window, "NOCHMAL", glm::ivec2(0,window.getSize().y/2-64), 44, true);
+		sGameOver.buttonNewGame->onClick = std::function<void()>([&]() {
+			m_gameState = GameState::Ingame;
+		});
+
+		// HAUPTSCHIRM
+		sGameOver.buttonMainMenu = new Button(window, "HAUPTSCHIRM", glm::ivec2(0, window.getSize().y/2), 44, true);
+		sGameOver.buttonMainMenu->onClick = std::function<void()>([&]() {
+			m_gameState = GameState::MainMenu;
+		});
+
+		// RAGEQUIT
+		sGameOver.buttonExitGame = new Button(window, "RAGEQUIT", glm::ivec2(0,window.getSize().y/2+64), 44, true);
+		sGameOver.buttonExitGame->onClick = std::function<void()>([&]() {
+			window.close();
+		});
+
+		// buttonvec
+		sGameOver.buttonVec = { sGameOver.buttonNewGame, sGameOver.buttonMainMenu, sGameOver.buttonExitGame };
+	}
+
 	// Load music
 	{
 		sMenu.music.openFromFile("res/audio/main_menu.ogg");
@@ -188,7 +222,7 @@ void Game::init() {
 	}
 
 	// Init GameState
-	m_gameState = GameState::MainMenu;
+	m_gameState = GameState::GameOver;
 }
 
 void Game::run() {
@@ -220,7 +254,6 @@ void Game::run() {
 
 	sIngame.gameWorld = new GameWorld(*this);
 	sIngame.gameWorld->init(1024, 2);
-	sIngame.gameWorld->saveToFileAsImage("demo.bmp");
 
 	BulletRenderer br(*programManager);
 
@@ -233,6 +266,7 @@ void Game::run() {
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				window.close();
+				continue;
 			}
 
 			if (event.type == sf::Event::KeyPressed) {
@@ -257,6 +291,9 @@ void Game::run() {
 					case GameState::Credits:
 						handleButtons_MouseLeftClicked(sCredits.buttonVec, event.mouseButton);
 						break;
+					case GameState::GameOver:
+						handleButtons_MouseLeftClicked(sGameOver.buttonVec, event.mouseButton);
+						break;
 					default: break;
 				}
 			}
@@ -270,18 +307,25 @@ void Game::run() {
 			// INGAME // -------------------------------
 			case GameState::Ingame:
 			{
+				cam1.setCameraPos(glm::vec3(0, m_gameClock.getElapsedTime().asSeconds()-.5f, 5));
+				
+				auto cpos = sIngame.playerShip->getPos();
+				sIngame.playerShip->setPos(glm::vec3(cpos.x, m_gameClock.getElapsedTime().asSeconds(), cpos.z));
+
 				sIngame.updateBullets(lastFrameTime);
 				br.drawInstances(sIngame.bullets, cam1);
 
 				sIngame.playerShip->updateSoundBuffers();
 				sIngame.playerShip->updateOnUserInput(lastFrameTime);
 
-				cam1.setCameraPos(glm::vec3(0.0f,-1.f,5.0f));
 				sIngame.gameWorld->draw(cam1, *cubeMap);
-
 				sIngame.playerShip->draw(cam1, *cubeMap);
 
 				const Program& aiProg = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
+				const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+
+				sIngame.drawHUDText(window, textProg);
+
 				sIngame.MunitionIconPistol->draw(100.f, aiProg);
 				sIngame.MunitionIconRocket->draw(sIngame.playerShip->getRocketAmmoPercent(), aiProg);
 				sIngame.MunitionIconShotgun->draw(sIngame.playerShip->getShotgunAmmoPercent(), aiProg);
@@ -469,8 +513,17 @@ void Game::drawCredits() {
 }
 
 void Game::drawGameOverScreen() {
-	static StarBackground starBkg;
 	static const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
+	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+
+	static Text textTailor = Text("schade.",72,glm::ivec2(0,100));
+	textTailor.centerHorizontally(window);
+	static Text textHighscore = Text("Dein Highscore:", 36, glm::ivec2(0, 220));
+	textHighscore.centerHorizontally(window);
+	static Text textHighscorePoints = Text("1.234.567", 44, glm::ivec2(0,274));
+	textHighscorePoints.centerHorizontally(window);
+
+	static StarBackground starBkg;
 	static InstanceBuffer busPos(1);
 	static Camera cam;
 
@@ -479,7 +532,7 @@ void Game::drawGameOverScreen() {
 	cam.setCameraPos(glm::vec3(0.0f,10.0f,10.0f));
 	cam.setCameraFront(glm::vec3(0.0f, -0.5f, -1.0f));
 	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
-	cam.setProjectionMatrix(glm::perspective(glm::radians(65.f), 640.f / 960.f, 1.f, 500.f));	
+	cam.setProjectionMatrix(glm::perspective(glm::radians(65.f), window.getSize().x / (float)window.getSize().y, 1.f, 500.f));	
 
 	busPos[0] = std::move(ModelPosition(
 		glm::vec3(0.0f,0.0f,0.0f),
@@ -489,8 +542,14 @@ void Game::drawGameOverScreen() {
 	busPos.transferToGpu();
 
 	starBkg.draw(window,programManager->get(ProgramManager::ProgramEntry::MainMenuBackground),secs);
-
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
+
+	textTailor.draw(window, textProg, glm::vec3(1.0, 0.0, 0.0));
+	textHighscore.draw(window, textProg);
+	textHighscorePoints.draw(window, textProg);
+
+	for (auto& iter : sGameOver.buttonVec)
+		iter->draw(window, *programManager);
 }
 
 // struct funcs
@@ -498,4 +557,34 @@ void Game::__sIngame::updateBullets(float deltaTime) {
 	for (auto& iter : bullets) {
 		iter.update(deltaTime);
 	}
+}
+
+void Game::__sIngame::drawHUDText(const sf::Window& win,const Program& program) {
+	const int padRight = 20;
+
+	textPoints->setText(std::string("Pts: ") + std::to_string(currentPoints));
+	textHealth->setText(std::string("HP: ") + std::to_string(currentHealth));
+	textStage->setText(std::string("Stage: ") + std::to_string(currentStage));
+
+	int textPointsWidth = textPoints->getSizePixels(win).x;
+	int textHealthWidth = textHealth->getSizePixels(win).x;
+	int textStageWidth = textStage->getSizePixels(win).x;
+
+	textPoints->setPos(glm::ivec2(win.getSize().x-textPointsWidth-padRight,25));
+	textHealth->setPos(glm::ivec2(win.getSize().x-textHealthWidth-padRight,47));
+	textStage->setPos(glm::ivec2(win.getSize().x-textStageWidth-padRight,69));
+
+	glm::vec3 healthCol;
+	if (currentHealth >= 0 && currentHealth < 33)
+		healthCol = glm::vec3(252.f / 255.f, 44.f / 255.f, 44.f / 255.f);
+	else if (currentHealth >= 33 && currentHealth < 60)
+		healthCol = glm::vec3(252.f / 255.f, 164.f / 255.f, 44.f / 255.f);
+	else if (currentHealth >= 60 && currentHealth < 80)
+		healthCol = glm::vec3(251.f / 255.f, 225.f / 255.f, 45.f / 255.f);
+	else
+		healthCol = glm::vec3(86.f / 255.f, 250.f / 255.f, 46.f / 255.f);
+
+	textPoints->draw(win, program);
+	textHealth->draw(win, program, healthCol);
+	textStage->draw(win, program);
 }

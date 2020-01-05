@@ -16,6 +16,11 @@ class TileEntityBase;
 class GameWorld;
 class StarShip;
 
+struct GameLaunchOptions {
+	glm::ivec2 res;
+	bool fullscreen;
+};
+
 class Game {
 private:
 	friend class TileEntityBase;
@@ -40,11 +45,24 @@ private:
 		AmmunitionIcon* MunitionIconRocket;
 		AmmunitionIcon* MunitionIconShotgun;
 
+		Text* textHealth;
+		Text* textPoints;
+		Text* textStage;
+
 		std::list<Bullet> bullets;
 		void updateBullets(float deltaTime);
-
 		GameWorld* gameWorld;
 		StarShip* playerShip;
+
+		int currentStage;
+		int currentPoints;
+		int currentHealth;
+
+		float currentProgressY;
+
+		void drawHUDText(const sf::Window& win, const Program& program);
+		void prepareStage(int stage);
+		bool isStageFinished();
 	} sIngame;
 
 	struct __sMenu {
@@ -65,8 +83,11 @@ private:
 	} sCredits;
 
 	struct __sGameOverScreen {
-
-	} sGameOverScreen;
+		Button* buttonNewGame;
+		Button* buttonMainMenu;
+		Button* buttonExitGame;
+		std::vector<Button*> buttonVec;
+	} sGameOver;
 
 public:
 	enum class GameState {
@@ -76,7 +97,7 @@ public:
 		GameOver
 	};
 
-	void init();
+	void init(const GameLaunchOptions& glo);
 	void run();
 	void exit();
 

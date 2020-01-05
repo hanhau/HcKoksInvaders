@@ -114,7 +114,7 @@ void StarShip::draw(const Camera& camera, Cubemap& cubemap) {
 	shipPos[0] = ModelPosition(
 		m_pos,
 		glm::radians(90.f),glm::vec3(1.f,0.0001f,0.0001f),
-		glm::vec3(0.075f)
+		glm::vec3(0.050f)
 	);
 	shipPos.setInnerCount(1);
 	shipPos.transferToGpu();
@@ -138,7 +138,7 @@ void StarShip::processShoot() {
 				// Add Bullet
 				m_gameRef.addBullet(Bullet{
 					bulletStartPos,
-					glm::vec3(0.f,2.0f,0.f),
+					glm::vec3(0.f,3.5f,0.f),
 					20.f,
 					Bullet::Owner::Player
 				});
@@ -175,19 +175,19 @@ void StarShip::processShoot() {
 					// Add Bullet
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
-						glm::vec3(0.f,1.2f,0.f),
+						glm::vec3(0.f,4.2f,0.f),
 						13.f,
 						Bullet::Owner::Player
 						});
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
-						glm::vec3(0.2f,1.2f,0.f),
+						glm::vec3(0.2f,4.2f,0.f),
 						13.f,
 						Bullet::Owner::Player
 						});
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
-						glm::vec3(-0.2f,1.2f,0.f),
+						glm::vec3(-0.2f,4.2f,0.f),
 						13.f,
 						Bullet::Owner::Player
 						});
@@ -210,14 +210,14 @@ void StarShip::processShoot() {
 					// Add Bullet
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
-						glm::vec3(0.f,2.2f,0.f),
+						glm::vec3(0.f,3.75f,0.f),
 						16.f,
 						Bullet::Owner::Player
 					});
 
 					// Add Sound
 					_soundQueue.push_back(sf::Sound(soundBufSMG));
-					_soundQueue.back().setPitch(1.0f + (cosf(m_pos.y * 1000.f)) * 0.1f);
+					_soundQueue.back().setPitch(1.0f + (cosf(m_pos.y*234.3432f)) * 0.05f);
 					_soundQueue.back().play();
 
 					// Subtract from Ammo

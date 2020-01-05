@@ -10,12 +10,24 @@ public:
 	glm::vec4 col;
 };
 
-Button::Button(const sf::Window& win,const std::string title, const glm::ivec2 posPixel, int fontHeight) :
-	m_title(title), m_position(posPixel), 
+Button::Button(
+	const sf::Window& win,
+	const std::string title, 
+	const glm::ivec2 posPixel, 
+	int fontHeight,
+	bool centerHorizontally
+) :
+	m_title(title), 
+	m_position(posPixel), 
 	Text(title,fontHeight,glm::ivec2(posPixel.x+5,posPixel.y+5))
 {
 	glm::vec2 size = this->getSizeNDC(win);
 	m_sizeInPixel = this->getSizePixels(win);
+
+	if (centerHorizontally) {
+		Text::centerHorizontally(win);
+		m_position.x = win.getSize().x/2 - (Text::getSizePixels(win).x + 10)/2;
+	}
 
 	m_pixelSize = glm::vec2(
 		2.0f / (float)win.getSize().x,

@@ -97,13 +97,13 @@ void GameWorld::init(int stageheight, int seed) {
 		for (int x = 0; x < WidthInTiles; x++)
 		{
 			if (m_tiles[y][x] == nullptr) {
-				int type = rand() % 7;
+				int type = rand() % 10;
 				switch (type) {
-				case 0: case 1: case 2: case 3:
-				case 4:
+				case 2: case 3: case 4: case 5:
+				case 6: case 7: case 8: case 9:
 					m_tiles[y][x] = (TileEntityBase*)new EmptyTile(&m_gameRef);
 					break;
-				case 5: 
+				case 0: 
 					m_tiles[y][x] = (TileEntityBase*)new EnemySpaceShipTile(
 						&m_gameRef,
 						rand(),
@@ -111,7 +111,7 @@ void GameWorld::init(int stageheight, int seed) {
 						0.025f
 					);
 					break;
-				case 6: 
+				case 1: 
 					m_tiles[y][x] = (TileEntityBase*)new EnemyTurretTile(
 						&m_gameRef,
 						rand(),
@@ -149,9 +149,6 @@ void GameWorld::init(int stageheight, int seed) {
 	m_instTurretBase = new InstanceBuffer(m_enemyTurretTilesPtrs.size());
 	m_instTurretHead = new InstanceBuffer(m_enemyTurretTilesPtrs.size());
 	m_instEnemyShip = new InstanceBuffer(m_enemySpaceshipTilesPtrs.size());
-
-	// Insert static positions
-
 }
 
 void GameWorld::update(const double deltaTime) {

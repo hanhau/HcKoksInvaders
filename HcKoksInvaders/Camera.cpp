@@ -39,9 +39,9 @@ const glm::mat4& Camera::getProjectionMatrix() const {
 }
 
 const glm::mat4&& Camera::getViewMatrix() const {
-	return std::move(glm::lookAt(
+	return glm::lookAt(
 		m_cameraPos,
 		m_cameraPos + m_cameraFront,
 		m_cameraUp
-	));
+	);
 }

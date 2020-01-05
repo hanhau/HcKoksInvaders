@@ -18,5 +18,8 @@ public:
 	glm::vec2 getSizeNDC(const sf::Window& win);
 	glm::ivec2 getSizePixels(const sf::Window& win);
 
+	void centerHorizontally(const sf::Window& win);
+	void centerVertically(const sf::Window& win);
+
 	void draw(const sf::Window& win, const Program& program,glm::vec3 col = glm::vec3(1.0f));
 };
