@@ -27,6 +27,10 @@ public:
 
 	void init(int stageheight,int seed);
 	void update(const double deltaTime);
+	void updateOnBulletCollisions(std::list<Bullet>& bullets,
+								  glm::vec3 camPos, 
+								  float visibleOffsetYPositive,
+								  float visibleOffsetYNegative);
 	void draw(const Camera& camera,Cubemap& cubemap);
 
 	const float getNDCHeight();

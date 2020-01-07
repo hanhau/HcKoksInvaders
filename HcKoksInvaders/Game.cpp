@@ -100,7 +100,7 @@ void Game::init(const GameLaunchOptions& glo) {
 		);
 		sIngame.MunitionIconRocket = new AmmunitionIcon(
 			"res/images/icon_munition_rocket.png",
-			glm::vec4(1.f),
+			glm::vec4(0.76,0.55,0.45,1.f),
 			40,
 			glm::ivec2(190, 10),
 			*textureManager,
@@ -222,7 +222,7 @@ void Game::init(const GameLaunchOptions& glo) {
 	}
 
 	// Init GameState
-	m_gameState = GameState::GameOver;
+	m_gameState = GameState::MainMenu;
 }
 
 void Game::run() {
@@ -253,7 +253,7 @@ void Game::run() {
 	sIngame.playerShip->addSMGAmmo(100);
 
 	sIngame.gameWorld = new GameWorld(*this);
-	sIngame.gameWorld->init(1024, 2);
+	sIngame.gameWorld->init(16, 2);
 
 	BulletRenderer br(*programManager);
 
@@ -306,13 +306,17 @@ void Game::run() {
 		switch (m_gameState) {
 			// INGAME // -------------------------------
 			case GameState::Ingame:
-			{
-				cam1.setCameraPos(glm::vec3(0, m_gameClock.getElapsedTime().asSeconds()-.5f, 5));
-				
+			{			
 				auto cpos = sIngame.playerShip->getPos();
-				sIngame.playerShip->setPos(glm::vec3(cpos.x, m_gameClock.getElapsedTime().asSeconds(), cpos.z));
+				sIngame.playerShip->setPos(glm::vec3(cpos.x, sIngame.getCurrentYPos(), cpos.z));
+				cam1.setCameraPos(glm::vec3(0, sIngame.getCurrentYPos() - 0.5f, 5));
 
 				sIngame.updateBullets(lastFrameTime);
+				sIngame.gameWorld->updateOnBulletCollisions(
+					sIngame.bullets,
+					sIngame.playerShip->getPos(),
+					3.5f, 2.f
+				);
 				br.drawInstances(sIngame.bullets, cam1);
 
 				sIngame.playerShip->updateSoundBuffers();
@@ -330,6 +334,18 @@ void Game::run() {
 				sIngame.MunitionIconRocket->draw(window,sIngame.playerShip->getRocketAmmoPercent(), aiProg);
 				sIngame.MunitionIconShotgun->draw(window,sIngame.playerShip->getShotgunAmmoPercent(), aiProg);
 				sIngame.MunitionIconSMG->draw(window,sIngame.playerShip->getSMGAmmoPercent(), aiProg);
+
+				if (sIngame.isGameOver()) {
+					
+				}
+
+				if (sIngame.isStageFinished()) {
+					std::cout << "Stage finished\n";
+					sIngame.prepareStage(sIngame.currentStage + 1);
+					sIngame.currentStage++;
+
+					sIngame.stageClock.restart();
+				}
 			}
 			break;
 			// CREDITS // ------------------------------
@@ -559,6 +575,10 @@ void Game::__sIngame::updateBullets(float deltaTime) {
 	}
 }
 
+float Game::__sIngame::getCurrentYPos() {
+	return stageOffsetStartY + stageClock.getElapsedTime().asSeconds() * 0.25f;
+}
+
 void Game::__sIngame::drawHUDText(const sf::Window& win,const Program& program) {
 	const int padRight = 20;
 
@@ -590,15 +610,16 @@ void Game::__sIngame::drawHUDText(const sf::Window& win,const Program& program) 
 }
 
 void Game::__sIngame::prepareStage(int stage) {
-	gameWorld->init(1024, stage);
+	gameWorld->init(16, stage);
 }
 
 bool Game::__sIngame::isStageFinished() {
-	return currentProgressY > gameWorld->getNDCHeight() + stageOffsetEndY;
-}
-void Game::__sIngame::startStage() {
-	currentProgressY = stageOffsetStartY;
+	return getCurrentYPos() > gameWorld->getNDCHeight() + stageOffsetEndY;
 }
 
-const float Game::__sIngame::stageOffsetEndY = 3.f;
-const float Game::__sIngame::stageOffsetStartY = 3.f;
+bool Game::__sIngame::isGameOver() {
+	return false;
+}
+
+const float Game::__sIngame::stageOffsetEndY = 1.f;
+const float Game::__sIngame::stageOffsetStartY = -4.f;

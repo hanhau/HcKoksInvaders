@@ -32,6 +32,12 @@ ProgramManager::ProgramManager()
 	mm_frag.loadFromFile("res/shaders/main_menu_frag.frag",Shader::ShaderType::Fragment);
 	add(ProgramEntry::MainMenuBackground, mm_vert, mm_frag);
 
+	// Ingame Background
+	Shader igBkg_vert, igBkg_frag;
+	igBkg_vert.loadFromFile("res/shaders/background_star_shader.vert",Shader::ShaderType::Vertex);
+	igBkg_frag.loadFromFile("res/shaders/background_star_shader.frag", Shader::ShaderType::Fragment);
+	add(ProgramEntry::IngameBackground, igBkg_vert, igBkg_frag);
+
 	// AmmunitionIcon
 	Shader ami_vert, ami_frag;
 	ami_vert.loadFromFile("res/shaders/AmmunitionIcon.vert",Shader::ShaderType::Vertex);

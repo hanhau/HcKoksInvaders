@@ -13,6 +13,8 @@ public:
 	BoundingBall(const glm::vec3 pos,const float radius);
 
 	bool intersects(const BoundingBall& b) const;
+	bool intersects(const glm::vec3& point) const;
+
 	const BoundingBall&& transform(const glm::mat4& mat) const;
 	const BoundingBall&& transform(const ModelPosition& modelPos) const;
 

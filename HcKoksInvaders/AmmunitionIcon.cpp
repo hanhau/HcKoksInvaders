@@ -42,8 +42,8 @@ void makeVertices(std::vector<ButtonVertex>& vertices,
 	{
 		// uv zero = bottom left
 		// 0.0 to 1.0
-		const float pad_x = 0.025f;
-		const float pad_y = pad_x * (pixelSize.y / pixelSize.x);
+		const float pad_x = 4.f * pixelSize.x;
+		const float pad_y = 4.f * pixelSize.y;
 		const float rNdc_x = radius * pixelSize.x;
 		const float rNdc_y = radius * pixelSize.y;
 

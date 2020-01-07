@@ -4,6 +4,7 @@ in vec2 fUV;
 in float fColAmount;
 
 layout (binding = 0) uniform sampler2D fTexture0;
+
 uniform vec3 fColor;
 uniform int fGrayImage;
 

@@ -1,13 +1,8 @@
 #version 330
 
-#define M_PI 3.14159265358979323846
+#define PI 3.14159265358979
 
-uniform float progress = 1 ;
 uniform float screenWidth;
-uniform float screenHeight;
-uniform vec3 baseColor = vec3(1.0,1.0,1.0);
-
-out vec4 res;
 
 float rand(vec2 c){
 	return fract(sin(dot(c.xy ,vec2(12.9898,78.233))) * 43758.5453);
@@ -17,8 +12,7 @@ float noise(vec2 p, float freq ){
 	float unit = screenWidth/freq;
 	vec2 ij = floor(p/unit);
 	vec2 xy = mod(p,unit)/unit;
-	//xy = 3.*xy*xy-2.*xy*xy*xy;
-	xy = .5*(1.-cos(M_PI*xy));
+	xy = .5*(1.-cos(PI*xy));
 	float a = rand((ij+vec2(0.,0.)));
 	float b = rand((ij+vec2(1.,0.)));
 	float c = rand((ij+vec2(0.,1.)));
@@ -29,10 +23,10 @@ float noise(vec2 p, float freq ){
 }
 
 float pNoise(vec2 p, int res){
-	float persistance = .75;
+	float persistance = .5;
 	float n = 0.;
 	float normK = 0.;
-	float f = 32.;
+	float f = 4.;
 	float amp = 1.;
 	int iCount = 0;
 	for (int i = 0; i<50; i++){
@@ -45,12 +39,4 @@ float pNoise(vec2 p, int res){
 	}
 	float nf = n/normK;
 	return nf*nf*nf*nf;
-}
-
-void main( void )
-{
-	float n = pNoise(vec2(gl_FragCoord.x,gl_FragCoord.y+progress),1024);
-	float n_far = pNoise(vec2(gl_FragCoord.x+640.f,gl_FragCoord.y+progress*0.67),256);
-	
-	res = mix(vec4(baseColor*n,1.0),vec4(vec3(1.0)*n_far,1.0),0.3);
 }

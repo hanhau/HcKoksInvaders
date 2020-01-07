@@ -16,7 +16,8 @@ public:
 		Bullet,
 		Button,
 		AmmunitionIcon,
-		Text
+		Text,
+		IngameBackground
 	};
 
 	ProgramManager();

@@ -10,6 +10,9 @@ BoundingBall::BoundingBall(const glm::vec3 pos,const float radius)  :
 bool BoundingBall::intersects(const BoundingBall& b) const {
 	return glm::distance(m_pos, b.getPos()) <= (m_radius + b.getRadius());
 }
+bool BoundingBall::intersects(const glm::vec3& point) const {
+	return glm::distance(m_pos, point) < m_radius;
+}
 
 const BoundingBall&& BoundingBall::transform(const ModelPosition& modelPos) const {
 	return transform(modelPos.getTransformationMatrix());
@@ -20,10 +23,10 @@ const BoundingBall&& BoundingBall::transform(const glm::mat4& mat) const {
 
 	const float transRadius = glm::distance(res_center,res_centerPR);
 
-	return std::move(BoundingBall(
+	return BoundingBall(
 		res_center,
 		transRadius
-	));
+	);
 }
 
 bool BoundingBall::isInViewport(const Camera& cam) const {

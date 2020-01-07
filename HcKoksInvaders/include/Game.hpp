@@ -57,14 +57,16 @@ private:
 		int currentStage;
 		int currentPoints;
 		int currentHealth;
+		sf::Clock stageClock;
+		float getCurrentYPos();
 
 		void drawHUDText(const sf::Window& win, const Program& program);
 		void prepareStage(int stage);
 
 		bool isStageFinished();
-		void startStage();
 
-		float currentProgressY;
+		bool isGameOver();
+
 		static const float stageOffsetStartY;
 		static const float stageOffsetEndY;
 

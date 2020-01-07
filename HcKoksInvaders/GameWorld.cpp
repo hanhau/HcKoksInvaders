@@ -12,7 +12,7 @@
 const int GameWorld::MinHeightInTiles = 15;
 const int GameWorld::WidthInTiles = 8;
 
-enum TileType {
+enum class TileType {
 	Empty,
 	Turret,
 	EnemySpaceShip
@@ -156,6 +156,45 @@ void GameWorld::update(const double deltaTime) {
 		for (auto& iter_column : iter_row) {
 			iter_column->update(deltaTime);
 		}
+	}
+}
+
+void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
+										 glm::vec3 camPos,
+										 float visibleOffsetYPositive,
+										 float visibleOffsetYNegative) 
+{
+	static const auto& mm = m_gameRef.getModelManager();
+	static const Model3D& modelTurret = mm.getModel("res/models/turret_head.obj");
+	static const Model3D& modelEnemySpaceShip = mm.getModel("res/models/ship1.obj");
+
+	for (const auto& iterTurret: m_enemyTurretTilesPtrs) {
+		if (iterTurret == nullptr)
+			continue;
+
+		if (iterTurret->getPos().y < camPos.y + visibleOffsetYPositive &&
+			iterTurret->getPos().y > camPos.y - abs(visibleOffsetYNegative)) 
+		{
+			std::list<Bullet>::iterator iterBullet = bullets.begin();
+
+			while (iterBullet != bullets.end()) {
+				auto bb = modelTurret.getOuterBB().transform(iterTurret->getHeadPos());
+
+				if (bb.intersects(iterBullet->m_pos)) {
+					std::cout << 
+						"HIT: B=" << 
+						iterBullet->m_pos.x << "/" << iterBullet->m_pos.y << "/" << iterBullet->m_pos.z <<
+						" ___ " << bb.getPos().x << "/" << bb.getPos().y << "  " << bb.getRadius() << "\n";
+					iterBullet = bullets.erase(iterBullet);
+				}
+				else
+					++iterBullet;
+			}
+		}
+	}
+	for (const auto& iter : m_enemySpaceshipTilesPtrs) {
+		if (iter == nullptr)
+			continue;
 	}
 }
 
