@@ -341,6 +341,7 @@ void Game::run() {
 
 				if (sIngame.isStageFinished()) {
 					std::cout << "Stage finished\n";
+					sIngame.bullets.clear();
 					sIngame.prepareStage(sIngame.currentStage + 1);
 					sIngame.currentStage++;
 
