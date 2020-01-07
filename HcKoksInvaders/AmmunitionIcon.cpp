@@ -10,7 +10,7 @@ struct ButtonVertex {
 void makeVertices(std::vector<ButtonVertex>& vertices,
 				  const float radius,
 				  int& minDotsAmount,int& maxDotsAmount,
-			      const float aspectRatio) 
+			      glm::vec2 pixelSize) 
 {
 	vertices.clear();
 
@@ -26,8 +26,8 @@ void makeVertices(std::vector<ButtonVertex>& vertices,
 		for (float i = 90.f; i <= 360.f+90.f; i+= 360.f/100.f) {
 			vertices.push_back(ButtonVertex{
 				sf::Vector2f(
-					cos(glm::radians(i))*radius,
-					sin(glm::radians(i))*radius
+					cos(glm::radians(i))*radius*pixelSize.x,
+					sin(glm::radians(i))*radius*pixelSize.y
 				),
 				sf::Vector2f(0.f,0.f),
 				1.0f
@@ -42,36 +42,39 @@ void makeVertices(std::vector<ButtonVertex>& vertices,
 	{
 		// uv zero = bottom left
 		// 0.0 to 1.0
-		const float pad = 0.025f;
+		const float pad_x = 0.025f;
+		const float pad_y = pad_x * (pixelSize.y / pixelSize.x);
+		const float rNdc_x = radius * pixelSize.x;
+		const float rNdc_y = radius * pixelSize.y;
 
 		vertices.push_back(ButtonVertex{
-			sf::Vector2f(-radius+pad,radius-pad),
+			sf::Vector2f(-rNdc_x+pad_x,rNdc_y -pad_y),
 			sf::Vector2f(0.f,1.f),
 			0.f
 		});
 		vertices.push_back(ButtonVertex{
-			sf::Vector2f(radius-pad,radius-pad),
+			sf::Vector2f(rNdc_x -pad_x,rNdc_y -pad_y),
 			sf::Vector2f(1.f,1.f),
 			0.f
 		});
 		vertices.push_back(ButtonVertex{
-			sf::Vector2f(-radius+pad,-radius+pad),
+			sf::Vector2f(-rNdc_x +pad_x,-rNdc_y +pad_y),
 			sf::Vector2f(0.f,0.f),
 			0.f
 		});
 
 		vertices.push_back(ButtonVertex{
-			sf::Vector2f(radius-pad,radius-pad),
+			sf::Vector2f(rNdc_x -pad_x,rNdc_y -pad_y),
 			sf::Vector2f(1.f,1.f),
 			0.f
 		});
 		vertices.push_back(ButtonVertex{
-			sf::Vector2f(radius-pad,-radius+pad),
+			sf::Vector2f(rNdc_x -pad_x,-rNdc_y +pad_y),
 			sf::Vector2f(1.f,0.f),
 			0.f
 		});
 		vertices.push_back(ButtonVertex{
-			sf::Vector2f(-radius+pad,-radius+pad),
+			sf::Vector2f(-rNdc_x +pad_x,-rNdc_y+pad_y),
 			sf::Vector2f(0.f,0.f),
 			0.f
 		});
@@ -81,13 +84,12 @@ void makeVertices(std::vector<ButtonVertex>& vertices,
 	for (auto& iter : vertices) {
 		iter.uv.x = 1.0f - iter.uv.x;
 		iter.uv.y = 1.0f - iter.uv.y;
-		iter.pos.y *= aspectRatio;
 	}
 }
 
 AmmunitionIcon::AmmunitionIcon(const std::string pathIcon, 
-							   sf::Color outlineColor, 
-							   const float radius, sf::Vector2f pos,
+							   glm::vec4 outlineColor, 
+							   const int radius, glm::ivec2 pos,
 							   TextureManager& texMgr, const sf::Window& window) :
 	m_col(outlineColor),
 	m_radius(radius),
@@ -95,6 +97,11 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 	m_minDotsAmount(0),
 	m_maxDotsAmount(0)
 {	
+	const glm::vec2 pixelSize = glm::vec2(
+		2.f/(float)window.getSize().x,
+		2.f/(float)window.getSize().y
+	);
+
 	if (!texMgr.exists(pathIcon))
 		throw "Texture not found: " + std::string(__FUNCSIG__);
 	gl_textureID = texMgr.get(pathIcon).getNativeHandle();
@@ -104,7 +111,7 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 				 radius,
 				 m_minDotsAmount,
 				 m_maxDotsAmount,
-				 (float)window.getSize().x/(float)window.getSize().y);
+				 pixelSize);
 
 	glGenVertexArrays(1, &gl_vao);
 	glGenBuffers(1, &gl_vbo);
@@ -129,16 +136,24 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 	glBindVertexArray(0);
 }
 
-void AmmunitionIcon::draw(float percentageFull, const Program& program) {
+void AmmunitionIcon::draw(const sf::Window& win, 
+						  float percentageFull, 
+						  const Program& program) 
+{
 	percentageFull = std::clamp(percentageFull, 0.f, 100.f);
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	const glm::vec2 renderPos = glm::vec2(
+		-1.f + (m_radius + m_position.x) * (2.f/(float)win.getSize().x),
+		+1.f - (m_radius + m_position.y) * (2.f/(float)win.getSize().y)
+	);
+
 	program.bind();
 	program.setUniform("fColor", sf::Vector3f(m_col.r, m_col.g, m_col.b));
-	program.setUniform("uPos", m_position);
+	program.setUniform("uPos", sf::Vector2f(renderPos.x,renderPos.y));
 
 	if (percentageFull == 0.0f)
 		program.setUniform("fGrayImage",1);

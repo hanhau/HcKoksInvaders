@@ -1,16 +1,15 @@
 #pragma once
 #include <string>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Window.hpp>
 #include "TextureManager.hpp"
 #include <Program.hpp>
 
 class AmmunitionIcon
 {
 	// setup
-	sf::Vector2f m_position;
-	float m_radius;
-	sf::Color m_col;
+	const glm::ivec2 m_position;
+	const float m_radius;
+	const glm::vec4 m_col;
 
 	int m_minDotsAmount;
 	int m_maxDotsAmount;
@@ -22,11 +21,15 @@ class AmmunitionIcon
 public:
 	AmmunitionIcon(
 		const std::string pathIcon, 
-		sf::Color outlineColor, 
-		const float radius, sf::Vector2f pos,
+		glm::vec4 outlineColor, 
+		const int radius, glm::ivec2 pos,
 		TextureManager& texMgr,
 		const sf::Window& window
 	);
 
-	void draw(float percentageFull,const Program& program);
+	void draw(
+		const sf::Window& win,
+		float percentageFull,
+		const Program& program
+	);
 };

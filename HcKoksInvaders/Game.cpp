@@ -84,33 +84,33 @@ void Game::init(const GameLaunchOptions& glo) {
 		// AmmunitionIcons
 		sIngame.MunitionIconPistol = new AmmunitionIcon(
 			"res/images/icon_munition_pistol.png",
-			sf::Color::Blue,
-			0.1f,
-			sf::Vector2f(-0.85f, 0.9f),
+			glm::vec4(1.f),
+			40,
+			glm::ivec2(10,10),
 			*textureManager,
 			window
 		);
 		sIngame.MunitionIconSMG = new AmmunitionIcon(
 			"res/images/icon_munition_smg.png",
-			sf::Color::Yellow,
-			0.1f,
-			sf::Vector2f(-0.6f, 0.9f),
+			glm::vec4(1.f),
+			40,
+			glm::ivec2(100, 10),
 			*textureManager,
 			window
 		);
 		sIngame.MunitionIconRocket = new AmmunitionIcon(
 			"res/images/icon_munition_rocket.png",
-			sf::Color::Green,
-			0.1f,
-			sf::Vector2f(-0.35f, 0.9f),
+			glm::vec4(1.f),
+			40,
+			glm::ivec2(190, 10),
 			*textureManager,
 			window
 		);
 		sIngame.MunitionIconShotgun = new AmmunitionIcon(
 			"res/images/icon_munition_shotgun.png",
-			sf::Color::Red,
-			0.1f,
-			sf::Vector2f(-0.1f, 0.9f),
+			glm::vec4(1.f),
+			40,
+			glm::ivec2(280, 10),
 			*textureManager,
 			window
 		);
@@ -326,10 +326,10 @@ void Game::run() {
 
 				sIngame.drawHUDText(window, textProg);
 
-				sIngame.MunitionIconPistol->draw(100.f, aiProg);
-				sIngame.MunitionIconRocket->draw(sIngame.playerShip->getRocketAmmoPercent(), aiProg);
-				sIngame.MunitionIconShotgun->draw(sIngame.playerShip->getShotgunAmmoPercent(), aiProg);
-				sIngame.MunitionIconSMG->draw(sIngame.playerShip->getSMGAmmoPercent(), aiProg);
+				sIngame.MunitionIconPistol->draw(window,100.f, aiProg);
+				sIngame.MunitionIconRocket->draw(window,sIngame.playerShip->getRocketAmmoPercent(), aiProg);
+				sIngame.MunitionIconShotgun->draw(window,sIngame.playerShip->getShotgunAmmoPercent(), aiProg);
+				sIngame.MunitionIconSMG->draw(window,sIngame.playerShip->getSMGAmmoPercent(), aiProg);
 			}
 			break;
 			// CREDITS // ------------------------------

@@ -5,12 +5,12 @@ void SoundBufferManager::add(std::string path)
 {
 	try {
 		if (exists(path))
-			throw "Sound does already exists @ SoundBufferManager::add(path)";
+			throw std::string("Sound does already exists @ " + std::string(__FUNCSIG__));
 
 		m_soundBuffers.emplace(path,sf::SoundBuffer());
 
 		if (!m_soundBuffers[path].loadFromFile(path))
-			throw "Unable to load Sound @ SoundBufferManager::add(path)";
+			throw std::string("Unable to load Sound @ " + std::string(__FUNCSIG__));
 	}
 	catch (std::string e)
 	{
