@@ -168,7 +168,7 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 	static const Model3D& modelTurret = mm.getModel("res/models/turret_head.obj");
 	static const Model3D& modelEnemySpaceShip = mm.getModel("res/models/ship1.obj");
 
-	for (const auto& iterTurret: m_enemyTurretTilesPtrs) {
+	for (auto& iterTurret: m_enemyTurretTilesPtrs) {
 		if (iterTurret == nullptr)
 			continue;
 
@@ -178,6 +178,9 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 			std::list<Bullet>::iterator iterBullet = bullets.begin();
 
 			while (iterBullet != bullets.end()) {
+				if (iterTurret == nullptr)
+					break;
+
 				auto bb = modelTurret.getOuterBB().transform(iterTurret->getHeadPos());
 
 				if (bb.intersects(iterBullet->m_pos)) {
@@ -185,6 +188,11 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 						"HIT: B=" << 
 						iterBullet->m_pos.x << "/" << iterBullet->m_pos.y << "/" << iterBullet->m_pos.z <<
 						" ___ " << bb.getPos().x << "/" << bb.getPos().y << "  " << bb.getRadius() << "\n";
+
+					iterTurret->takeDamage(iterBullet->m_damage);
+					if (iterTurret->getHealth() <= 0.0f)
+						iterTurret = nullptr;
+
 					iterBullet = bullets.erase(iterBullet);
 				}
 				else
@@ -215,6 +223,9 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 
 	int drawnTurrets = 0;
 	for (const auto& iter: m_enemyTurretTilesPtrs) {
+		if (iter == nullptr)
+			continue;
+
 		const float dy = abs(spaceShipPos.y - iter->getPos().y);
 		const float dx = spaceShipPos.x - iter->getPos().x;
 

@@ -315,7 +315,7 @@ void Game::run() {
 				sIngame.gameWorld->updateOnBulletCollisions(
 					sIngame.bullets,
 					sIngame.playerShip->getPos(),
-					3.5f, 2.f
+					4.5f, 1.f
 				);
 				br.drawInstances(sIngame.bullets, cam1);
 

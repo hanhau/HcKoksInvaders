@@ -31,6 +31,9 @@ public:
 	void update(double deltaTime);
 	void draw();
 
+	void takeDamage(float dmg);
+	float getHealth();
+
 	const glm::vec3 getPos() const;
 	ModelPosition& getBasePos();
 	ModelPosition& getHeadPos();

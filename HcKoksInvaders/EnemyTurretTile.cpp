@@ -46,6 +46,13 @@ void EnemyTurretTile::update(double deltaTime)
 
 }
 
+void EnemyTurretTile::takeDamage(float dmg) {
+	m_health -= dmg;
+}
+float EnemyTurretTile::getHealth() {
+	return m_health;
+}
+
 void EnemyTurretTile::draw() 
 {
 
