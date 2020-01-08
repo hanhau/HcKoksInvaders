@@ -162,7 +162,8 @@ void GameWorld::update(const double deltaTime) {
 void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 										 glm::vec3 camPos,
 										 float visibleOffsetYPositive,
-										 float visibleOffsetYNegative) 
+										 float visibleOffsetYNegative,
+										 int& points) 
 {
 	static const auto& mm = m_gameRef.getModelManager();
 	static const Model3D& modelTurret = mm.getModel("res/models/turret_head.obj");
@@ -190,8 +191,10 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 						" ___ " << bb.getPos().x << "/" << bb.getPos().y << "  " << bb.getRadius() << "\n";
 
 					iterTurret->takeDamage(iterBullet->m_damage);
-					if (iterTurret->getHealth() <= 0.0f)
+					if (iterTurret->getHealth() <= 0.0f) {
 						iterTurret = nullptr;
+						points += 25;
+					}
 
 					iterBullet = bullets.erase(iterBullet);
 				}

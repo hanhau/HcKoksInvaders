@@ -30,7 +30,8 @@ public:
 	void updateOnBulletCollisions(std::list<Bullet>& bullets,
 								  glm::vec3 camPos, 
 								  float visibleOffsetYPositive,
-								  float visibleOffsetYNegative);
+								  float visibleOffsetYNegative,
+								  int& points);
 	void draw(const Camera& camera,Cubemap& cubemap);
 
 	const float getNDCHeight();

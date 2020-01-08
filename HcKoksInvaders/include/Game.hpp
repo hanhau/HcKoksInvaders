@@ -11,6 +11,7 @@
 #include "AmmunitionIcon.hpp"
 #include "Button.hpp"
 #include "Bullet.hpp"
+#include "BulletRenderer.hpp"
 
 class TileEntityBase;
 class GameWorld;
@@ -44,32 +45,33 @@ private:
 		AmmunitionIcon* MunitionIconSMG;
 		AmmunitionIcon* MunitionIconRocket;
 		AmmunitionIcon* MunitionIconShotgun;
-
+		
 		Text* textHealth;
 		Text* textPoints;
 		Text* textStage;
-
+		
 		std::list<Bullet> bullets;
-		void updateBullets(float deltaTime);
+		
 		GameWorld* gameWorld;
 		StarShip* playerShip;
+
+		BulletRenderer* bulletRenderer;
 
 		int currentStage;
 		int currentPoints;
 		int currentHealth;
 		sf::Clock stageClock;
+		
+		void updateBullets(float deltaTime);
 		float getCurrentYPos();
-
 		void drawHUDText(const sf::Window& win, const Program& program);
 		void prepareStage(int stage);
-
 		bool isStageFinished();
-
 		bool isGameOver();
 
 		static const float stageOffsetStartY;
 		static const float stageOffsetEndY;
-
+		static const int stageHeight;
 	} sIngame;
 
 	struct __sMenu {
@@ -116,6 +118,7 @@ public:
 	StarShip* getStarShip();
 
 	void addBullet(Bullet&& bullet);
+	void startGame();
 private:
 	GameState m_gameState;
 

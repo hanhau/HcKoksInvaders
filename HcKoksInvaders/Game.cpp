@@ -131,10 +131,10 @@ void Game::init(const GameLaunchOptions& glo) {
 			glm::ivec2(50, windowHeight-260),
 		48);
 		sMenu.buttonPlay->onClick = std::function<void()>([&]() {
-			m_gameClock.restart();
 			static sf::Sound s(soundBufferManager->get("res/audio/select.flac"));
 			s.play();
-			m_gameState = GameState::Ingame;
+			
+			startGame();
 		});
 
 		// CREDITS
@@ -196,7 +196,7 @@ void Game::init(const GameLaunchOptions& glo) {
 		// NOCHMAL
 		sGameOver.buttonNewGame = new Button(window, "NOCHMAL", glm::ivec2(0,window.getSize().y/2-64), 44, true);
 		sGameOver.buttonNewGame->onClick = std::function<void()>([&]() {
-			m_gameState = GameState::Ingame;
+			startGame();
 		});
 
 		// HAUPTSCHIRM
@@ -219,6 +219,18 @@ void Game::init(const GameLaunchOptions& glo) {
 	{
 		sMenu.music.openFromFile("res/audio/main_menu.ogg");
 		sCredits.music.openFromFile("res/audio/credits.flac");
+	}
+
+	// Init sIngame
+	{
+		sIngame.playerShip = new StarShip(*this);
+		sIngame.playerShip->addRocketAmmo(100);
+		sIngame.playerShip->addShotgunAmmo(100);
+		sIngame.playerShip->addSMGAmmo(100);
+
+		sIngame.gameWorld = new GameWorld(*this);
+
+		sIngame.bulletRenderer = new BulletRenderer(*programManager);
 	}
 
 	// Init GameState
@@ -246,16 +258,6 @@ void Game::run() {
 
 	bool wireframe = false;
 	double lastFrameTime = 0.0f;
-
-	sIngame.playerShip = new StarShip(*this);
-	sIngame.playerShip->addRocketAmmo(100);
-	sIngame.playerShip->addShotgunAmmo(100);
-	sIngame.playerShip->addSMGAmmo(100);
-
-	sIngame.gameWorld = new GameWorld(*this);
-	sIngame.gameWorld->init(16, 2);
-
-	BulletRenderer br(*programManager);
 
 	window.setKeyRepeatEnabled(true);
 
@@ -315,9 +317,10 @@ void Game::run() {
 				sIngame.gameWorld->updateOnBulletCollisions(
 					sIngame.bullets,
 					sIngame.playerShip->getPos(),
-					4.5f, 1.f
+					4.5f, 1.f,
+					sIngame.currentPoints
 				);
-				br.drawInstances(sIngame.bullets, cam1);
+				sIngame.bulletRenderer->drawInstances(sIngame.bullets, cam1);
 
 				sIngame.playerShip->updateSoundBuffers();
 				sIngame.playerShip->updateOnUserInput(lastFrameTime);
@@ -404,6 +407,19 @@ StarShip* Game::getStarShip() {
 
 void Game::addBullet(Bullet&& bullet) {
 	sIngame.bullets.push_back(bullet);
+}
+
+void Game::startGame() {
+	sIngame.bullets.clear();
+
+	sIngame.currentStage = 1;
+	sIngame.currentPoints = 0;
+	sIngame.currentHealth = 100;
+
+	sIngame.gameWorld->init(__sIngame::stageHeight, 1);
+
+	sIngame.stageClock.restart();
+	m_gameState = GameState::Ingame;
 }
 
 // private functions
@@ -611,7 +627,7 @@ void Game::__sIngame::drawHUDText(const sf::Window& win,const Program& program) 
 }
 
 void Game::__sIngame::prepareStage(int stage) {
-	gameWorld->init(16, stage);
+	gameWorld->init(stageHeight, stage);
 }
 
 bool Game::__sIngame::isStageFinished() {
@@ -624,3 +640,4 @@ bool Game::__sIngame::isGameOver() {
 
 const float Game::__sIngame::stageOffsetEndY = 1.f;
 const float Game::__sIngame::stageOffsetStartY = -4.f;
+const int Game::__sIngame::stageHeight = 16;
