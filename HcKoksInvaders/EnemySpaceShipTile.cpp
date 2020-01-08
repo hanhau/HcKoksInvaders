@@ -12,10 +12,9 @@ EnemySpaceShipTile::EnemySpaceShipTile(
 			glm::vec3(scale)
 		)
 	)),
-	m_pos(pos)
-{
-
-}
+	m_pos(pos),
+	m_health(100.f)
+{}
 
 void EnemySpaceShipTile::update(double deltaTime) {
 	
@@ -24,6 +23,13 @@ void EnemySpaceShipTile::update(double deltaTime) {
 void EnemySpaceShipTile::draw() {
 
 };
+
+void EnemySpaceShipTile::takeDamage(float dmg) {
+	m_health -= dmg;
+}
+float EnemySpaceShipTile::getHealth() {
+	return m_health;
+}
 
 const ModelPosition& EnemySpaceShipTile::getSpaceshipPos() {
 	return m_shipPos;

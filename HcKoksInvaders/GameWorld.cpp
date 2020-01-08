@@ -182,13 +182,16 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 				if (iterTurret == nullptr)
 					break;
 
+				if (iterBullet->m_owner == Bullet::Owner::Enemy)
+					continue;
+
 				auto bb = modelTurret.getOuterBB().transform(iterTurret->getHeadPos());
 
 				if (bb.intersects(iterBullet->m_pos)) {
 					std::cout << 
-						"HIT: B=" << 
+						"HIT_TR: B " << 
 						iterBullet->m_pos.x << "/" << iterBullet->m_pos.y << "/" << iterBullet->m_pos.z <<
-						" ___ " << bb.getPos().x << "/" << bb.getPos().y << "  " << bb.getRadius() << "\n";
+						" @ " << bb.getPos().x << "/" << bb.getPos().y << " R:" << bb.getRadius() << "\n";
 
 					iterTurret->takeDamage(iterBullet->m_damage);
 					if (iterTurret->getHealth() <= 0.0f) {
@@ -203,9 +206,42 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 			}
 		}
 	}
-	for (const auto& iter : m_enemySpaceshipTilesPtrs) {
-		if (iter == nullptr)
+	for (auto& iterSpaceship : m_enemySpaceshipTilesPtrs) {
+		if (iterSpaceship == nullptr)
 			continue;
+
+		if (iterSpaceship->getPos().y < camPos.y + visibleOffsetYPositive &&
+			iterSpaceship->getPos().y > camPos.y - abs(visibleOffsetYNegative))
+		{
+			std::list<Bullet>::iterator iterBullet = bullets.begin();
+
+			while (iterBullet != bullets.end()) {
+				if (iterSpaceship == nullptr)
+					break;
+
+				if (iterBullet->m_owner == Bullet::Owner::Enemy)
+					continue;
+
+				auto bb = modelEnemySpaceShip.getOuterBB().transform(iterSpaceship->getSpaceshipPos());
+
+				if (bb.intersects(iterBullet->m_pos)) {
+					std::cout <<
+						"HIT_SS: B " <<
+						iterBullet->m_pos.x << "/" << iterBullet->m_pos.y << "/" << iterBullet->m_pos.z <<
+						" @ " << bb.getPos().x << "/" << bb.getPos().y << " R:" << bb.getRadius() << "\n";
+
+					iterSpaceship->takeDamage(iterBullet->m_damage);
+					if (iterSpaceship->getHealth() <= 0.0f) {
+						iterSpaceship = nullptr;
+						points += 25;
+					}
+
+					iterBullet = bullets.erase(iterBullet);
+				}
+				else
+					++iterBullet;
+			}
+		}
 	}
 }
 
@@ -229,12 +265,12 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 		if (iter == nullptr)
 			continue;
 
-		const float dy = abs(spaceShipPos.y - iter->getPos().y);
+		const float dy = spaceShipPos.y - iter->getPos().y;
 		const float dx = spaceShipPos.x - iter->getPos().x;
 
 		if (dy >= aabb_relMiny && dy <= aabb_relMaxy) 
 		{
-			const float ratio = dx / dy;
+			const float ratio = dx / abs(dy);
 			const float angle = glm::degrees(atanf(ratio));
 
 			iter->getHeadPos().setRotationMatrix(
@@ -262,7 +298,10 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 
 	int drawnSpaceShips = 0;
 	for (const auto& iter: m_enemySpaceshipTilesPtrs) {
-		const float dy = abs(spaceShipPos.y - iter->getPos().y);
+		if (iter == nullptr)
+			continue;
+
+		const float dy = spaceShipPos.y - iter->getPos().y;
 
 		if (dy >= aabb_relMiny && dy <= aabb_relMaxy)
 		{

@@ -5,7 +5,7 @@
 #include <SFML/Window/Window.hpp>
 
 namespace util {
-	inline void checkGlCalls(const char* func_name) {
+	inline void checkGlCalls(const std::string func_name) {
 		#ifdef RELEASE_BUILD
 			return;
 		#else

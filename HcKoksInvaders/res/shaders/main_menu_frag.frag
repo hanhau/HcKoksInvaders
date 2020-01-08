@@ -13,7 +13,7 @@ float vDrop(vec2 uv,float t)
     uv.x = uv.x*128.0f;						// H-Count
     float dx = fract(uv.x);
     uv.x = floor(uv.x);
-    uv.y *= 0.125f;							// stretch
+    uv.y *= 0.225f;							// stretch
     float o=sin(uv.x*215.4f);				// offset
     float s=cos(uv.x*33.1f)*.3f +.7f;			// speed
     float trail = mix(95.0f,35.0f,s);			// trail length

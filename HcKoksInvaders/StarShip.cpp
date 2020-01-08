@@ -139,7 +139,7 @@ void StarShip::processShoot() {
 				m_gameRef.addBullet(Bullet{
 					bulletStartPos,
 					glm::vec3(0.f,3.5f,0.f),
-					20.f,
+					33.f,
 					Bullet::Owner::Player
 				});
 
@@ -157,7 +157,7 @@ void StarShip::processShoot() {
 					// Add Bullet
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
-						glm::vec3(0.f,1.2f,0.f),
+						glm::vec3(0.f,5.2f,0.f),
 						100.f,
 						Bullet::Owner::Player
 					});
@@ -176,19 +176,19 @@ void StarShip::processShoot() {
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
 						glm::vec3(0.f,4.2f,0.f),
-						13.f,
+						50.f,
 						Bullet::Owner::Player
 						});
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
 						glm::vec3(0.2f,4.2f,0.f),
-						13.f,
+						50.f,
 						Bullet::Owner::Player
 						});
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
 						glm::vec3(-0.2f,4.2f,0.f),
-						13.f,
+						50.f,
 						Bullet::Owner::Player
 						});
 
@@ -211,7 +211,7 @@ void StarShip::processShoot() {
 					m_gameRef.addBullet(Bullet{
 						bulletStartPos,
 						glm::vec3(0.f,3.75f,0.f),
-						16.f,
+						30.f,
 						Bullet::Owner::Player
 					});
 

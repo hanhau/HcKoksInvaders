@@ -12,6 +12,7 @@
 #include "Button.hpp"
 #include "Bullet.hpp"
 #include "BulletRenderer.hpp"
+#include "HighscoreManager.hpp"
 
 class TileEntityBase;
 class GameWorld;
@@ -81,7 +82,15 @@ private:
 		std::vector<Button*> buttonVec;
 
 		Text* textTitle;
+		Text* textHighscore;
+		Text* textHighscorePoints;
+		Text* textHighscoreStages;
+
 		sf::Music music;
+
+		int highscorePoints = 0;
+		int highscoreStages = 0;
+		void refreshHighscore();
 	} sMenu;
 
 	struct __sCredits {

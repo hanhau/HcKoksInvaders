@@ -129,18 +129,15 @@
     <ClCompile Include="StarShip.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="HighscoreManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\GameObject.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="include\Util.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Cubemap.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Turret.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="include\ModelManager.hpp">
@@ -214,6 +211,15 @@
     </ClInclude>
     <ClInclude Include="include\Game.hpp">
       <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HighscoreManager.hpp">
+      <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Cubemap.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkManager.hpp">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

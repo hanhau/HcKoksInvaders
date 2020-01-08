@@ -23,13 +23,13 @@ class Text::impl {
 public:
 	std::array<Char, 128> chars = {};
 	
-	GLuint gl_tex2DArray = 0;
+	GLuint gl_tex2DArray;
 	GLuint gl_vao;
 	GLuint gl_vbo;
 
 	int pixelHeight;
-	std::string text = "";
-	glm::ivec2 pos = glm::ivec2();
+	std::string text;
+	glm::ivec2 pos;
 
 	std::vector<CharVertex> createVertices(glm::vec2 pxsize) {
 		float x = 0.0f;
@@ -76,6 +76,15 @@ public:
 
 		return std::move(verts);
 	}
+
+	inline impl() :
+		gl_tex2DArray(0),
+		gl_vao(0),
+		gl_vbo(0),
+		pixelHeight(0),
+		text(""),
+		pos(glm::ivec2(0))
+	{}
 };
 
 constexpr static unsigned int _maxChars = 64 * 4;
@@ -86,14 +95,11 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 		if(iter > 127)
 			std::cout << "Text contains invalid char '" << iter << "'\n";
 
-	util::checkGlCalls("");
 
 	m_impl = new Text::impl();
 	m_impl->pos = posInPixel + glm::ivec2(0,pixelheight);
 	m_impl->text = text;
 	m_impl->pixelHeight = pixelheight;
-
-	util::checkGlCalls("texstart");
 
 	FT_Library ft{};
 	FT_Face face{};
@@ -113,16 +119,23 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 
 	glGenTextures(1, &m_impl->gl_tex2DArray);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, m_impl->gl_tex2DArray);
+	util::checkGlCalls("glCreate/Bind Texture @ " + std::string(__FUNCSIG__));
+	
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	util::checkGlCalls("glPixelStorei @ " + std::string(__FUNCSIG__));
 
 	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1,GL_R8, pixelheight, pixelheight, 128);
+	util::checkGlCalls("glTexStorage3D @ " + std::string(__FUNCSIG__));
+
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	util::checkGlCalls("glTexParameteri @ " + std::string(__FUNCSIG__));
 
 	for (unsigned char c = 0; c <= 127; c++) {
-		FT_Load_Char(face, c, FT_LOAD_RENDER);
+		if(FT_Load_Char(face, c, FT_LOAD_RENDER))
+			continue;
 
 		m_impl->chars[c].size = glm::ivec2(
 			face->glyph->bitmap.width,
@@ -145,6 +158,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 			1, GL_RED, GL_UNSIGNED_BYTE,
 			clearBuffer
 		);
+		util::checkGlCalls(std::to_string(c) + " " + text + " glTexSubImage3D clear @ " + std::string(__FUNCSIG__));
 
 		// insert layer
 		glTexSubImage3D(
@@ -153,13 +167,14 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 			0, // xoffset
 			0, // yoffset
 			c, // zoffset
-			m_impl->chars[c].size.x, // width
-			m_impl->chars[c].size.y, // height
+			std::clamp(m_impl->chars[c].size.x,0,pixelheight), // width
+			std::clamp(m_impl->chars[c].size.y,0,pixelheight), // height
 			1, // depth
 			GL_RED, // format
 			GL_UNSIGNED_BYTE, // type
 			face->glyph->bitmap.buffer // data
 		);
+		util::checkGlCalls(std::to_string(c) + " " + text + " glTexSubImage3D fill @ " + std::string(__FUNCSIG__));
 	}
 
 	FT_Done_Face(face);
@@ -184,7 +199,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls((text + " " + std::string(__FUNCSIG__)).c_str());
 }
 
 void Text::setText(const std::string text) {

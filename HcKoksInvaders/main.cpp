@@ -1,8 +1,9 @@
-#include <SFML/Graphics.hpp>
 #include "include/Game.hpp"
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <Windows.h>
 #include <SFML/Audio.hpp>
+#include "include/NetworkManager.hpp"
 
 #ifdef RELEASE_BUILD
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
@@ -10,6 +11,8 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLin
 int main()
 #endif
 {
+	NetworkManager::init();
+
 	GameLaunchOptions glo;
 
 	int choice = MessageBoxW(
@@ -45,5 +48,6 @@ int main()
 	game.run();
 	game.exit();
 
+	NetworkManager::shutdown();
 	return 0;
 }

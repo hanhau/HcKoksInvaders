@@ -166,10 +166,12 @@
     <ClCompile Include="EnemyTurretTile.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameWorld.cpp" />
+    <ClCompile Include="HighscoreManager.cpp" />
     <ClCompile Include="InstanceBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelManager.cpp" />
+    <ClCompile Include="NetworkManager.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ProgramManager.cpp" />
@@ -193,12 +195,13 @@
     <ClInclude Include="include\EnemySpaceShipTile.hpp" />
     <ClInclude Include="include\EnemyTurretTile.hpp" />
     <ClInclude Include="include\Game.hpp" />
-    <ClInclude Include="include\GameObject.hpp" />
     <ClInclude Include="include\GameWorld.hpp" />
+    <ClInclude Include="include\HighscoreManager.hpp" />
     <ClInclude Include="include\InstanceBuffer.hpp" />
     <ClInclude Include="include\Model.hpp" />
     <ClInclude Include="include\ModelManager.hpp" />
     <ClInclude Include="include\ModelPosition.hpp" />
+    <ClInclude Include="include\NetworkManager.hpp" />
     <ClInclude Include="include\Program.hpp" />
     <ClInclude Include="include\ProgramManager.hpp" />
     <ClInclude Include="include\Shader.hpp" />
@@ -208,7 +211,6 @@
     <ClInclude Include="include\Text.hpp" />
     <ClInclude Include="include\TextureManager.hpp" />
     <ClInclude Include="include\TileEntityBase.hpp" />
-    <ClInclude Include="include\Turret.hpp" />
     <ClInclude Include="include\Util.hpp" />
   </ItemGroup>
   <ItemGroup>

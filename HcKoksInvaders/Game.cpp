@@ -174,6 +174,10 @@ void Game::init(const GameLaunchOptions& glo) {
 
 		// Text
 		sMenu.textTitle = new Text("HCKOKSINVADERS", 43, glm::ivec2(20,20));
+
+		sMenu.textHighscore = new Text("HIGHSCORE", 38, glm::ivec2(0, windowHeight / 2.f - 42));
+		sMenu.textHighscorePoints = new Text("123423 Punkte", 40, glm::ivec2(0, windowHeight / 2.f));
+		sMenu.textHighscoreStages = new Text("999 Stages", 36, glm::ivec2(0, windowHeight / 2.f + 44));
 	}
 
 	// Load Credits UI
@@ -241,6 +245,7 @@ void Game::run() {
 	sMenu.music.setLoop(true);
 	sMenu.music.setVolume(100);
 	sMenu.music.play();
+	sMenu.refreshHighscore();
 
 	sCredits.music.setLoop(true);
 	sCredits.music.setVolume(0);
@@ -309,6 +314,13 @@ void Game::run() {
 			// INGAME // -------------------------------
 			case GameState::Ingame:
 			{			
+				static StarBackground starBkg;
+				starBkg.draw(
+					window, 
+					programManager->get(ProgramManager::ProgramEntry::IngameBackground), 
+					m_gameClock.getElapsedTime().asSeconds()
+				);
+
 				auto cpos = sIngame.playerShip->getPos();
 				sIngame.playerShip->setPos(glm::vec3(cpos.x, sIngame.getCurrentYPos(), cpos.z));
 				cam1.setCameraPos(glm::vec3(0, sIngame.getCurrentYPos() - 0.5f, 5));
@@ -339,7 +351,10 @@ void Game::run() {
 				sIngame.MunitionIconSMG->draw(window,sIngame.playerShip->getSMGAmmoPercent(), aiProg);
 
 				if (sIngame.isGameOver()) {
-					
+					HighscoreManager::updateEntry(
+						sIngame.currentPoints, 
+						sIngame.currentStage
+					);
 				}
 
 				if (sIngame.isStageFinished()) {
@@ -425,7 +440,7 @@ void Game::startGame() {
 // private functions
 void Game::drawFpsCounter(sf::Time timeElapsed) {
 	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
-	static Text text = Text("",18,glm::ivec2(2,2));
+	static Text text = Text("n",18,glm::ivec2(2,2));
 
 	text.setText(std::to_string((int)(1'000'000.0/(double)std::max((unsigned long long)timeElapsed.asMicroseconds(),1ull))));
 	text.draw(window, textProg);
@@ -458,12 +473,22 @@ void Game::drawMainMenu() {
 	for (auto& iter : sMenu.buttonVec)
 		iter->draw(window, *programManager);
 
-	
 	sMenu.textTitle->draw(window, textProg, glm::vec3(
 		abs(cosf(secs * 2.0f)),
 		abs(cosf(secs * 2.0f + glm::radians(120.f))),
 		abs(cosf(secs * 2.0f + glm::radians(240.f)))
 	));
+
+	sMenu.textHighscorePoints->setText(std::to_string(sMenu.highscorePoints) + std::string(" Punkte"));
+	sMenu.textHighscoreStages->setText(std::to_string(sMenu.highscoreStages) + std::string(" Stages"));
+
+	sMenu.textHighscore->centerHorizontally(window);
+	sMenu.textHighscorePoints->centerHorizontally(window);
+	sMenu.textHighscoreStages->centerHorizontally(window);
+
+	sMenu.textHighscore->draw(window, textProg, glm::vec3(0.f, 1.f, 0.518f));
+	sMenu.textHighscorePoints->draw(window, textProg);
+	sMenu.textHighscoreStages->draw(window, textProg);
 }
 
 void Game::drawCredits() {
@@ -489,6 +514,10 @@ void Game::drawCredits() {
 		"Hannes H.",64,
 		glm::ivec2(20, window.getSize().y - 100)
 	);	
+	static Text textFlo = Text(
+		"Flo is gay @ 4te Klasse", 12,
+		glm::ivec2(20,window.getSize().y-13)
+	);
 
 	static Camera cam;
 	cam.setCameraPos(glm::vec3(sinf(secs)*0.25f, cos(secs)*0.25f, 1.0f));
@@ -540,6 +569,11 @@ void Game::drawCredits() {
 		abs(cosf(secs*2.0f + glm::radians(120.f))),
 		abs(cosf(secs*2.0f + glm::radians(240.f)))
 	));
+	textFlo.draw(window, textProg, glm::vec3(
+		abs(cosf(secs * 2.0f)),
+		abs(cosf(secs * 2.0f + glm::radians(120.f))),
+		abs(cosf(secs * 2.0f + glm::radians(240.f)))
+	));
 
 	for (auto& iter : sCredits.buttonVec)
 		iter->draw(window, *programManager);
@@ -586,6 +620,10 @@ void Game::drawGameOverScreen() {
 }
 
 // struct funcs
+void Game::__sMenu::refreshHighscore() {
+	HighscoreManager::get(highscorePoints, highscoreStages);
+}
+
 void Game::__sIngame::updateBullets(float deltaTime) {
 	for (auto& iter : bullets) {
 		iter.update(deltaTime);
@@ -635,9 +673,9 @@ bool Game::__sIngame::isStageFinished() {
 }
 
 bool Game::__sIngame::isGameOver() {
-	return false;
+	return currentHealth <= 0;
 }
 
 const float Game::__sIngame::stageOffsetEndY = 1.f;
 const float Game::__sIngame::stageOffsetStartY = -4.f;
-const int Game::__sIngame::stageHeight = 16;
+const int Game::__sIngame::stageHeight = 192;

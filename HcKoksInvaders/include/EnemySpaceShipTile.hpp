@@ -7,13 +7,12 @@ class EnemySpaceShipTile : public TileEntityBase
 private:
 	ModelPosition m_shipPos;
 	glm::vec3 m_pos;
+	float m_health;
 
 	enum class MovementPattern {
 		Circle, Wave, Straight
 	};
 	MovementPattern m_movementPattern;
-
-	//void moveInPattern(MovementPattern mp);
 public:
 	EnemySpaceShipTile(
 		Game* const ref_game, 
@@ -24,6 +23,9 @@ public:
 
 	void update(double deltaTime);
 	void draw();
+
+	void takeDamage(float dmg);
+	float getHealth();
 
 	const ModelPosition& getSpaceshipPos();
 	const glm::vec3& getPos();
