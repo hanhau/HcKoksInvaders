@@ -1,13 +1,12 @@
-#include "include/Game.hpp"
-#include <SFML/Graphics.hpp>
-#include <iostream>
-#include <Windows.h>
-#include <SFML/Audio.hpp>
+#include "include/GameLauncher.hpp"
 #include "include/NetworkManager.hpp"
+#include "include/Game.hpp"
+#include <iostream>
 
 #ifdef RELEASE_BUILD
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
 #else
+HINSTANCE hInstance = 0;
 int main()
 #endif
 {
@@ -45,6 +44,9 @@ int main()
 	}
 
 	Game game;
+
+	GameLauncher launcher("abc", glo, HINSTANCE());
+
 	game.init(glo);
 	game.run();
 	game.exit();

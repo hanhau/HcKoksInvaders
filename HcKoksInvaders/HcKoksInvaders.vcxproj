@@ -184,6 +184,7 @@
     <ClCompile Include="Turret.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameLauncher.cpp" />
     <ClInclude Include="include\AmmunitionIcon.hpp" />
     <ClInclude Include="include\BoundingBall.hpp" />
     <ClInclude Include="include\Bullet.hpp" />
@@ -195,6 +196,8 @@
     <ClInclude Include="include\EnemySpaceShipTile.hpp" />
     <ClInclude Include="include\EnemyTurretTile.hpp" />
     <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\GameLauncher.hpp" />
+    <ClInclude Include="include\GameLaunchOptions.hpp" />
     <ClInclude Include="include\GameWorld.hpp" />
     <ClInclude Include="include\HighscoreManager.hpp" />
     <ClInclude Include="include\InstanceBuffer.hpp" />
@@ -212,6 +215,7 @@
     <ClInclude Include="include\TextureManager.hpp" />
     <ClInclude Include="include\TileEntityBase.hpp" />
     <ClInclude Include="include\Util.hpp" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

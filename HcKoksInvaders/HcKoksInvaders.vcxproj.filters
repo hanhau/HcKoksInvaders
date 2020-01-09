@@ -221,6 +221,18 @@
     <ClInclude Include="include\NetworkManager.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="include\GameLauncher.hpp">
+      <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLauncher.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameLaunchOptions.hpp">
+      <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\frag_shader.frag">

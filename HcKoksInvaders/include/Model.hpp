@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <SFML/Graphics.hpp>
 #include <glm/glm.hpp>
 #include <vector>
 #include <GL/glew.h>

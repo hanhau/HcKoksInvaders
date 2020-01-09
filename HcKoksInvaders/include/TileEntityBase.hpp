@@ -1,6 +1,5 @@
 #pragma once
 #include "Game.hpp"
-#include <SFML/System/Vector3.hpp>
 
 class TileEntityBase {
 protected:

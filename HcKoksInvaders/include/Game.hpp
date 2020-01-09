@@ -1,5 +1,4 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include <SFML/Audio/Music.hpp>
 #include <glm/mat4x4.hpp>
 
@@ -13,15 +12,11 @@
 #include "Bullet.hpp"
 #include "BulletRenderer.hpp"
 #include "HighscoreManager.hpp"
+#include "GameLaunchOptions.hpp"
 
 class TileEntityBase;
 class GameWorld;
 class StarShip;
-
-struct GameLaunchOptions {
-	glm::ivec2 res;
-	bool fullscreen;
-};
 
 class Game {
 private:

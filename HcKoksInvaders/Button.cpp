@@ -3,6 +3,7 @@
 #include <Util.hpp>
 #include <vector>
 #include <glm\ext\matrix_transform.hpp>
+#include <SFML\Window\Mouse.hpp>
 
 class ButtonVertex {
 public:
