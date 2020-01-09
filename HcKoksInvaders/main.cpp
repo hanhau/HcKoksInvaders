@@ -12,6 +12,7 @@ int main()
 #endif
 {
 	NetworkManager::init();
+	NetworkManager::sendHttpsPOSTRequest("");
 
 	GameLaunchOptions glo;
 
