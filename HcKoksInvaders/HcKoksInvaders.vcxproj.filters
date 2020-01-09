@@ -224,9 +224,6 @@
     <ClInclude Include="include\GameLauncher.hpp">
       <Filter>Headerdateien\Game</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="GameLauncher.cpp">
       <Filter>Quelldateien</Filter>
     </ClInclude>

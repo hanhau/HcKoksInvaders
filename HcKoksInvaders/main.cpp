@@ -1,7 +1,14 @@
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+#include "include/Game.hpp"
 #include "include/GameLauncher.hpp"
 #include "include/NetworkManager.hpp"
-#include "include/Game.hpp"
-#include <iostream>
+
+// 2do
+// ids setzen bei gui elementen
+// formular werte holen lassen
+// server anfragen ausbauen
+// sichtbarkeit ingame fixen
 
 #ifdef RELEASE_BUILD
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
@@ -14,6 +21,9 @@ int main()
 	NetworkManager::sendHttpsPOSTRequest("");
 
 	GameLaunchOptions glo;
+
+	GameLauncher gl("Optionen", hInstance);
+	gl.processDialog(glo);
 
 	int choice = MessageBoxW(
 		NULL,
@@ -44,9 +54,6 @@ int main()
 	}
 
 	Game game;
-
-	GameLauncher launcher("abc", glo, HINSTANCE());
-
 	game.init(glo);
 	game.run();
 	game.exit();

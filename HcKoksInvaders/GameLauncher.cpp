@@ -1,12 +1,25 @@
 #include "include/GameLauncher.hpp"
 
+#include <CommCtrl.h>
+#pragma comment(lib, "comctl32.lib")
+
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-GameLauncher::GameLauncher(std::string title,
-						   GameLaunchOptions& glo,
-						   HINSTANCE hInstance) :
+const enum ID {
+	BUTTON_PLAY = 1,
+	BUTTON_PLAY_OFFLINE = 2,
+	BUTTON_EXIT = 3,
+	INPUT_LOGIN = 4,
+	INPUT_PASSWORD = 5,
+	CHECK_FULLSCREEN = 6
+};
+
+
+GameLauncher::GameLauncher(std::string title, HINSTANCE hInstance) :
 	m_msg({ 0 })
 {
+	InitCommonControls();
+
 	m_dialogAppName = TEXT((char* const)title.c_str());
 	m_font = CreateFont(
 		0, 0, 0, 0, 400, 
@@ -30,57 +43,58 @@ GameLauncher::GameLauncher(std::string title,
 	RegisterClass(&m_wndclass);
 
 	m_hwndDialog = CreateWindow(
-		m_dialogAppName,  // window class name
-		TEXT(title.c_str()), // window caption
-		WS_OVERLAPPEDWINDOW,        // window style
-		CW_USEDEFAULT,              // initial x position
-		CW_USEDEFAULT,              // initial y position
-		500,              // initial x size
-		250,              // initial y size
-		NULL,                       // parent window handle
-		NULL,                       // window menu handle
-		hInstance,                  // program instance handle
-		NULL);                     // creation parameters
+		m_dialogAppName,  
+		TEXT(title.c_str()), 
+		WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU,
+		CW_USEDEFAULT,       
+		CW_USEDEFAULT,       
+		400,              
+		250,              
+		NULL,             
+		NULL,             
+		hInstance,        
+		NULL);        
 
 	// Creation of SubHwnds
 	{
 		m_hwndButtonPlay = CreateWindowA(
 			"BUTTON", "Spielen",
 			WS_CHILD | WS_VISIBLE,
-			70, 160, 80, 25,
-			m_hwndDialog, 0, hInstance, 0
+			20, 160, 80, 25,
+			m_hwndDialog, (HMENU)ID::BUTTON_PLAY, hInstance, 0
 		);
 		m_hwndButtonPlayOffline = CreateWindowA(
 			"BUTTON", "Offline Spielen",
 			WS_CHILD | WS_VISIBLE,
-			160, 160, 140, 25,
-			m_hwndDialog, 0, hInstance, 0
+			110, 160, 140, 25,
+			m_hwndDialog, (HMENU)ID::BUTTON_PLAY_OFFLINE, hInstance, 0
 		);
 		m_hwndButtonExit = CreateWindowA(
 			"BUTTON", "Verlassen",
 			WS_CHILD | WS_VISIBLE,
-			310, 160, 80, 25,
-			m_hwndDialog, 0, hInstance, 0
+			260, 160, 80, 25,
+			m_hwndDialog, (HMENU)xxx, hInstance, 0
 		);
 
 		m_hwndInputLogin = CreateWindowA(
 			"EDIT", "",
 			WS_CHILD | WS_VISIBLE | WS_BORDER,
-			220, 15, 150, 25,
+			170, 15, 150, 25,
 			m_hwndDialog, 0, hInstance, 0
 		);
 
-		m_hwndInputPassword = CreateWindowA(
+		m_hwndInputPassword = CreateWindowExA(
+			WS_EX_CLIENTEDGE,
 			"EDIT", "",
-			WS_CHILD | WS_VISIBLE | WS_BORDER,
-			220, 45, 150, 25,
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_PASSWORD,
+			170, 45, 150, 25,
 			m_hwndDialog, 0, hInstance, 0
 		);
 
 		m_hwndCheckFullscreen = CreateWindowExA(
 			NULL, "BUTTON", "Spiel im Vollbild starten",
 			BS_CHECKBOX | WS_VISIBLE | WS_CHILD,
-			145, 120, 210, 25,
+			95, 120, 210, 25,
 			m_hwndDialog, NULL, hInstance, NULL
 		);
 	}
@@ -95,6 +109,23 @@ GameLauncher::GameLauncher(std::string title,
 
 	ShowWindow(m_hwndDialog, 1);
 	UpdateWindow(m_hwndDialog);
+}
+
+void GameLauncher::processDialog(GameLaunchOptions& glo_res) {
+	BOOL ret;
+	
+	while (1) {
+		ret = GetMessage(&m_msg, NULL, 0, 0);
+
+		if (ret > 0) {
+			TranslateMessage(&m_msg);
+			DispatchMessage(&m_msg);
+		}
+		else
+			break;
+
+		Sleep(10);
+	}
 }
 
 GameLauncher::~GameLauncher() {
@@ -112,10 +143,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	case WM_PAINT:
 	{
 		SelectObject(hdc, font);
-
 		const std::string textLogin = "Benutzername: ";
 		RECT textLoginRect = { 0 };
-		textLoginRect.right = 210;
+		textLoginRect.right = 160;
 		textLoginRect.top = 17;
 		DrawText(
 			hdc, textLogin.c_str(), textLogin.length(),
@@ -123,7 +153,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		);
 		const std::string textPassword = "Passwort: ";
 		RECT textPasswordRect = { 0 };
-		textPasswordRect.right = 210;
+		textPasswordRect.right = 160;
 		textPasswordRect.top = 47;
 		DrawText(
 			hdc, textPassword.c_str(), textPassword.length(),
@@ -131,6 +161,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		);
 	}
 	break;
+	case WM_CLOSE: 
+		PostQuitMessage(0);
+		break;
 	default:
 		return DefWindowProc(hwnd, message, wParam, lParam);
 		break;

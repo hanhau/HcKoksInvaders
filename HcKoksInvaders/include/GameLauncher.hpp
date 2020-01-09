@@ -3,7 +3,6 @@
 #include <string>
 #include "GameLaunchOptions.hpp"
 
-
 class GameLauncher {
 	TCHAR* m_dialogAppName;
 
@@ -21,6 +20,7 @@ class GameLauncher {
 	HFONT m_font;
 
 public:
-	GameLauncher(std::string title,GameLaunchOptions& glo,HINSTANCE hInstance);
+	GameLauncher(std::string title,HINSTANCE hInstance);
+	void processDialog(GameLaunchOptions& glo_res);
 	~GameLauncher();
 };
