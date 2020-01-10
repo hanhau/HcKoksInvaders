@@ -3,11 +3,10 @@
 #include "include/Game.hpp"
 #include "include/GameLauncher.hpp"
 #include "include/NetworkManager.hpp"
+#include <iostream>
 
 // 2do
-// ids setzen bei gui elementen
 // formular werte holen lassen
-// server anfragen ausbauen
 // sichtbarkeit ingame fixen
 
 #ifdef RELEASE_BUILD
@@ -17,41 +16,18 @@ HINSTANCE hInstance = 0;
 int main()
 #endif
 {
-	NetworkManager::init();
-	NetworkManager::sendHttpsPOSTRequest("");
+	NetworkManager::init("81.19.159.64","hcki.handata.eu");
+	std::string res;
+	NetworkManager::verifyUserLoginValid("abc", "abc", res);
+	std::cout << res;
 
 	GameLaunchOptions glo;
 
 	GameLauncher gl("Optionen", hInstance);
 	gl.processDialog(glo);
 
-	int choice = MessageBoxW(
-		NULL,
-		(LPCWSTR)L"HcKoksInvaders im Vollbild starten?",
-		(LPCWSTR)L"Vollbild",
-		MB_YESNOCANCEL | MB_ICONQUESTION | MB_DEFBUTTON2
-	);
-
-	switch (choice) {
-	case IDYES:
-		glo = {
-			glm::ivec2(
-				GetSystemMetrics(SM_CXSCREEN),
-				GetSystemMetrics(SM_CYSCREEN)
-			),
-			true
-		};
-		break;
-	case IDNO:
-		glo = {
-			glm::ivec2(640,960),
-			false
-		};
-		break;
-	case IDCANCEL:
+	if (glo.exit)
 		return 0;
-		break;
-	}
 
 	Game game;
 	game.init(glo);

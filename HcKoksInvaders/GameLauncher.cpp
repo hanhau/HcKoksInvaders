@@ -1,9 +1,11 @@
 #include "include/GameLauncher.hpp"
 
+#include <map>
 #include <CommCtrl.h>
 #pragma comment(lib, "comctl32.lib")
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+static std::map<std::string, GameLaunchOptions*> _globalGloPtrs;
 
 const enum ID {
 	BUTTON_PLAY = 1,
@@ -13,7 +15,6 @@ const enum ID {
 	INPUT_PASSWORD = 5,
 	CHECK_FULLSCREEN = 6
 };
-
 
 GameLauncher::GameLauncher(std::string title, HINSTANCE hInstance) :
 	m_msg({ 0 })
@@ -59,43 +60,43 @@ GameLauncher::GameLauncher(std::string title, HINSTANCE hInstance) :
 	{
 		m_hwndButtonPlay = CreateWindowA(
 			"BUTTON", "Spielen",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 			20, 160, 80, 25,
 			m_hwndDialog, (HMENU)ID::BUTTON_PLAY, hInstance, 0
 		);
 		m_hwndButtonPlayOffline = CreateWindowA(
 			"BUTTON", "Offline Spielen",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 			110, 160, 140, 25,
 			m_hwndDialog, (HMENU)ID::BUTTON_PLAY_OFFLINE, hInstance, 0
 		);
 		m_hwndButtonExit = CreateWindowA(
 			"BUTTON", "Verlassen",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 			260, 160, 80, 25,
-			m_hwndDialog, (HMENU)xxx, hInstance, 0
+			m_hwndDialog, (HMENU)ID::BUTTON_EXIT, hInstance, 0
 		);
 
 		m_hwndInputLogin = CreateWindowA(
 			"EDIT", "",
-			WS_CHILD | WS_VISIBLE | WS_BORDER,
+			WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP,
 			170, 15, 150, 25,
-			m_hwndDialog, 0, hInstance, 0
+			m_hwndDialog, (HMENU)ID::INPUT_LOGIN, hInstance, 0
 		);
 
 		m_hwndInputPassword = CreateWindowExA(
 			WS_EX_CLIENTEDGE,
 			"EDIT", "",
-			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_PASSWORD,
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_PASSWORD | WS_TABSTOP,
 			170, 45, 150, 25,
-			m_hwndDialog, 0, hInstance, 0
+			m_hwndDialog, (HMENU)ID::INPUT_PASSWORD, hInstance, 0
 		);
 
 		m_hwndCheckFullscreen = CreateWindowExA(
 			NULL, "BUTTON", "Spiel im Vollbild starten",
-			BS_CHECKBOX | WS_VISIBLE | WS_CHILD,
+			BS_CHECKBOX | WS_VISIBLE | WS_CHILD | WS_TABSTOP,
 			95, 120, 210, 25,
-			m_hwndDialog, NULL, hInstance, NULL
+			m_hwndDialog, (HMENU)ID::CHECK_FULLSCREEN, hInstance, NULL
 		);
 	}
 
@@ -111,9 +112,13 @@ GameLauncher::GameLauncher(std::string title, HINSTANCE hInstance) :
 	UpdateWindow(m_hwndDialog);
 }
 
-void GameLauncher::processDialog(GameLaunchOptions& glo_res) {
-	BOOL ret;
+void GameLauncher::processDialog(GameLaunchOptions& glo_res) 
+{
+	char winTitle[1024];
+	GetWindowTextA(m_hwndDialog, winTitle,1024);
+	_globalGloPtrs[std::string(winTitle)] = &glo_res;
 	
+	BOOL ret;
 	while (1) {
 		ret = GetMessage(&m_msg, NULL, 0, 0);
 
@@ -121,8 +126,9 @@ void GameLauncher::processDialog(GameLaunchOptions& glo_res) {
 			TranslateMessage(&m_msg);
 			DispatchMessage(&m_msg);
 		}
-		else
+		else {
 			break;
+		}
 
 		Sleep(10);
 	}
@@ -132,9 +138,14 @@ GameLauncher::~GameLauncher() {
 
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
+{
 	HDC hdc = GetDC(hwnd);
 	static HFONT font;
+
+	static char winTitle[1024];
+	GetWindowTextA(hwnd, winTitle, 1024);
+	auto gloPtr = _globalGloPtrs[std::string(winTitle)];
 
 	switch (message) {
 	case WM_CREATE:
@@ -161,7 +172,30 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		);
 	}
 	break;
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam)) {
+		case ID::BUTTON_EXIT:
+			if (gloPtr != nullptr)
+				gloPtr->exit = true;
+			PostQuitMessage(0);
+			break;
+		case ID::BUTTON_PLAY:
+			printf_s("play\n");
+			break;
+		case ID::BUTTON_PLAY_OFFLINE:
+			printf_s("play_offline\n");
+			break;
+		case ID::CHECK_FULLSCREEN:
+			printf_s("check_fullscreen\n");
+			break;
+		}
+	}
+	break;
 	case WM_CLOSE: 
+		if (gloPtr != nullptr)
+			gloPtr->exit = true;
+
 		PostQuitMessage(0);
 		break;
 	default:

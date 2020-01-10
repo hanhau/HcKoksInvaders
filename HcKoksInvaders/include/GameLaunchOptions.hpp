@@ -3,12 +3,9 @@
 #include <string>
 
 struct GameLaunchOptions {
-	glm::ivec2 res;
-	bool fullscreen;
+	glm::ivec2 res = glm::ivec2();
+	bool fullscreen = false;
 
-	bool online;
-	std::string login;
-	std::string password;
-
-	bool exit;
+	std::string token = "";
+	bool exit = false;
 };

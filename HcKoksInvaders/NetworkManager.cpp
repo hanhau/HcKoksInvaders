@@ -16,6 +16,7 @@
 #include <tchar.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <iostream>
 
 // Link with ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
@@ -26,36 +27,42 @@
 // link with ntdsapi.lib for DsMakeSpn function
 #pragma comment(lib, "ntdsapi.lib")
 
-static WSADATA* wsadata = new WSADATA();
+struct NetworkManager::impl {
+    SSL* ssl;
+    int sock;
+    WSADATA* wsadata;
 
-SSL* ssl;
-int sock;
+    std::string host;
+    std::string ip;
+};
 
-int RecvPacket()
+NetworkManager::impl* NetworkManager::m_impl;
+
+std::string NetworkManager::recvPacket()
 {
+    std::string res;
+
     int len = 100;
+    size_t readBytes = 0;
     char * buf = new char[len+1];
     do {
-        len = SSL_read(ssl, buf, 100);
+        len = SSL_read_ex(m_impl->ssl, buf, 100, &readBytes);
         buf[len] = 0;
-        printf(buf);
+        res.append(buf, readBytes);
     } while (len > 0);
     if (len < 0) {
-        int err = SSL_get_error(ssl, len);
-        if (err == SSL_ERROR_WANT_READ)
-            return 0;
-        if (err == SSL_ERROR_WANT_WRITE)
-            return 0;
-        if (err == SSL_ERROR_ZERO_RETURN || err == SSL_ERROR_SYSCALL || err == SSL_ERROR_SSL)
-            return -1;
+        int err = SSL_get_error(m_impl->ssl, len);
+        return "SSL Error " + std::to_string(err);
     }
+
+    return res;
 }
 
-int SendPacket(const char* buf)
+int NetworkManager::sendPacket(const char* buf)
 {
-    int len = SSL_write(ssl, buf, strlen(buf));
+    int len = SSL_write(m_impl->ssl, buf, strlen(buf));
     if (len < 0) {
-        int err = SSL_get_error(ssl, len);
+        int err = SSL_get_error(m_impl->ssl, len);
         switch (err) {
         case SSL_ERROR_WANT_WRITE:
             return 0;
@@ -70,19 +77,42 @@ int SendPacket(const char* buf)
     }
 }
 
+std::string NetworkManager::encodeStringToUrl(const std::string input) 
+{
+    return input;
+}
+std::string NetworkManager::getDataString(const std::string valName, 
+                                          const std::string input) 
+{
+    size_t posBegin = input.find(valName+"({") + valName.length() + strlen("({");
+    if (posBegin == std::string::npos)
+        return "";
 
-void NetworkManager::init() {
-    if (WSAStartup(0x0101, wsadata))
-        return;// std::cout << __FUNCSIG__ << " ERROR\n";
+    size_t posEnd = input.find_first_of("})", posBegin);
+    if (posEnd == std::string::npos)
+        return "";
+
+    return std::string(input.begin() + posBegin, input.begin() + posEnd);
+}
+
+void NetworkManager::init(const std::string ip, 
+                          const std::string host) 
+{
+    m_impl = new impl;
+    m_impl->host = host;
+    m_impl->ip = ip;
+    m_impl->wsadata = new WSADATA();
+
+    if (WSAStartup(0x0101, m_impl->wsadata))
+        std::cout << __FUNCSIG__ << " ERROR\n";
 }
 
 void NetworkManager::shutdown() {
     if (WSACleanup())
-        return;// std::cout << __FUNCSIG__ << " ERROR\n";
-
+        std::cout << __FUNCSIG__ << " ERROR\n";
 }
 
-void NetworkManager::sendHttpsPOSTRequest(const std::string url)
+std::string NetworkManager::sendHttpsRequest(const RequestType type,const std::string url)
 {
     int s;
     s = socket(AF_INET, SOCK_STREAM, 0);
@@ -92,7 +122,7 @@ void NetworkManager::sendHttpsPOSTRequest(const std::string url)
     struct sockaddr_in sa;
     memset(&sa, 0, sizeof(sa));
     sa.sin_family = AF_INET;
-    inet_pton(AF_INET, "81.19.159.64", &(sa.sin_addr));
+    inet_pton(AF_INET, m_impl->ip.c_str(), &(sa.sin_addr));
 
     sa.sin_port = htons(443);
     socklen_t socklen = sizeof(sa);
@@ -104,21 +134,130 @@ void NetworkManager::sendHttpsPOSTRequest(const std::string url)
     SSL_load_error_strings();
     const SSL_METHOD* meth = TLSv1_2_client_method();
     SSL_CTX* ctx = SSL_CTX_new(meth);
-    ssl = SSL_new(ctx);
-    if (!ssl) {
+    m_impl->ssl = SSL_new(ctx);
+    if (!m_impl->ssl) {
         printf("Error creating SSL.\n");
     }
-    sock = SSL_get_fd(ssl);
-    SSL_set_fd(ssl, s);
-    int err = SSL_connect(ssl);
+    m_impl->sock = SSL_get_fd(m_impl->ssl);
+    SSL_set_fd(m_impl->ssl, s);
+    int err = SSL_connect(m_impl->ssl);
     if (err <= 0) {
         printf("Error creating SSL connection.  err=%x\n", err);
-        fflush(stdout);
     }
-    printf("SSL connection using %s\n", SSL_get_cipher(ssl));
+    printf("SSL connection using %s\n", SSL_get_cipher(m_impl->ssl));
 
-    char* request = (char*)""
-        "GET /admin/admin_login.html HTTP/1.1\r\nHost: www.handata.eu\r\n\r\n";
-    SendPacket(request);
-    RecvPacket();
+    std::string request = "";
+    request += type == RequestType::GET ? "GET " : "POST ";
+    request += url + " HTTP/1.1\r\n";
+    request += "Host: "+m_impl->host+"\r\n\r\n";
+
+    sendPacket(request.c_str());
+    
+    return recvPacket();
 }
+
+bool NetworkManager::verifyUserLoginValid(const std::string login,
+                                          const std::string password,
+                                          std::string& errorMessage) 
+{
+    const std::string res = sendHttpsRequest(
+        RequestType::GET,
+        "verify_user.php?login=" + encodeStringToUrl(login) + 
+        "&password=" + encodeStringToUrl(password)
+    );
+
+    if (res.find("RESULT_OK") != std::string::npos) {
+        errorMessage = "";
+        return true;
+    }
+    else if (res.find("RESULT_NOTFOUND") != std::string::npos) {
+        errorMessage = "Der Nutzer wurde noch nicht angelegt.";
+    }
+    else if (res.find("RESULT_INVALIDPASSWORD") != std::string::npos) {
+        errorMessage = "Ungültiges Passwort";
+    }
+    else {
+        errorMessage = "Unbekannter Fehler";
+    }
+
+    return false;
+}
+
+bool NetworkManager::getUserToken(const std::string login,
+                                  const std::string password,
+                                  std::string& token) 
+{
+    const std::string res = sendHttpsRequest(
+        RequestType::GET,
+        "getUserToken.php?login="+ encodeStringToUrl(login) +
+        "&password="+encodeStringToUrl(password)
+    );
+
+    if (res.find("RESULT_ERROR") != std::string::npos) {
+        token = "";
+        return false;
+    }
+    else {
+        token = getDataString("TOKEN", res);
+        return true;
+    }
+}
+
+bool NetworkManager::uploadHighscore(const std::string token,
+                                     const int highscore,
+                                     const int stages)
+{
+    const std::string res = sendHttpsRequest(
+        RequestType::POST,
+        "uploadHighscore.php?token=" + encodeStringToUrl(token) +
+        "&highscore=" + encodeStringToUrl(std::to_string(highscore)) +
+        "&stages=" + encodeStringToUrl(std::to_string(stages))
+    );
+
+    return true;
+}
+
+bool NetworkManager::getUserStatistics(const std::string token,
+                                       int& played_games,
+                                       int& highscorePoints,
+                                       int& highscoreStages)
+{
+    const std::string res = sendHttpsRequest(
+        RequestType::GET,
+        "getUserStatistics.php?token=" + encodeStringToUrl(token)
+    );
+
+    played_games = 0;
+    highscorePoints = 0;
+    highscoreStages = 0;
+
+    std::string playedGamesString = getDataString("PLAYEDGAMES", res);
+    std::string highscorePointsString = getDataString("HIGHSCOREPOINTS", res);
+    std::string highscoreStagesString = getDataString("HIGHSCORESTAGES", res);
+
+    if (res.find("RESULT_ERROR") != std::string::npos ||
+        playedGamesString == "" ||
+        highscorePointsString == "" ||
+        highscoreStagesString == "") 
+    {
+        return false;
+    }
+    
+    int games, points, stages;
+
+    try {
+        games = std::stoi(playedGamesString);
+        points = std::stoi(highscorePointsString);
+        stages = std::stoi(highscoreStagesString);
+    }
+    catch (std::exception e) {
+        return false;
+    }
+
+    played_games = games;
+    highscorePoints = points;
+    highscoreStages = stages;
+
+    return true;
+}
+
