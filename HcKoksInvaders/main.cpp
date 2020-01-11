@@ -3,11 +3,6 @@
 #include "include/Game.hpp"
 #include "include/GameLauncher.hpp"
 #include "include/NetworkManager.hpp"
-#include <iostream>
-
-// 2do
-// formular werte holen lassen
-// sichtbarkeit ingame fixen
 
 #ifdef RELEASE_BUILD
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
@@ -17,20 +12,20 @@ int main()
 #endif
 {
 	NetworkManager::init("81.19.159.64","hcki.handata.eu");
-	std::string res;
-	NetworkManager::verifyUserLoginValid("abc", "abc", res);
-	std::cout << res;
 
-	GameLaunchOptions glo;
+	GameLaunchOptions gameLaunchOptions;
+	gameLaunchOptions.loadFromFileOrDefault();
 
-	GameLauncher gl("Optionen", hInstance);
-	gl.processDialog(glo);
+	GameLauncher gameLauncher("HcKoksInvaders Launcher", hInstance);
+	gameLauncher.processDialog(gameLaunchOptions);
 
-	if (glo.exit)
+	gameLaunchOptions.saveToFile();
+
+	if (gameLaunchOptions.exit)
 		return 0;
 
 	Game game;
-	game.init(glo);
+	game.init(gameLaunchOptions);
 	game.run();
 	game.exit();
 

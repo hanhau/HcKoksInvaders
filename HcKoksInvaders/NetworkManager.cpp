@@ -17,14 +17,11 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <iostream>
+#include <sstream>
+#include <filesystem>
 
-// Link with ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
-
-// link with fwpuclnt.lib for Winsock secure socket extensions
 #pragma comment(lib, "fwpuclnt.lib")
-
-// link with ntdsapi.lib for DsMakeSpn function
 #pragma comment(lib, "ntdsapi.lib")
 
 struct NetworkManager::impl {
@@ -35,29 +32,29 @@ struct NetworkManager::impl {
     std::string host;
     std::string ip;
 };
-
 NetworkManager::impl* NetworkManager::m_impl;
 
 std::string NetworkManager::recvPacket()
 {
     std::string res;
 
-    int len = 100;
+    int bufLen = 1000;
     size_t readBytes = 0;
-    char * buf = new char[len+1];
+    char * buf = new char[bufLen+1];
+    
     do {
-        len = SSL_read_ex(m_impl->ssl, buf, 100, &readBytes);
-        buf[len] = 0;
+        readBytes = SSL_read(m_impl->ssl, buf, bufLen);
+        buf[bufLen] = 0;
         res.append(buf, readBytes);
-    } while (len > 0);
-    if (len < 0) {
-        int err = SSL_get_error(m_impl->ssl, len);
+    } while (readBytes > 0);
+
+    if (readBytes < 0) {
+        int err = SSL_get_error(m_impl->ssl, bufLen);
         return "SSL Error " + std::to_string(err);
     }
 
     return res;
 }
-
 int NetworkManager::sendPacket(const char* buf)
 {
     int len = SSL_write(m_impl->ssl, buf, strlen(buf));
@@ -77,9 +74,28 @@ int NetworkManager::sendPacket(const char* buf)
     }
 }
 
-std::string NetworkManager::encodeStringToUrl(const std::string input) 
+std::string NetworkManager::encodeStringToUrl(std::string input) 
 {
-    return input;
+    std::ostringstream escaped;
+    escaped.fill('0');
+    escaped << std::hex;
+
+    for (std::string::const_iterator i = input.begin(), n = input.end(); i != n; ++i) {
+        std::string::value_type c = (*i);
+
+        // Keep alphanumeric and other accepted characters intact
+        if (std::isalnum((unsigned char)c) || c == '-' || c == '_' || c == '.' || c == '~') {
+            escaped << c;
+            continue;
+        }
+
+        // Any other characters are percent-encoded
+        escaped << std::uppercase;
+        escaped << '%' << std::setw(2) << int((unsigned char)c);
+        escaped << std::nouppercase;
+    }
+
+    return escaped.str();
 }
 std::string NetworkManager::getDataString(const std::string valName, 
                                           const std::string input) 
@@ -112,12 +128,15 @@ void NetworkManager::shutdown() {
         std::cout << __FUNCSIG__ << " ERROR\n";
 }
 
-std::string NetworkManager::sendHttpsRequest(const RequestType type,const std::string url)
+bool NetworkManager::sendHttpsRequest(const RequestType type,
+                                      const std::string url,
+                                      std::string& res)
 {
     int s;
     s = socket(AF_INET, SOCK_STREAM, 0);
     if (!s) {
         printf("Error creating socket.\n");
+        return false;
     }
     struct sockaddr_in sa;
     memset(&sa, 0, sizeof(sa));
@@ -128,6 +147,7 @@ std::string NetworkManager::sendHttpsRequest(const RequestType type,const std::s
     socklen_t socklen = sizeof(sa);
     if (connect(s, (struct sockaddr*) & sa, socklen)) {
         printf("Error connecting to server.\n");
+        return false;
     }
     SSL_library_init();
     SSLeay_add_ssl_algorithms();
@@ -137,12 +157,14 @@ std::string NetworkManager::sendHttpsRequest(const RequestType type,const std::s
     m_impl->ssl = SSL_new(ctx);
     if (!m_impl->ssl) {
         printf("Error creating SSL.\n");
+        return false;
     }
     m_impl->sock = SSL_get_fd(m_impl->ssl);
     SSL_set_fd(m_impl->ssl, s);
     int err = SSL_connect(m_impl->ssl);
     if (err <= 0) {
         printf("Error creating SSL connection.  err=%x\n", err);
+        return false;
     }
     printf("SSL connection using %s\n", SSL_get_cipher(m_impl->ssl));
 
@@ -152,19 +174,23 @@ std::string NetworkManager::sendHttpsRequest(const RequestType type,const std::s
     request += "Host: "+m_impl->host+"\r\n\r\n";
 
     sendPacket(request.c_str());
-    
-    return recvPacket();
+    res = recvPacket();
 }
 
 bool NetworkManager::verifyUserLoginValid(const std::string login,
                                           const std::string password,
                                           std::string& errorMessage) 
 {
-    const std::string res = sendHttpsRequest(
+    std::string res;
+    if (!sendHttpsRequest(
         RequestType::GET,
-        "verify_user.php?login=" + encodeStringToUrl(login) + 
-        "&password=" + encodeStringToUrl(password)
-    );
+        "/verifyUserLoginValid.php?login=" + encodeStringToUrl(login) +
+        "&password=" + encodeStringToUrl(password),
+        res
+    )) {
+        errorMessage = "Kann sich nicht mit dem Server verbinden.";
+        return false;
+    };
 
     if (res.find("RESULT_OK") != std::string::npos) {
         errorMessage = "";
@@ -183,49 +209,62 @@ bool NetworkManager::verifyUserLoginValid(const std::string login,
     return false;
 }
 
-bool NetworkManager::getUserToken(const std::string login,
-                                  const std::string password,
-                                  std::string& token) 
+bool NetworkManager::getUserID(const std::string login,
+                               const std::string password,
+                               int& userID) 
 {
-    const std::string res = sendHttpsRequest(
+    std::string res;
+    if (!sendHttpsRequest(
         RequestType::GET,
-        "getUserToken.php?login="+ encodeStringToUrl(login) +
-        "&password="+encodeStringToUrl(password)
-    );
+        "getUserToken.php?login=" + encodeStringToUrl(login) +
+        "&password=" + encodeStringToUrl(password),
+        res
+    )) {
+        userID = 0;
+        return false;
+    };
 
     if (res.find("RESULT_ERROR") != std::string::npos) {
-        token = "";
+        userID = 0;
         return false;
     }
     else {
-        token = getDataString("TOKEN", res);
+        userID = std::atoi(getDataString("USERID", res).c_str());
         return true;
     }
 }
 
-bool NetworkManager::uploadHighscore(const std::string token,
+bool NetworkManager::uploadHighscore(const int userID,
                                      const int highscore,
                                      const int stages)
 {
-    const std::string res = sendHttpsRequest(
+    std::string res;
+    if (!sendHttpsRequest(
         RequestType::POST,
-        "uploadHighscore.php?token=" + encodeStringToUrl(token) +
+        "uploadHighscore.php?userid=" + encodeStringToUrl(std::to_string(userID)) +
         "&highscore=" + encodeStringToUrl(std::to_string(highscore)) +
-        "&stages=" + encodeStringToUrl(std::to_string(stages))
-    );
+        "&stages=" + encodeStringToUrl(std::to_string(stages)),
+        res
+    )) {
+        return false;
+    };
 
     return true;
 }
 
-bool NetworkManager::getUserStatistics(const std::string token,
+bool NetworkManager::getUserStatistics(const int userID,
                                        int& played_games,
                                        int& highscorePoints,
                                        int& highscoreStages)
 {
-    const std::string res = sendHttpsRequest(
+    std::string res;
+    if (!sendHttpsRequest(
         RequestType::GET,
-        "getUserStatistics.php?token=" + encodeStringToUrl(token)
-    );
+        "getUserStatistics.php?userid=" + encodeStringToUrl(std::to_string(userID)),
+        res
+    )) {
+        return false;
+    };
 
     played_games = 0;
     highscorePoints = 0;

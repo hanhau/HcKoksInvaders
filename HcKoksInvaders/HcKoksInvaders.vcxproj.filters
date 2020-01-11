@@ -135,6 +135,12 @@
     <ClCompile Include="NetworkManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="GameLauncher.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLaunchOptions.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Util.hpp">
@@ -223,9 +229,6 @@
     </ClInclude>
     <ClInclude Include="include\GameLauncher.hpp">
       <Filter>Headerdateien\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="GameLauncher.cpp">
-      <Filter>Quelldateien</Filter>
     </ClInclude>
     <ClInclude Include="include\GameLaunchOptions.hpp">
       <Filter>Headerdateien\Game</Filter>
