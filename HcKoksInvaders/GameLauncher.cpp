@@ -218,13 +218,13 @@ LRESULT CALLBACK __WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 				const std::string login = GetDlgItemString(hwnd, ID::INPUT_LOGIN);
 				if (login == "") {
 					MessageBox(hwnd, "Kein Login eingetragen.", "Info", MB_OK);
-					break;IsDlgButtonChecked(hwnd, ID::CHECK_FULLSCREEN);
+					break; 
 				}
 
 				const std::string password = GetDlgItemString(hwnd, ID::INPUT_PASSWORD);
 				if (password == "") {
 					MessageBox(hwnd, "Kein Passwort eingetragen.", "Info", MB_OK);
-					break; IsDlgButtonChecked(hwnd, ID::CHECK_FULLSCREEN);
+					break; 
 				}
 
 				std::string errMessage = "";
@@ -241,6 +241,9 @@ LRESULT CALLBACK __WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 					break;
 				}
 
+				gloPtr->login = login;
+				gloPtr->password = password;
+
 				gloPtr->fullscreen = IsDlgButtonChecked(hwnd, ID::CHECK_FULLSCREEN);
 				if (gloPtr->fullscreen) {
 					gloPtr->res.x = GetSystemMetrics(SM_CXSCREEN);
@@ -251,7 +254,7 @@ LRESULT CALLBACK __WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 					SystemParametersInfoA(SPI_GETWORKAREA, 0, &workarea, 0);
 					float prefAspectRatio = 640.f / 960.f;
 
-					gloPtr->res.y = abs(workarea.bottom - workarea.top) - 20;
+					gloPtr->res.y = abs(workarea.bottom - workarea.top) - 100;
 					gloPtr->res.x = gloPtr->res.y * prefAspectRatio;
 				}
 				gloPtr->exit = false;

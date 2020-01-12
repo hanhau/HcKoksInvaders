@@ -29,10 +29,12 @@ void GameLaunchOptions::loadFromFileOrDefault() {
 	file.read((char*)&lenPassword, sizeof(size_t));
 	password.resize(lenPassword, '\0');
 	file.read(password.data(), lenPassword);
+
+	file.close();
 }
 
 void GameLaunchOptions::saveToFile() {
-	std::ofstream file(_filepath, std::ios::binary | std::ios::trunc | std::ios::out);
+	std::fstream file(_filepath, std::ios::binary | std::ios::trunc | std::ios::out);
 
 	// Resolution & Fullscreen
 	file.write((const char*)&fullscreen, sizeof(bool));
@@ -45,4 +47,6 @@ void GameLaunchOptions::saveToFile() {
 	size_t lenPassword = password.size();
 	file.write((const char*)&lenPassword, sizeof(size_t));
 	file.write(password.c_str(), password.size());
+
+	file.close();
 }
