@@ -23,6 +23,25 @@ std::string GetDlgItemString(HWND hwnd,ID id) {
 	return std::string(buf);
 }
 
+glm::ivec2 determineResolution(bool fullscreen) {
+	glm::ivec2 res;
+
+	if (fullscreen) {
+		res.x = GetSystemMetrics(SM_CXSCREEN);
+		res.y = GetSystemMetrics(SM_CYSCREEN);
+	}
+	else {
+		RECT workarea;
+		SystemParametersInfoA(SPI_GETWORKAREA, 0, &workarea, 0);
+		float prefAspectRatio = 640.f / 960.f;
+
+		res.y = abs(workarea.bottom - workarea.top) - 100;
+		res.x = res.y * prefAspectRatio;
+	}
+
+	return res;
+}
+
 GameLauncher::GameLauncher(std::string title, HINSTANCE hInstance) :
 	m_msg({ 0 }),
 	m_dialogAppName(title)
@@ -245,24 +264,19 @@ LRESULT CALLBACK __WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 				gloPtr->password = password;
 
 				gloPtr->fullscreen = IsDlgButtonChecked(hwnd, ID::CHECK_FULLSCREEN);
-				if (gloPtr->fullscreen) {
-					gloPtr->res.x = GetSystemMetrics(SM_CXSCREEN);
-					gloPtr->res.y = GetSystemMetrics(SM_CYSCREEN);
-				}
-				else {
-					RECT workarea;
-					SystemParametersInfoA(SPI_GETWORKAREA, 0, &workarea, 0);
-					float prefAspectRatio = 640.f / 960.f;
-
-					gloPtr->res.y = abs(workarea.bottom - workarea.top) - 100;
-					gloPtr->res.x = gloPtr->res.y * prefAspectRatio;
-				}
+				gloPtr->res = determineResolution(gloPtr->fullscreen);
 				gloPtr->exit = false;
 
 				PostQuitMessage(0);
 			}
 			break;
 		case ID::BUTTON_PLAY_OFFLINE:
+			gloPtr->fullscreen = IsDlgButtonChecked(hwnd, ID::CHECK_FULLSCREEN);
+			gloPtr->res = determineResolution(gloPtr->fullscreen);
+			gloPtr->userid = 0;
+			gloPtr->exit = false;
+
+			PostQuitMessage(0);
 			printf_s("play_offline\n");
 			break;
 		case ID::CHECK_FULLSCREEN:

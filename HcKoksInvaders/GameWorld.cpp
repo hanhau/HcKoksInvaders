@@ -259,6 +259,7 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 
 	const float secs = clock.getElapsedTime().asSeconds();
 	const glm::vec3 spaceShipPos = m_gameRef.getStarShip()->getPos();
+	const glm::vec3 camPos = camera.getCameraPos();
 
 	int drawnTurrets = 0;
 	for (const auto& iter: m_enemyTurretTilesPtrs) {
@@ -268,7 +269,10 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 		const float dy = spaceShipPos.y - iter->getPos().y;
 		const float dx = spaceShipPos.x - iter->getPos().x;
 
-		if (dy >= aabb_relMiny && dy <= aabb_relMaxy) 
+		bool visible = iter->getPos().y < camPos.y + aabb_relMaxy &&
+					   iter->getPos().y > camPos.y - abs(aabb_relMiny);
+
+		if (visible) 
 		{
 			const float ratio = dx / abs(dy);
 			const float angle = glm::degrees(atanf(ratio));
@@ -303,7 +307,10 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 
 		const float dy = spaceShipPos.y - iter->getPos().y;
 
-		if (dy >= aabb_relMiny && dy <= aabb_relMaxy)
+		bool visible = iter->getPos().y < camPos.y + aabb_relMaxy &&
+					   iter->getPos().y > camPos.y - abs(aabb_relMiny);
+
+		if (visible)
 		{
 			(*m_instEnemyShip)[drawnSpaceShips] = iter->getSpaceshipPos();
 			

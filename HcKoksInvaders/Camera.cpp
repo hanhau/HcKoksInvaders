@@ -34,6 +34,10 @@ void Camera::setProjectionMatrix(const glm::mat4 proj) {
 	m_projectionMat = proj;
 }
 
+const glm::vec3& Camera::getCameraPos() const {
+	return m_cameraPos;
+}
+
 const glm::mat4& Camera::getProjectionMatrix() const {
 	return m_projectionMat;
 }
