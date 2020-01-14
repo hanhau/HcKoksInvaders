@@ -108,6 +108,7 @@ std::string NetworkManager::getDataString(const std::string valName,
     if (posEnd == std::string::npos)
         return "";
 
+    auto a = std::string(input.begin() + posBegin, input.begin() + posEnd);
     return std::string(input.begin() + posBegin, input.begin() + posEnd);
 }
 

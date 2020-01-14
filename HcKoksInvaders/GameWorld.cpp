@@ -332,18 +332,31 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 void GameWorld::letNPCsShoot(const Camera& camera) {
 	const glm::vec3& camPos = camera.getCameraPos();
 
-	for (const auto& iter_row : m_tiles) {
-		for (const auto& iter_column : iter_row) {
-			bool visible = (iter_column->getPos().y < camPos.y + AABB_relMaxy &&
-							iter_column->getPos().y > camPos.y - abs(AABB_relMiny));
+	for (const auto& iter : m_enemyTurretTilesPtrs) {
+		if (iter == nullptr)
+			continue;
 
-			if (visible) {
-				const glm::vec2 orientation = glm::normalize(glm::vec2(
-					m_gameRef.getStarShip()->getPos().x - iter_column->getPos().x,
-					m_gameRef.getStarShip()->getPos().y - iter_column->getPos().y
-				));
-				iter_column->letShoot(iter_column->getPos(), orientation);
-			}
+		bool visible = (iter->getPos().y < camPos.y + AABB_relMaxy &&
+						iter->getPos().y > camPos.y - abs(AABB_relMiny));
+
+		if (visible) {
+			const glm::vec2 orientation = glm::normalize(glm::vec2(
+				m_gameRef.getStarShip()->getPos().x - iter->getPos().x,
+				m_gameRef.getStarShip()->getPos().y - iter->getPos().y
+			));
+			iter->letShoot(iter->getPos(), orientation);
+		}
+	}
+
+	for (const auto& iter : m_enemySpaceshipTilesPtrs) {
+		if (iter == nullptr)
+			continue;
+
+		bool visible = (iter->getPos().y < camPos.y + AABB_relMaxy &&
+			iter->getPos().y > camPos.y - abs(AABB_relMiny));
+
+		if (visible) {
+			iter->letShoot(iter->getPos(), glm::vec2(-1.0,0.0));
 		}
 	}
 }

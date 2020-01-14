@@ -1,10 +1,11 @@
 #pragma once
-#include <deque>
-#include <SFML/Audio/Sound.hpp>
+#include <array>
+#include <SFML/Audio.hpp>
 
-static class _SoundQueue : 
-	public std::deque<sf::Sound> 
+class SoundQueue
 {
+	static std::array<sf::Sound,200>* m_sounds;
 public:
-	void cleanPlayedSounds();
-} SoundQueue;
+	static sf::Sound& add(const sf::SoundBuffer& soundbuf,const float pitch = 1.0f);
+	static int getActivePlayingSounds();
+};

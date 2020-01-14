@@ -415,7 +415,7 @@ void Game::run() {
 		}
 
 		// End of Frame
-		SoundQueue.cleanPlayedSounds();
+		printf_s("active sounds: %d\n", SoundQueue::getActivePlayingSounds());
 
 		lastFrameTime = fpsClock.getElapsedTime().asMicroseconds() / 1'000'000.0;
 		drawFpsCounter(fpsClock.getElapsedTime());

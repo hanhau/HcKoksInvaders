@@ -133,9 +133,7 @@ void StarShip::processShoot() {
 				});
 
 				// Add Sound
-				SoundQueue.push_back(sf::Sound(soundBufPistol));
-				SoundQueue.back().setPitch(1.0f + (cosf(m_pos.y * 1000.f)) * 0.1f);
-				SoundQueue.back().play();
+				SoundQueue::add(soundBufPistol, 1.0f + (cosf(m_pos.y * 1000.f)) * 0.1f);
 			}
 			break;
 		case WeaponType::Rocket:
@@ -182,9 +180,7 @@ void StarShip::processShoot() {
 						});
 
 					// Add Sound
-					SoundQueue.push_back(sf::Sound(soundBufShotgun));
-					SoundQueue.back().setPitch(1.0f + (cosf(m_pos.x * 1000.f)) * 0.1f);
-					SoundQueue.back().play();
+					SoundQueue::add(soundBufShotgun, 1.0f + (cosf(m_pos.x * 1000.f)) * 0.1f);
 
 					// Subtract from Ammo
 					m_ammoShotgun--;
@@ -205,9 +201,7 @@ void StarShip::processShoot() {
 					});
 
 					// Add Sound
-					SoundQueue.push_back(sf::Sound(soundBufSMG));
-					SoundQueue.back().setPitch(1.0f + (cosf(m_pos.y*234.3432f)) * 0.05f);
-					SoundQueue.back().play();
+					SoundQueue::add(soundBufSMG, 1.0f + (cosf(m_pos.y * 234.3432f)) * 0.05f);
 
 					// Subtract from Ammo
 					m_ammoSMG--;

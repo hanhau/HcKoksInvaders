@@ -1,22 +1,21 @@
-#version 330
+#version 430 core
 
 #define PI 3.14159265358979
 
 #define iterations 14
-#define formuparam 0.125
+#define formuparam 0.525
 
-#define volsteps 14
+#define volsteps 20
 #define stepsize 0.25
 
 #define zoom   0.080
 #define tile   0.850
-#define speed  0.010 
+#define speed  0.001 
 
-#define brightness 0.0015
+#define brightness 0.0001
 #define darkmatter 0.500
 #define distfading 0.730
 #define saturation 0.550
-
 
 uniform float progress = 1.0f;
 uniform vec3 baseColor = vec3(1.0f,1.0f,1.0f);
@@ -25,8 +24,8 @@ uniform vec2 iResolution = vec2(640.0f,960.0f);
 out vec4 res;
 
 void main(){
-	res = vec4(1.0);
-	discard;
+	baseColor;
+
 
 	//get coords and direction
 	vec2 uv=gl_FragCoord.xy/iResolution.xy-.5;
