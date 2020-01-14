@@ -216,7 +216,7 @@ bool NetworkManager::getUserID(const std::string login,
     std::string res;
     if (!sendHttpsRequest(
         RequestType::GET,
-        "getUserToken.php?login=" + encodeStringToUrl(login) +
+        "/getUserID.php?login=" + encodeStringToUrl(login) +
         "&password=" + encodeStringToUrl(password),
         res
     )) {

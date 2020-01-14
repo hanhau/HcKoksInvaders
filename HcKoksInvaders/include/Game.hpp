@@ -22,6 +22,10 @@ class Game {
 private:
 	friend class TileEntityBase;
 	
+	// Game Launch Options
+	GameLaunchOptions m_gameLaunchOptions;
+
+	// Window
 	sf::Window window;
 	
 	// global Game Clock
@@ -59,6 +63,9 @@ private:
 		sf::Clock stageClock;
 		
 		void updateBullets(float deltaTime);
+		void letBulletsDie(const glm::vec3 aliveCenter, 
+						   const float aliveDiameter);
+
 		float getCurrentYPos();
 		void drawHUDText(const sf::Window& win, const Program& program);
 		void prepareStage(int stage);
@@ -77,15 +84,20 @@ private:
 		std::vector<Button*> buttonVec;
 
 		Text* textTitle;
+
 		Text* textHighscore;
 		Text* textHighscorePoints;
 		Text* textHighscoreStages;
+		
+		// optional if online
+		Text* textLoginName;
+		Text* textPlayedGames;
 
 		sf::Music music;
 
 		int highscorePoints = 0;
 		int highscoreStages = 0;
-		void refreshHighscore();
+		void refreshHighscore(const GameLaunchOptions& glo);
 	} sMenu;
 
 	struct __sCredits {

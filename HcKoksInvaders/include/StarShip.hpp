@@ -46,7 +46,6 @@ public:
 	StarShip(Game& game);
 
 	void updateOnUserInput(float deltaSeconds);
-	void updateSoundBuffers();
 
 	void addSMGAmmo(int shots);
 	void addShotgunAmmo(int shots);

@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="AmmunitionIcon.cpp" />
     <ClCompile Include="BoundingBall.cpp" />
+    <ClCompile Include="BulletEmitter.cpp" />
     <ClCompile Include="BulletRenderer.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ProgramManager.cpp" />
     <ClCompile Include="SoundBufferManager.cpp" />
+    <ClCompile Include="SoundQueue.cpp" />
     <ClCompile Include="StarBackground.cpp" />
     <ClCompile Include="StarShip.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -189,6 +191,7 @@
     <ClInclude Include="include\AmmunitionIcon.hpp" />
     <ClInclude Include="include\BoundingBall.hpp" />
     <ClInclude Include="include\Bullet.hpp" />
+    <ClInclude Include="include\BulletEmitter.hpp" />
     <ClInclude Include="include\BulletRenderer.hpp" />
     <ClInclude Include="include\Button.hpp" />
     <ClInclude Include="include\Camera.hpp" />
@@ -210,6 +213,7 @@
     <ClInclude Include="include\ProgramManager.hpp" />
     <ClInclude Include="include\Shader.hpp" />
     <ClInclude Include="include\SoundBufferManager.hpp" />
+    <ClInclude Include="include\SoundQueue.hpp" />
     <ClInclude Include="include\StarBackground.hpp" />
     <ClInclude Include="include\StarShip.hpp" />
     <ClInclude Include="include\Text.hpp" />

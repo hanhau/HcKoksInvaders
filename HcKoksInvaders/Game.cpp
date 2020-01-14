@@ -18,6 +18,8 @@
 #include "include/BulletRenderer.hpp"
 #include "include/Text.hpp"
 #include "include/StarShip.hpp"
+#include "include/NetworkManager.hpp"
+#include "include/SoundQueue.hpp"
 
 void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 	const sf::Event::MouseButtonEvent& mbEvent)
@@ -33,6 +35,8 @@ void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 }
 
 void Game::init(const GameLaunchOptions& glo) {
+	m_gameLaunchOptions = glo;
+
 	// Init window with Context
 	sf::ContextSettings cs(24, 0, 0, 4, 3, 0, false);
 
@@ -69,11 +73,11 @@ void Game::init(const GameLaunchOptions& glo) {
 
 	// Check OpenGL Version
 	std::cout << "OpenGL-Version: " << (const char*)glGetString(GL_VERSION) << "\n";
-	std::cout << "Vendor: " << (const char*)glGetString(GL_VENDOR) << "\n";
-	std::cout << "Renderer: " << (const char*)glGetString(GL_RENDERER) << "\n";
+	std::cout << "Vendor: "			<< (const char*)glGetString(GL_VENDOR) << "\n";
+	std::cout << "Renderer: "		<< (const char*)glGetString(GL_RENDERER) << "\n";
 	sf::ContextSettings settings = window.getSettings();
-	std::cout << "depth bits:" << settings.depthBits << std::endl;
-	std::cout << "stencil bits:" << settings.stencilBits << std::endl;
+	std::cout << "depth bits:"		   << settings.depthBits << std::endl;
+	std::cout << "stencil bits:"	   << settings.stencilBits << std::endl;
 	std::cout << "antialiasing level:" << settings.antialiasingLevel << std::endl;
 
 	// Check OpenGL Errors
@@ -178,6 +182,10 @@ void Game::init(const GameLaunchOptions& glo) {
 		sMenu.textHighscore = new Text("HIGHSCORE", 38, glm::ivec2(0, windowHeight / 2.f - 42));
 		sMenu.textHighscorePoints = new Text("123423 Punkte", 40, glm::ivec2(0, windowHeight / 2.f));
 		sMenu.textHighscoreStages = new Text("999 Stages", 36, glm::ivec2(0, windowHeight / 2.f + 44));
+
+		// optional Highscore Text
+		sMenu.textLoginName = new Text("LOGIN", 30, glm::ivec2(0,windowHeight / 2.0f - 88));
+		sMenu.textPlayedGames = new Text("Gespielte Spiele: 999", 24, glm::ivec2(0, windowHeight / 2.0f + 88));
 	}
 
 	// Load Credits UI
@@ -245,7 +253,7 @@ void Game::run() {
 	sMenu.music.setLoop(true);
 	sMenu.music.setVolume(100);
 	sMenu.music.play();
-	sMenu.refreshHighscore();
+	sMenu.refreshHighscore(m_gameLaunchOptions);
 
 	sCredits.music.setLoop(true);
 	sCredits.music.setVolume(0);
@@ -255,7 +263,7 @@ void Game::run() {
 	sf::Clock fpsClock;
 
 	Camera cam1 = Camera(
-		glm::vec3(0.0f, 0.0f, 5.0f),
+		glm::vec3(0.0f, 0.0f, 4.0f),
 		glm::vec3(0.0f, 0.45f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f),
 		glm::perspective(glm::radians(47.5f), window.getSize().x / (float)window.getSize().y, 1.f, 100.f)
@@ -325,7 +333,11 @@ void Game::run() {
 				sIngame.playerShip->setPos(glm::vec3(cpos.x, sIngame.getCurrentYPos(), cpos.z));
 				cam1.setCameraPos(glm::vec3(0, sIngame.getCurrentYPos() - 0.5f, 5));
 
+				sIngame.gameWorld->letNPCsShoot(cam1);
+
 				sIngame.updateBullets(lastFrameTime);
+				sIngame.letBulletsDie(cam1.getCameraPos(), 8.f);
+
 				sIngame.gameWorld->updateOnBulletCollisions(
 					sIngame.bullets,
 					sIngame.playerShip->getPos(),
@@ -334,7 +346,6 @@ void Game::run() {
 				);
 				sIngame.bulletRenderer->drawInstances(sIngame.bullets, cam1);
 
-				sIngame.playerShip->updateSoundBuffers();
 				sIngame.playerShip->updateOnUserInput(lastFrameTime);
 
 				sIngame.gameWorld->draw(cam1, *cubeMap);
@@ -353,8 +364,20 @@ void Game::run() {
 				if (sIngame.isGameOver()) {
 					HighscoreManager::updateEntry(
 						sIngame.currentPoints, 
-						sIngame.currentStage
+						sIngame.currentStage-1
 					);
+					if (m_gameLaunchOptions.userid != 0) {
+						std::thread t([&]() {
+							bool res = NetworkManager::uploadHighscore(
+								m_gameLaunchOptions.userid,
+								sIngame.currentPoints,
+								sIngame.currentStage-1
+							);
+							if (!res) {
+								std::cout << "Error uploading Highscore\n";
+							}
+						});
+					}
 				}
 
 				if (sIngame.isStageFinished()) {
@@ -392,6 +415,8 @@ void Game::run() {
 		}
 
 		// End of Frame
+		SoundQueue.cleanPlayedSounds();
+
 		lastFrameTime = fpsClock.getElapsedTime().asMicroseconds() / 1'000'000.0;
 		drawFpsCounter(fpsClock.getElapsedTime());
 		fpsClock.restart();
@@ -489,6 +514,14 @@ void Game::drawMainMenu() {
 	sMenu.textHighscore->draw(window, textProg, glm::vec3(0.f, 1.f, 0.518f));
 	sMenu.textHighscorePoints->draw(window, textProg);
 	sMenu.textHighscoreStages->draw(window, textProg);
+
+	if (m_gameLaunchOptions.userid != 0) {
+		sMenu.textLoginName->centerHorizontally(window);
+		sMenu.textPlayedGames->centerHorizontally(window);
+
+		sMenu.textLoginName->draw(window, textProg);
+		sMenu.textPlayedGames->draw(window, textProg);
+	}
 }
 
 void Game::drawCredits() {
@@ -620,14 +653,51 @@ void Game::drawGameOverScreen() {
 }
 
 // struct funcs
-void Game::__sMenu::refreshHighscore() {
-	HighscoreManager::get(highscorePoints, highscoreStages);
+void Game::__sMenu::refreshHighscore(const GameLaunchOptions& glo) {
+	if (glo.userid == 0) {
+		HighscoreManager::get(highscorePoints, highscoreStages);
+	}
+	else 
+	{
+		int playedGames = 0;
+		bool res = NetworkManager::getUserStatistics(
+			glo.userid,
+			playedGames,
+			highscorePoints, highscoreStages
+		);
+
+		if (!res)
+			HighscoreManager::get(highscorePoints, highscoreStages);
+
+		textLoginName->setText(glo.login);
+		textPlayedGames->setText("Gespielte Spiele: " + std::to_string(playedGames));
+	}
 }
 
 void Game::__sIngame::updateBullets(float deltaTime) {
 	for (auto& iter : bullets) {
 		iter.update(deltaTime);
 	}
+}
+void Game::__sIngame::letBulletsDie(const glm::vec3 aliveCenter,
+									const float aliveDiameter) 
+{
+	int i = 0;
+	std::list<Bullet>::iterator iter = bullets.begin();
+	while (iter != bullets.end()) {
+		bool inRange = glm::distance(iter->m_pos,aliveCenter) < aliveDiameter;
+
+		if (i >= 1024 || !inRange) 
+		{
+			bullets.erase(iter++);
+		}
+		else {
+			++iter;
+			i++;
+		}
+	}
+
+	printf_s("alive bullets %d\n", i);
 }
 
 float Game::__sIngame::getCurrentYPos() {

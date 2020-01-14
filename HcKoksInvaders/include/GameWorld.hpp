@@ -25,6 +25,10 @@ public:
 	static const int MinHeightInTiles;
 	static const int WidthInTiles;
 
+	// Updated & drawn area on Y Axis
+	static const float AABB_relMiny; // negative y offset
+	static const float AABB_relMaxy; // positive y offset
+
 	void init(int stageheight,int seed);
 	void update(const double deltaTime);
 	void updateOnBulletCollisions(std::list<Bullet>& bullets,
@@ -32,7 +36,9 @@ public:
 								  float visibleOffsetYPositive,
 								  float visibleOffsetYNegative,
 								  int& points);
+
 	void draw(const Camera& camera,Cubemap& cubemap);
+	void letNPCsShoot(const Camera& camera);
 
 	const float getNDCHeight();
 

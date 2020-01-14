@@ -11,6 +11,8 @@
 
 const int GameWorld::MinHeightInTiles = 15;
 const int GameWorld::WidthInTiles = 8;
+const float GameWorld::AABB_relMiny = -1.0;
+const float GameWorld::AABB_relMaxy = 6.0;
 
 enum class TileType {
 	Empty,
@@ -182,8 +184,10 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 				if (iterTurret == nullptr)
 					break;
 
-				if (iterBullet->m_owner == Bullet::Owner::Enemy)
+				if (iterBullet->m_owner == Bullet::Owner::Enemy) {
+					++iterBullet;
 					continue;
+				}
 
 				auto bb = modelTurret.getOuterBB().transform(iterTurret->getHeadPos());
 
@@ -219,8 +223,10 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 				if (iterSpaceship == nullptr)
 					break;
 
-				if (iterBullet->m_owner == Bullet::Owner::Enemy)
+				if (iterBullet->m_owner == Bullet::Owner::Enemy) {
+					++iterBullet;
 					continue;
+				}
 
 				auto bb = modelEnemySpaceShip.getOuterBB().transform(iterSpaceship->getSpaceshipPos());
 
@@ -252,9 +258,6 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 	static const Model3D& turretBase = mm.getModel("res/models/turret_base.obj");
 	static const Model3D& playerShip = mm.getModel("res/models/vengabus.obj");
 
-	static constexpr float aabb_relMiny = -1.0;
-	static constexpr float aabb_relMaxy = 6.0;
-
 	static sf::Clock clock;
 
 	const float secs = clock.getElapsedTime().asSeconds();
@@ -269,8 +272,8 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 		const float dy = spaceShipPos.y - iter->getPos().y;
 		const float dx = spaceShipPos.x - iter->getPos().x;
 
-		bool visible = iter->getPos().y < camPos.y + aabb_relMaxy &&
-					   iter->getPos().y > camPos.y - abs(aabb_relMiny);
+		bool visible = iter->getPos().y < camPos.y + AABB_relMaxy &&
+					   iter->getPos().y > camPos.y - abs(AABB_relMiny);
 
 		if (visible) 
 		{
@@ -307,8 +310,8 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 
 		const float dy = spaceShipPos.y - iter->getPos().y;
 
-		bool visible = iter->getPos().y < camPos.y + aabb_relMaxy &&
-					   iter->getPos().y > camPos.y - abs(aabb_relMiny);
+		bool visible = iter->getPos().y < camPos.y + AABB_relMaxy &&
+					   iter->getPos().y > camPos.y - abs(AABB_relMiny);
 
 		if (visible)
 		{
@@ -324,6 +327,25 @@ void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
 	turretBase.drawInstanceQueue(*m_instTurretBase, camera,cubemap);
 	turretHead.drawInstanceQueue(*m_instTurretHead, camera, cubemap);
 	enemyShip.drawInstanceQueue(*m_instEnemyShip, camera, cubemap);
+}
+
+void GameWorld::letNPCsShoot(const Camera& camera) {
+	const glm::vec3& camPos = camera.getCameraPos();
+
+	for (const auto& iter_row : m_tiles) {
+		for (const auto& iter_column : iter_row) {
+			bool visible = (iter_column->getPos().y < camPos.y + AABB_relMaxy &&
+							iter_column->getPos().y > camPos.y - abs(AABB_relMiny));
+
+			if (visible) {
+				const glm::vec2 orientation = glm::normalize(glm::vec2(
+					m_gameRef.getStarShip()->getPos().x - iter_column->getPos().x,
+					m_gameRef.getStarShip()->getPos().y - iter_column->getPos().y
+				));
+				iter_column->letShoot(iter_column->getPos(), orientation);
+			}
+		}
+	}
 }
 
 const float GameWorld::getNDCHeight() {

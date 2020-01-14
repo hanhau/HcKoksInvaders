@@ -1,49 +1,39 @@
 #include "include/EnemyTurretTile.hpp"
+#include "include/Bullet.hpp"
 
 EnemyTurretTile::EnemyTurretTile(Game* const ref_game,int seed,
 								 const glm::vec3 pos,const float scale) :
 	TileEntityBase(ref_game),
+	BulletEmitter(ref_game, seed, {GunType::Pistol}),
 	m_pos(pos)
 {
-	switch (seed % 3) {
-	case 0: m_gunType = GunType::Pistol; break;
-	case 1: m_gunType = GunType::Shotgun; break;
-	case 2: m_gunType = GunType::SMG; break;
-	default: m_gunType = GunType::Pistol; break;
-	}
 	m_health = 100.f;
-
 	m_basePos = std::move(ModelPosition(
 		pos, glm::radians(90.f), glm::vec3(1.f,0.f,0.f), glm::vec3(scale)
 	));
 	m_headPos = std::move(ModelPosition(
 		pos, glm::radians(90.f), glm::vec3(1.f,0.f,0.f), glm::vec3(scale)
 	));
-}
 
-void EnemyTurretTile::fire()
-{
+	// Bullet Emitter Properties
+	m_beBulletOwner = Bullet::Owner::Enemy;
 
-}
+	m_beCooldownPistolSecs = 2.f;
+	m_bePistolDamage = 10.f;
+	m_bePistolSpeed = 1.2f;
 
-void EnemyTurretTile::firePistolShot(std::vector<Bullet>& bullets)
-{
+	m_beCooldownShotgunSecs = 3.2f;
+	m_beShotgunDamage = 12.f;
+	m_beShotgunSpeed = 1.4f;
 
-}
-
-void EnemyTurretTile::fireSMGShot(std::vector<Bullet>& bullets)
-{
-
-}
-
-void EnemyTurretTile::fireShotgunShot(std::vector<Bullet>& bullets)
-{
-
+	m_beCooldownSMGSecs = 1.5f;
+	m_beSMGDamage = 10.f;
+	m_beSMGSpeed = 0.5f;
 }
 
 void EnemyTurretTile::update(double deltaTime) 
 {
-
+	
 }
 
 void EnemyTurretTile::takeDamage(float dmg) {
@@ -58,7 +48,11 @@ void EnemyTurretTile::draw()
 
 }
 
-const glm::vec3 EnemyTurretTile::getPos() const {
+void EnemyTurretTile::letShoot(const glm::vec3 pos, const glm::vec2 orientation) {
+	fireIfReady(pos, orientation);
+}
+
+const glm::vec3& EnemyTurretTile::getPos() const {
 	return m_pos;
 }
 

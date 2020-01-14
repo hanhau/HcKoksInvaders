@@ -1,5 +1,6 @@
 #include "include/StarShip.hpp"
 #include "include/Model.hpp"
+#include "include/SoundQueue.hpp"
 
 #include <deque>
 #include <SFML/Audio/Sound.hpp>
@@ -12,8 +13,6 @@ const float StarShip::coolDownPistol = 0.2f;
 const float StarShip::coolDownRocket = 5.0f;
 const float StarShip::coolDownShotgun = 0.5f;
 const float StarShip::coolDownSMG = 0.10f;
-
-static std::deque<sf::Sound> _soundQueue = std::deque<sf::Sound>();
 
 StarShip::StarShip(Game& game) :
 	m_gameRef(game),
@@ -59,16 +58,6 @@ void StarShip::updateOnUserInput(float deltaSeconds) {
 	}
 
 	m_pos.x = std::clamp(m_pos.x, _minx, _miny);
-}
-
-void StarShip::updateSoundBuffers() {
-	if (_soundQueue.size() == 0)
-		return;
-
-	if (_soundQueue.front().getStatus() == sf::Sound::Stopped) {
-		_soundQueue.pop_front();
-		updateSoundBuffers();
-	}
 }
 
 // Add Ammunition
@@ -144,9 +133,9 @@ void StarShip::processShoot() {
 				});
 
 				// Add Sound
-				_soundQueue.push_back(sf::Sound(soundBufPistol));
-				_soundQueue.back().setPitch(1.0f + (cosf(m_pos.y * 1000.f)) * 0.1f);
-				_soundQueue.back().play();
+				SoundQueue.push_back(sf::Sound(soundBufPistol));
+				SoundQueue.back().setPitch(1.0f + (cosf(m_pos.y * 1000.f)) * 0.1f);
+				SoundQueue.back().play();
 			}
 			break;
 		case WeaponType::Rocket:
@@ -193,9 +182,9 @@ void StarShip::processShoot() {
 						});
 
 					// Add Sound
-					_soundQueue.push_back(sf::Sound(soundBufShotgun));
-					_soundQueue.back().setPitch(1.0f + (cosf(m_pos.x * 1000.f)) * 0.1f);
-					_soundQueue.back().play();
+					SoundQueue.push_back(sf::Sound(soundBufShotgun));
+					SoundQueue.back().setPitch(1.0f + (cosf(m_pos.x * 1000.f)) * 0.1f);
+					SoundQueue.back().play();
 
 					// Subtract from Ammo
 					m_ammoShotgun--;
@@ -216,9 +205,9 @@ void StarShip::processShoot() {
 					});
 
 					// Add Sound
-					_soundQueue.push_back(sf::Sound(soundBufSMG));
-					_soundQueue.back().setPitch(1.0f + (cosf(m_pos.y*234.3432f)) * 0.05f);
-					_soundQueue.back().play();
+					SoundQueue.push_back(sf::Sound(soundBufSMG));
+					SoundQueue.back().setPitch(1.0f + (cosf(m_pos.y*234.3432f)) * 0.05f);
+					SoundQueue.back().play();
 
 					// Subtract from Ammo
 					m_ammoSMG--;
