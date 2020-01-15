@@ -14,13 +14,16 @@ const float StarShip::coolDownRocket = 5.0f;
 const float StarShip::coolDownShotgun = 0.5f;
 const float StarShip::coolDownSMG = 0.10f;
 
+const float StarShip::m_scale = 0.04f;
+
 StarShip::StarShip(Game& game) :
 	m_gameRef(game),
 	m_ammoSMG(0),
 	m_ammoShotgun(0),
 	m_ammoRocket(0),
 	m_pos(glm::vec3(0.0f)),
-	m_activeWeapon(WeaponType::Pistol)
+	m_activeWeapon(WeaponType::Pistol),
+	m_health(100.f)
 {
 	m_clockPistol.restart();
 	m_clockRocket.restart();
@@ -89,6 +92,13 @@ const float StarShip::getRocketAmmoPercent() const {
 	return _getAmmoPercent(m_ammoRocket, maxAmmoRocket);
 }
 
+void StarShip::setHealth(int health) {
+	m_health = health;
+}
+const int StarShip::getHealth() {
+	return m_health;
+}
+
 const glm::vec3& StarShip::getPos() const {
 	return m_pos;
 }
@@ -103,7 +113,7 @@ void StarShip::draw(const Camera& camera, Cubemap& cubemap) {
 	shipPos[0] = ModelPosition(
 		m_pos,
 		glm::radians(90.f),glm::vec3(1.f,0.0001f,0.0001f),
-		glm::vec3(0.050f)
+		glm::vec3(m_scale)
 	);
 	shipPos.setInnerCount(1);
 	shipPos.transferToGpu();
@@ -211,5 +221,28 @@ void StarShip::processShoot() {
 		default:
 			throw "Invalid WeaponType";
 			break;
+	}
+}
+
+void StarShip::handleBullets(std::list<Bullet>& bullets) {
+	static const Model3D& ship = m_gameRef.getModelManager().getModel("res/models/vengabus.obj");
+	static const BoundingBall bb = ship.getOuterBB();
+	static const float shipRadius = bb.getRadius() * m_scale;
+
+	std::list<Bullet>::iterator iter = bullets.begin();
+	while (iter != bullets.end()) {
+		if (iter->m_owner == Bullet::Owner::Player) {
+			++iter;
+			continue;
+		}
+
+		if (glm::distance(m_pos,iter->m_pos) <= shipRadius) {
+			m_health -= iter->m_damage;
+
+			bullets.erase(iter++);
+		}
+		else {
+			++iter;
+		}
 	}
 }

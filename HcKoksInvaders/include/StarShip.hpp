@@ -17,6 +17,7 @@ class StarShip {
 	Game& m_gameRef;
 	void processShoot();
 	glm::vec3 m_pos;
+	float m_health;
 
 	// Max Ammo of a Weapon Type
 	static const int maxAmmoSMG;
@@ -42,6 +43,8 @@ class StarShip {
 
 	// Currently selected Weapon
 	WeaponType m_activeWeapon;
+
+	static const float m_scale;
 public:
 	StarShip(Game& game);
 
@@ -55,8 +58,12 @@ public:
 	const float getShotgunAmmoPercent() const;
 	const float getRocketAmmoPercent() const;
 
+	const int getHealth();
+	void setHealth(int health);
+
 	const glm::vec3& getPos() const;
 	void setPos(const glm::vec3 pos);
 
 	void draw(const Camera& camera, Cubemap& cubemap);
+	void handleBullets(std::list<Bullet>& bullets);
 };

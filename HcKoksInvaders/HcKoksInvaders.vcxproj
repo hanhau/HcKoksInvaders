@@ -305,7 +305,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\fonts\font.png" />
     <Image Include="res\images\cubemap\back.png" />
     <Image Include="res\images\cubemap\bot.png" />
     <Image Include="res\images\cubemap\front.png" />
@@ -382,12 +381,6 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Image>
-    <Image Include="res\models\vengabus_emit.png">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </Image>
     <Image Include="res\models\vengabus_glossy.png">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -414,7 +407,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="res\fonts\CabinSketch-Bold.ttf" />
     <Font Include="res\fonts\PressStart2P-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>

@@ -108,6 +108,9 @@ private:
 	} sCredits;
 
 	struct __sGameOverScreen {
+		int points;
+		int stages;
+
 		Button* buttonNewGame;
 		Button* buttonMainMenu;
 		Button* buttonExitGame;

@@ -10,7 +10,7 @@
 #include <iostream>
 
 const int GameWorld::MinHeightInTiles = 15;
-const int GameWorld::WidthInTiles = 8;
+const int GameWorld::WidthInTiles = 5; // 8
 const float GameWorld::AABB_relMiny = -1.0;
 const float GameWorld::AABB_relMaxy = 6.0;
 
@@ -110,7 +110,7 @@ void GameWorld::init(int stageheight, int seed) {
 						&m_gameRef,
 						rand(),
 						glm::vec3(px,py,0.0f),
-						0.025f
+						0.04f //0.025f
 					);
 					break;
 				case 1: 
@@ -118,7 +118,7 @@ void GameWorld::init(int stageheight, int seed) {
 						&m_gameRef,
 						rand(),
 						glm::vec3(px,py,0.0f),
-						0.075f
+						0.12f //0.075f
 					);
 					break;
 				}

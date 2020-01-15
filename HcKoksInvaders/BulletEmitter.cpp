@@ -31,6 +31,7 @@ void BulletEmitter::fireIfReady(const glm::vec3 pos, const glm::vec2 orientation
 					m_bePistolDamage,
 					m_beBulletOwner
 				});
+				
 				m_beClockPistol.restart();
 			}
 		}
@@ -47,7 +48,16 @@ void BulletEmitter::fireIfReady(const glm::vec3 pos, const glm::vec2 orientation
 		break;
 	case GunType::SMG:
 		{
+			if (m_beClockSMG.getElapsedTime().asSeconds() >= m_beCooldownSMGSecs) {
+				m_beGamePtr->addBullet(Bullet{
+					pos,
+					glm::vec3(on.x * m_beSMGSpeed, on.y * m_beSMGSpeed, 0.f),
+					m_beSMGDamage,
+					m_beBulletOwner
+				});
 
+				m_beClockSMG.restart();
+			}
 		}
 		break;
 	default:

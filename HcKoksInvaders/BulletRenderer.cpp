@@ -9,7 +9,7 @@ struct BulletPosData {
 };
 
 std::vector<glm::vec3> getBulletVertices() {
-	constexpr float x_half = 1.0f * 2.f/320.f;
+	constexpr float x_half = 2.0f * 2.f/320.f;
 	constexpr float y_half = 8.0f * 2.f/640.f;
 
 	return std::vector<glm::vec3>{
@@ -53,7 +53,8 @@ void BulletRenderer::drawInstances(std::list<Bullet>& bullets, const Camera& cam
 
 	const unsigned int bulletCount = bullets.size();
 
-	assert(bulletCount <= MAX_BULLETS);
+	if (bulletCount > MAX_BULLETS)
+		printf_s("Too many bullets in %s",__FUNCSIG__);
 
 	unsigned int i = 0;
 	for (auto& iter : bullets) {

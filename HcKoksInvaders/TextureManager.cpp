@@ -19,9 +19,7 @@ TextureManager::TextureManager() {
 	add("res/models/ship1_glossy.png");
 
 	add("res/models/vengabus_diffuse.png");
-	add("res/models/vengabus_emit.png");
 	add("res/models/vengabus_glossy.png");
-	add("res/models/vengabus_normal.png");
 
 	add("res/models/vengabus_hq_diffuse.png");
 	add("res/models/vengabus_hq_glossy.png");

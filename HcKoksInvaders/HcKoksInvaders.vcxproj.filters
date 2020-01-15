@@ -348,9 +348,6 @@
     <Image Include="res\models\vengabus_diffuse.png">
       <Filter>res\models</Filter>
     </Image>
-    <Image Include="res\models\vengabus_emit.png">
-      <Filter>res\models</Filter>
-    </Image>
     <Image Include="res\models\vengabus_glossy.png">
       <Filter>res\models</Filter>
     </Image>
@@ -405,9 +402,6 @@
     <Image Include="res\models\vengabus_hq_glossy.png">
       <Filter>res\models</Filter>
     </Image>
-    <Image Include="res\fonts\font.png">
-      <Filter>res\fonts</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\models\ship1.obj">
@@ -416,9 +410,6 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\fonts\PressStart2P-Regular.ttf">
-      <Filter>res\fonts</Filter>
-    </Font>
-    <Font Include="res\fonts\CabinSketch-Bold.ttf">
       <Filter>res\fonts</Filter>
     </Font>
   </ItemGroup>

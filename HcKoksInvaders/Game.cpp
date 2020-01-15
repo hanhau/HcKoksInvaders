@@ -263,7 +263,7 @@ void Game::run() {
 	sf::Clock fpsClock;
 
 	Camera cam1 = Camera(
-		glm::vec3(0.0f, 0.0f, 4.0f),
+		glm::vec3(0.0f, 0.0f, 2.5f),
 		glm::vec3(0.0f, 0.45f, -1.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f),
 		glm::perspective(glm::radians(47.5f), window.getSize().x / (float)window.getSize().y, 1.f, 100.f)
@@ -334,16 +334,17 @@ void Game::run() {
 				cam1.setCameraPos(glm::vec3(0, sIngame.getCurrentYPos() - 0.5f, 5));
 
 				sIngame.gameWorld->letNPCsShoot(cam1);
-
-				sIngame.updateBullets(lastFrameTime);
 				sIngame.letBulletsDie(cam1.getCameraPos(), 8.f);
-
+				sIngame.updateBullets(lastFrameTime);
 				sIngame.gameWorld->updateOnBulletCollisions(
 					sIngame.bullets,
 					sIngame.playerShip->getPos(),
 					4.5f, 1.f,
 					sIngame.currentPoints
 				);
+				sIngame.playerShip->handleBullets(sIngame.bullets);
+				sIngame.currentHealth = sIngame.playerShip->getHealth();
+
 				sIngame.bulletRenderer->drawInstances(sIngame.bullets, cam1);
 
 				sIngame.playerShip->updateOnUserInput(lastFrameTime);
@@ -362,22 +363,33 @@ void Game::run() {
 				sIngame.MunitionIconSMG->draw(window,sIngame.playerShip->getSMGAmmoPercent(), aiProg);
 
 				if (sIngame.isGameOver()) {
+					sGameOver.points = sIngame.currentPoints;
+					sGameOver.stages = sIngame.currentStage-1;
+
 					HighscoreManager::updateEntry(
 						sIngame.currentPoints, 
 						sIngame.currentStage-1
 					);
 					if (m_gameLaunchOptions.userid != 0) {
-						std::thread t([&]() {
-							bool res = NetworkManager::uploadHighscore(
-								m_gameLaunchOptions.userid,
-								sIngame.currentPoints,
-								sIngame.currentStage-1
-							);
-							if (!res) {
-								std::cout << "Error uploading Highscore\n";
-							}
-						});
+						std::thread t([](int userid,int points,int stages) 
+							{
+								bool res = NetworkManager::uploadHighscore(
+									userid,
+									points,
+									stages
+								);
+								if (!res) {
+									std::cout << "Error uploading Highscore\n";
+								}
+							},
+							m_gameLaunchOptions.userid,
+							sIngame.currentPoints,
+							sIngame.currentStage-1
+						);
+						t.join();
 					}
+
+					m_gameState = GameState::GameOver;
 				}
 
 				if (sIngame.isStageFinished()) {
@@ -457,6 +469,7 @@ void Game::startGame() {
 	sIngame.currentHealth = 100;
 
 	sIngame.gameWorld->init(__sIngame::stageHeight, 1);
+	sIngame.playerShip->setHealth(100);
 
 	sIngame.stageClock.restart();
 	m_gameState = GameState::Ingame;
@@ -620,8 +633,14 @@ void Game::drawGameOverScreen() {
 	textTailor.centerHorizontally(window);
 	static Text textHighscore = Text("Dein Highscore:", 36, glm::ivec2(0, 220));
 	textHighscore.centerHorizontally(window);
+
 	static Text textHighscorePoints = Text("1.234.567", 44, glm::ivec2(0,274));
+	static Text textHighscoreStages = Text("Stages: xxxx", 44, glm::ivec2(0, 318));
+
+	textHighscorePoints.setText(std::to_string(sGameOver.points));
 	textHighscorePoints.centerHorizontally(window);
+	textHighscoreStages.setText("Stages: " + std::to_string(sGameOver.stages));
+	textHighscoreStages.centerHorizontally(window);
 
 	static StarBackground starBkg;
 	static InstanceBuffer busPos(1);
@@ -647,6 +666,7 @@ void Game::drawGameOverScreen() {
 	textTailor.draw(window, textProg, glm::vec3(1.0, 0.0, 0.0));
 	textHighscore.draw(window, textProg);
 	textHighscorePoints.draw(window, textProg);
+	textHighscoreStages.draw(window, textProg);
 
 	for (auto& iter : sGameOver.buttonVec)
 		iter->draw(window, *programManager);
@@ -701,11 +721,11 @@ void Game::__sIngame::letBulletsDie(const glm::vec3 aliveCenter,
 }
 
 float Game::__sIngame::getCurrentYPos() {
-	return stageOffsetStartY + stageClock.getElapsedTime().asSeconds() * 0.25f;
+	return stageOffsetStartY + stageClock.getElapsedTime().asSeconds() * 0.60f;
 }
 
 void Game::__sIngame::drawHUDText(const sf::Window& win,const Program& program) {
-	const int padRight = 20;
+	static const int padRight = 20;
 
 	textPoints->setText(std::string("Pts: ") + std::to_string(currentPoints));
 	textHealth->setText(std::string("HP: ") + std::to_string(currentHealth));
@@ -720,7 +740,7 @@ void Game::__sIngame::drawHUDText(const sf::Window& win,const Program& program) 
 	textStage->setPos(glm::ivec2(win.getSize().x-textStageWidth-padRight,69));
 
 	glm::vec3 healthCol;
-	if (currentHealth >= 0 && currentHealth < 33)
+	if (currentHealth <= 0 && currentHealth < 33)
 		healthCol = glm::vec3(252.f / 255.f, 44.f / 255.f, 44.f / 255.f);
 	else if (currentHealth >= 33 && currentHealth < 60)
 		healthCol = glm::vec3(252.f / 255.f, 164.f / 255.f, 44.f / 255.f);

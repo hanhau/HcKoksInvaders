@@ -4,7 +4,7 @@
 EnemyTurretTile::EnemyTurretTile(Game* const ref_game,int seed,
 								 const glm::vec3 pos,const float scale) :
 	TileEntityBase(ref_game),
-	BulletEmitter(ref_game, seed, {GunType::Pistol}),
+	BulletEmitter(ref_game, seed, {GunType::Pistol,GunType::SMG}),
 	m_pos(pos)
 {
 	m_health = 100.f;
@@ -18,17 +18,17 @@ EnemyTurretTile::EnemyTurretTile(Game* const ref_game,int seed,
 	// Bullet Emitter Properties
 	m_beBulletOwner = Bullet::Owner::Enemy;
 
-	m_beCooldownPistolSecs = 2.f;
+	m_beCooldownPistolSecs = 3.f;
 	m_bePistolDamage = 10.f;
-	m_bePistolSpeed = 1.2f;
+	m_bePistolSpeed = 1.1f;
 
 	m_beCooldownShotgunSecs = 3.2f;
 	m_beShotgunDamage = 12.f;
 	m_beShotgunSpeed = 1.4f;
 
-	m_beCooldownSMGSecs = 1.5f;
+	m_beCooldownSMGSecs = 2.0f;
 	m_beSMGDamage = 10.f;
-	m_beSMGSpeed = 0.5f;
+	m_beSMGSpeed = 1.0f;
 }
 
 void EnemyTurretTile::update(double deltaTime) 
