@@ -88,7 +88,7 @@ void Game::init(const GameLaunchOptions& glo) {
 		// AmmunitionIcons
 		sIngame.MunitionIconPistol = new AmmunitionIcon(
 			"res/images/icon_munition_pistol.png",
-			glm::vec4(1.f),
+			glm::vec4(0.9f,0.9f,1.0f,1.f),
 			40,
 			glm::ivec2(10,10),
 			*textureManager,
