@@ -68,7 +68,7 @@ GameLauncher::GameLauncher(std::string title, HINSTANCE hInstance) :
 	m_wndclass.hInstance = hInstance;
 	m_wndclass.hIcon = LoadIcon(NULL, IDI_QUESTION);
 	m_wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	m_wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	m_wndclass.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(0,0,0));
 	m_wndclass.lpszMenuName = NULL;
 	m_wndclass.lpszClassName = m_dialogAppName.c_str();
 

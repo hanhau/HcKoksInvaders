@@ -397,6 +397,7 @@ void Game::run() {
 					sIngame.bullets.clear();
 					sIngame.prepareStage(sIngame.currentStage + 1);
 					sIngame.currentStage++;
+					sIngame.currentPoints += 250;
 
 					sIngame.stageClock.restart();
 				}
