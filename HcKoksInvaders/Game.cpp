@@ -438,6 +438,8 @@ void Game::run() {
 }
 
 void Game::exit() {
+	sMenu.music.stop();
+	sCredits.music.stop();
 	window.close();
 }
 

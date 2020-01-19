@@ -184,7 +184,6 @@
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TileEntityBase.cpp" />
-    <ClCompile Include="Turret.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameLauncher.cpp" />

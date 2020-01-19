@@ -78,9 +78,6 @@
     <ClCompile Include="GameWorld.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Turret.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SoundBufferManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
