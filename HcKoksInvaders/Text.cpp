@@ -279,6 +279,7 @@ void Text::draw(const sf::Window& win, const Program& program, glm::vec3 col) {
 	program.bind();
 	program.setUniform("translate", glm::translate(glm::identity<glm::mat4>(), glm::vec3(tx,ty,0.0)));
 	program.setUniform("texColor", sf::Vector3f(col.x,col.y,col.z));
+	program.setUniform("tex", 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, m_impl->gl_tex2DArray);

@@ -244,12 +244,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\frag_shader.frag">
-      <Filter>res\shaders</Filter>
-    </None>
-    <None Include="res\shaders\vertex_shader.vert">
-      <Filter>res\shaders</Filter>
-    </None>
     <None Include="res\shaders\background_star_shader.frag">
       <Filter>res\shaders</Filter>
     </None>

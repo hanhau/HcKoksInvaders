@@ -1,5 +1,7 @@
 #include "include/AmmunitionIcon.hpp"
+#include "include/Text.hpp"
 #include <GL/glew.h>
+#include <SFML/System/Clock.hpp>
 
 struct ButtonVertex {
 	sf::Vector2f pos;
@@ -138,8 +140,16 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 
 void AmmunitionIcon::draw(const sf::Window& win, 
 						  float percentageFull, 
-						  const Program& program) 
+						  const ProgramManager& programMgr,
+						  const std::string slotTextStr,
+						  bool active)
 {
+	static Text slotText = Text("", 18, {0,0});
+	static sf::Clock clock;
+
+	const Program& program = programMgr.get(ProgramManager::ProgramEntry::AmmunitionIcon);
+	const Program& programText = programMgr.get(ProgramManager::ProgramEntry::Text);
+
 	percentageFull = std::clamp(percentageFull, 0.f, 100.f);
 
 	glDepthMask(GL_FALSE);
@@ -154,6 +164,7 @@ void AmmunitionIcon::draw(const sf::Window& win,
 	program.bind();
 	program.setUniform("fColor", sf::Vector3f(m_col.r, m_col.g, m_col.b));
 	program.setUniform("uPos", sf::Vector2f(renderPos.x,renderPos.y));
+	program.setUniform("fTexture0", 0);
 
 	if (percentageFull == 0.0f)
 		program.setUniform("fGrayImage",1);
@@ -178,4 +189,24 @@ void AmmunitionIcon::draw(const sf::Window& win,
 
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
+
+	// Draw SlotText
+	slotText.setText(slotTextStr);
+	const glm::ivec2 textCenterPos = glm::ivec2(
+		m_position.x + m_radius - slotText.getSizePixels(win).x/2,
+		m_position.y + m_radius*2 + 25
+	);
+	slotText.setPos(textCenterPos);
+
+	glm::vec3 col = glm::vec3(1.0f);
+	if (active) {
+		const float secs = clock.getElapsedTime().asSeconds();
+		col = glm::vec3(
+			abs(cosf(secs * 2.0f)),
+			abs(cosf(secs * 2.0f + glm::radians(120.f))),
+			abs(cosf(secs * 2.0f + glm::radians(240.f)))
+		);
+	}
+
+	slotText.draw(win, programText, col);
 }

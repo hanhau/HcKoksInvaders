@@ -51,13 +51,13 @@ void StarShip::updateOnUserInput(float deltaSeconds) {
 		m_activeWeapon = WeaponType::Pistol;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) {
-		m_activeWeapon = WeaponType::Shotgun;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) {
 		m_activeWeapon = WeaponType::SMG;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) {
 		m_activeWeapon = WeaponType::Rocket;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) {
+		m_activeWeapon = WeaponType::Shotgun;
 	}
 
 	m_pos.x = std::clamp(m_pos.x, _minx, _miny);
@@ -104,6 +104,10 @@ const glm::vec3& StarShip::getPos() const {
 }
 void StarShip::setPos(const glm::vec3 pos) {
 	m_pos = pos;
+}
+
+WeaponType StarShip::getWeaponType() {
+	return m_activeWeapon;
 }
 
 void StarShip::draw(const Camera& camera, Cubemap& cubemap) {

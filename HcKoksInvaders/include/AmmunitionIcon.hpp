@@ -2,7 +2,7 @@
 #include <string>
 #include <SFML/Window/Window.hpp>
 #include "TextureManager.hpp"
-#include <Program.hpp>
+#include "ProgramManager.hpp"
 
 class AmmunitionIcon
 {
@@ -30,6 +30,8 @@ public:
 	void draw(
 		const sf::Window& win,
 		float percentageFull,
-		const Program& program
+		const ProgramManager& programMgr,
+		const std::string slotTextStr,
+		bool active
 	);
 };

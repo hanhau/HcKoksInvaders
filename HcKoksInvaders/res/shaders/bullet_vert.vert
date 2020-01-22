@@ -19,8 +19,6 @@ layout (std430,binding = 0) buffer modelMatrices
 
 
 void main(){
-	//gl_Position = proj * view * inst[gl_InstanceID].translate * vec4(aPos,1.0f);
-	//gl_Position = iMat[gl_InstanceID] * vec4(aPos,1.0f);
 	gl_Position = proj * view * instance[gl_InstanceID].translate * vec4(aPos,1.0f);
 	vCol = instance[gl_InstanceID].color;
 }

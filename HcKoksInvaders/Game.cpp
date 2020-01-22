@@ -20,6 +20,7 @@
 #include "include/StarShip.hpp"
 #include "include/NetworkManager.hpp"
 #include "include/SoundQueue.hpp"
+#include <Windows.h>
 
 void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 	const sf::Event::MouseButtonEvent& mbEvent)
@@ -38,7 +39,7 @@ void Game::init(const GameLaunchOptions& glo) {
 	m_gameLaunchOptions = glo;
 
 	// Init window with Context
-	sf::ContextSettings cs(24, 0, 0, 4, 3, 0, false);
+	sf::ContextSettings cs(24, 8, 0, 3, 3, 0, false);
 
 	window.create(
 		sf::VideoMode(glo.res.x, glo.res.y), 
@@ -48,7 +49,14 @@ void Game::init(const GameLaunchOptions& glo) {
 	);
 	window.setActive(true);
 
-	// set OpenGL Function Ptrs
+	// Check if OpenGL Version
+	sf::ContextSettings settings = window.getSettings();
+	if (settings.majorVersion != 4 || (settings.majorVersion == 4 && settings.minorVersion < 3)) {
+		MessageBoxA(NULL, "Ihre Grafikkarte unterstützt kein OpenGL 4.3", NULL, MB_OK);
+		//exit();
+	}
+
+	// Set OpenGL Function Ptrs
 	glewExperimental = GL_TRUE;
 	glewInit();
 
@@ -75,7 +83,6 @@ void Game::init(const GameLaunchOptions& glo) {
 	std::cout << "OpenGL-Version: " << (const char*)glGetString(GL_VERSION) << "\n";
 	std::cout << "Vendor: "			<< (const char*)glGetString(GL_VENDOR) << "\n";
 	std::cout << "Renderer: "		<< (const char*)glGetString(GL_RENDERER) << "\n";
-	sf::ContextSettings settings = window.getSettings();
 	std::cout << "depth bits:"		   << settings.depthBits << std::endl;
 	std::cout << "stencil bits:"	   << settings.stencilBits << std::endl;
 	std::cout << "antialiasing level:" << settings.antialiasingLevel << std::endl;
@@ -356,15 +363,26 @@ void Game::run() {
 				sIngame.gameWorld->draw(cam1, *cubeMap);
 				sIngame.playerShip->draw(cam1, *cubeMap);
 
-				const Program& aiProg = programManager->get(ProgramManager::ProgramEntry::AmmunitionIcon);
 				const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
 
 				sIngame.drawHUDText(window, textProg);
 
-				sIngame.MunitionIconPistol->draw(window,100.f, aiProg);
-				sIngame.MunitionIconRocket->draw(window,sIngame.playerShip->getRocketAmmoPercent(), aiProg);
-				sIngame.MunitionIconShotgun->draw(window,sIngame.playerShip->getShotgunAmmoPercent(), aiProg);
-				sIngame.MunitionIconSMG->draw(window,sIngame.playerShip->getSMGAmmoPercent(), aiProg);
+				sIngame.MunitionIconPistol->draw(
+					window,100.f, *programManager,"[1]",
+					sIngame.playerShip->getWeaponType() == WeaponType::Pistol
+				);
+				sIngame.MunitionIconSMG->draw(
+					window, sIngame.playerShip->getSMGAmmoPercent(), *programManager, "[2]", 
+					sIngame.playerShip->getWeaponType() == WeaponType::SMG
+				);
+				sIngame.MunitionIconRocket->draw(
+					window,sIngame.playerShip->getRocketAmmoPercent(), *programManager,"[3]",
+					sIngame.playerShip->getWeaponType() == WeaponType::Rocket
+				);
+				sIngame.MunitionIconShotgun->draw(
+					window,sIngame.playerShip->getShotgunAmmoPercent(), *programManager,"[4]",
+					sIngame.playerShip->getWeaponType() == WeaponType::Shotgun
+				);
 
 				if (sIngame.isGameOver()) {
 					sGameOver.points = sIngame.currentPoints;
@@ -477,6 +495,9 @@ void Game::startGame() {
 
 	sIngame.gameWorld->init(__sIngame::stageHeight, 1);
 	sIngame.playerShip->setHealth(100);
+	sIngame.playerShip->addRocketAmmo(999);
+	sIngame.playerShip->addShotgunAmmo(9999);
+	sIngame.playerShip->addSMGAmmo(999);
 
 	sIngame.stageClock.restart();
 	m_gameState = GameState::Ingame;

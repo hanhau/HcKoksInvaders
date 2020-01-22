@@ -1,9 +1,10 @@
-#version 430
+#version 330 core
 
 in vec2 fUV;
 in float fColAmount;
+out vec4 res;
 
-layout (binding = 0) uniform sampler2D fTexture0;
+uniform sampler2D fTexture0;
 
 uniform vec3 fColor;
 uniform int fGrayImage;
@@ -16,5 +17,5 @@ void main(){
 
 	vec4 col = mix(tex_filtered,vec4(fColor.xyz,1.0),fColAmount);
 	
-	gl_FragColor = col;
+	res = col;
 }

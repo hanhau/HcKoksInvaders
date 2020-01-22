@@ -64,6 +64,8 @@ public:
 	const glm::vec3& getPos() const;
 	void setPos(const glm::vec3 pos);
 
+	WeaponType getWeaponType();
+
 	void draw(const Camera& camera, Cubemap& cubemap);
 	void handleBullets(std::list<Bullet>& bullets);
 };

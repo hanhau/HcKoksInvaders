@@ -8,6 +8,7 @@ private:
 	ModelPosition m_shipPos;
 	glm::vec3 m_pos;
 	float m_health;
+	const int m_seed;
 
 	enum class MovementPattern {
 		Circle, Wave, Straight

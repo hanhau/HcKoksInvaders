@@ -13,7 +13,8 @@ EnemySpaceShipTile::EnemySpaceShipTile(
 		)
 	)),
 	m_pos(pos),
-	m_health(100.f)
+	m_health(100.f),
+	m_seed(seed)
 {}
 
 void EnemySpaceShipTile::update(double deltaTime) {

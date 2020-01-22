@@ -1,4 +1,4 @@
-#version 430 core
+#version 330 core
 
 in vec4 col;
 out vec4 res;
@@ -10,5 +10,4 @@ void main(){
 	vec4 rainbow = vec4(abs(cos(x)),abs(cos(x+2.094)),abs(cos(x-2.094)),1.0);
 
 	res = mix(rainbow,col,col.a);
-	//res = vec4(1);
 }
