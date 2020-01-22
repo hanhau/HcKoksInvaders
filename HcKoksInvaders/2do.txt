@@ -8,7 +8,15 @@
 .. Resourcen auch schon während des Gamelaunchers laden
 .. Kleine Adminoberfläche für den Server
 .. Veränderung des Schwierigkeitgrades über Zeit
+   -> höhere Y-Geschwindigkeit
 .. Controller ?
 .. Audio-Levels anpassen
 .. Bloom
 .. ResourcenManager statisch und global machen
+.. Gesundheitspakete bei Gegner zufällig droppen lassen
+   -> Je geringer die Gesundheit, desto höher die Chance
+   -> statische Gegner 10HP
+   -> dynamische 20HP
+.. Stages Längen anpassen (pro Stage ~1 Minute?)
+.. Explosion von Gegner bei Tötung
+.. Raketenwerfer heftiger machen
