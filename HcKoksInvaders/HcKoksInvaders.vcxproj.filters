@@ -78,9 +78,6 @@
     <ClCompile Include="GameWorld.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Turret.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SoundBufferManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -257,9 +254,6 @@
       <Filter>res\shaders</Filter>
     </None>
     <None Include="packages.config" />
-    <None Include="res\audio\main_menu.flac">
-      <Filter>Audio</Filter>
-    </None>
     <None Include="res\audio\select.flac">
       <Filter>Audio</Filter>
     </None>
@@ -424,6 +418,9 @@
       <Filter>Audio</Filter>
     </Media>
     <Media Include="res\audio\gunShotgun.wav">
+      <Filter>Audio</Filter>
+    </Media>
+    <Media Include="res\audio\gunEmitter.wav">
       <Filter>Audio</Filter>
     </Media>
   </ItemGroup>

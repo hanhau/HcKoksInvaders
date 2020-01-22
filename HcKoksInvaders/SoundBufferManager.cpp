@@ -25,6 +25,8 @@ SoundBufferManager::SoundBufferManager() {
 	add("res/audio/gunShotgun.wav");
 	add("res/audio/gunPistol.wav");
 	add("res/audio/gunSMG.wav");
+	add("res/audio/gunEmitter.wav");
+	add("res/audio/playershipHit.wav");
 }
 
 const sf::SoundBuffer& SoundBufferManager::get(std::string path) const

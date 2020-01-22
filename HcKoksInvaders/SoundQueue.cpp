@@ -1,4 +1,5 @@
 #include "include/SoundQueue.hpp"
+#include <thread>
 
 std::array<sf::Sound, 200>* SoundQueue::m_sounds;
 
@@ -28,4 +29,19 @@ int SoundQueue::getActivePlayingSounds() {
 			count++;
 
 	return count;
+}
+
+void SoundQueue::waitTillEverythingCompleted() {
+	if (m_sounds == nullptr)
+		return;
+
+	bool running;
+	do {
+		running = false;
+		for (const auto& iter : *m_sounds)
+			if (iter.getStatus() == sf::Sound::Playing)
+				running = true;
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	} while (running);
 }

@@ -239,6 +239,11 @@ void StarShip::handleBullets(std::list<Bullet>& bullets) {
 		if (glm::distance(m_pos,iter->m_pos) <= shipRadius) {
 			m_health -= iter->m_damage;
 
+			SoundQueue::add(
+				m_gameRef.getSoundBufferManager().get("res/audio/playershipHit.wav"),
+				0.9f + cosf(m_pos.x*m_pos.y*1324.23f) * 0.1f
+			);
+
 			bullets.erase(iter++);
 		}
 		else {

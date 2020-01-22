@@ -122,7 +122,8 @@ public:
 		MainMenu,
 		Ingame,
 		Credits,
-		GameOver
+		GameOver,
+		Exit
 	};
 
 	void init(const GameLaunchOptions& glo);

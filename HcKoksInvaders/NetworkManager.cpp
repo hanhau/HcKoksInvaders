@@ -20,10 +20,6 @@
 #include <sstream>
 #include <filesystem>
 
-#pragma comment(lib, "Ws2_32.lib")
-#pragma comment(lib, "fwpuclnt.lib")
-#pragma comment(lib, "ntdsapi.lib")
-
 struct NetworkManager::impl {
     SSL* ssl;
     int sock;
@@ -74,6 +70,12 @@ int NetworkManager::sendPacket(const char* buf)
     }
 }
 
+bool isalnum(unsigned char c) {
+    return (c >= 'A' && c <= 'Z') || 
+           (c >= 'a' && c <= 'z') || 
+           (c >= '0' && c <= '9');
+}
+
 std::string NetworkManager::encodeStringToUrl(std::string input) 
 {
     std::ostringstream escaped;
@@ -84,7 +86,7 @@ std::string NetworkManager::encodeStringToUrl(std::string input)
         std::string::value_type c = (*i);
 
         // Keep alphanumeric and other accepted characters intact
-        if (std::isalnum((unsigned char)c) || c == '-' || c == '_' || c == '.' || c == '~') {
+        if (isalnum((unsigned char)c) || c == '-' || c == '_' || c == '.' || c == '~') {
             escaped << c;
             continue;
         }
@@ -239,12 +241,15 @@ bool NetworkManager::uploadHighscore(const int userID,
                                      const int highscore,
                                      const int stages)
 {
+    std::string request = 
+        "/uploadHighscore.php?userid=" + encodeStringToUrl(std::to_string(userID)) +
+        "&highscore=" + encodeStringToUrl(std::to_string(highscore)) +
+        "&stages=" + encodeStringToUrl(std::to_string(stages));
+
     std::string res;
     if (!sendHttpsRequest(
-        RequestType::POST,
-        "uploadHighscore.php?userid=" + encodeStringToUrl(std::to_string(userID)) +
-        "&highscore=" + encodeStringToUrl(std::to_string(highscore)) +
-        "&stages=" + encodeStringToUrl(std::to_string(stages)),
+        RequestType::GET,
+        request,
         res
     )) {
         return false;

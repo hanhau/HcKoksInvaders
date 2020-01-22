@@ -4,7 +4,7 @@
 EnemyTurretTile::EnemyTurretTile(Game* const ref_game,int seed,
 								 const glm::vec3 pos,const float scale) :
 	TileEntityBase(ref_game),
-	BulletEmitter(ref_game, seed, {GunType::Pistol,GunType::SMG}),
+	BulletEmitter(ref_game, seed, {GunType::Pistol,GunType::SMG,GunType::Shotgun}),
 	m_pos(pos)
 {
 	m_health = 100.f;

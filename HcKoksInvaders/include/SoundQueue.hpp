@@ -8,4 +8,6 @@ class SoundQueue
 public:
 	static sf::Sound& add(const sf::SoundBuffer& soundbuf,const float pitch = 1.0f);
 	static int getActivePlayingSounds();
+
+	static void waitTillEverythingCompleted();
 };

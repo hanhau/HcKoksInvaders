@@ -88,7 +88,7 @@ void Game::init(const GameLaunchOptions& glo) {
 		// AmmunitionIcons
 		sIngame.MunitionIconPistol = new AmmunitionIcon(
 			"res/images/icon_munition_pistol.png",
-			glm::vec4(0.9f,0.9f,1.0f,1.f),
+			glm::vec4(1.f),
 			40,
 			glm::ivec2(10,10),
 			*textureManager,
@@ -104,7 +104,7 @@ void Game::init(const GameLaunchOptions& glo) {
 		);
 		sIngame.MunitionIconRocket = new AmmunitionIcon(
 			"res/images/icon_munition_rocket.png",
-			glm::vec4(0.76,0.55,0.45,1.f),
+			glm::vec4(1.f),
 			40,
 			glm::ivec2(190, 10),
 			*textureManager,
@@ -167,9 +167,7 @@ void Game::init(const GameLaunchOptions& glo) {
 			window.display();
 			sMenu.music.setVolume(0);
 
-			static sf::Sound s(soundBufferManager->get("res/audio/hcDankeBye.wav"));
-			s.play();
-			sf::sleep(s.getBuffer()->getDuration());
+			SoundQueue::add(soundBufferManager->get("res/audio/hcDankeBye.wav"));
 
 			this->exit();
 		});
@@ -314,6 +312,11 @@ void Game::run() {
 			}
 		}
 
+		// Check if got closed
+		if (m_gameState == GameState::Exit || !window.isOpen()) {
+			break;
+		}
+
 		// Start of Frame
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -342,6 +345,7 @@ void Game::run() {
 					4.5f, 1.f,
 					sIngame.currentPoints
 				);
+
 				sIngame.playerShip->handleBullets(sIngame.bullets);
 				sIngame.currentHealth = sIngame.playerShip->getHealth();
 
@@ -371,22 +375,16 @@ void Game::run() {
 						sIngame.currentStage-1
 					);
 					if (m_gameLaunchOptions.userid != 0) {
-						std::thread t([](int userid,int points,int stages) 
-							{
-								bool res = NetworkManager::uploadHighscore(
-									userid,
-									points,
-									stages
-								);
-								if (!res) {
-									std::cout << "Error uploading Highscore\n";
-								}
-							},
+						std::cout << "Saving highscore in H-Cloud\n";
+
+						bool res = NetworkManager::uploadHighscore(
 							m_gameLaunchOptions.userid,
 							sIngame.currentPoints,
-							sIngame.currentStage-1
+							sIngame.currentStage - 1
 						);
-						t.join();
+						if (!res) {
+							std::cout << "Error uploading Highscore\n";
+						}
 					}
 
 					m_gameState = GameState::GameOver;
@@ -398,6 +396,7 @@ void Game::run() {
 					sIngame.prepareStage(sIngame.currentStage + 1);
 					sIngame.currentStage++;
 					sIngame.currentPoints += 250;
+					sIngame.currentHealth = 100;
 
 					sIngame.stageClock.restart();
 				}
@@ -422,6 +421,8 @@ void Game::run() {
 			}
 			break;
 			// -----------------------------------------
+			case GameState::Exit:
+				break;
 			default: 
 				throw; 
 			break;
@@ -438,6 +439,11 @@ void Game::run() {
 }
 
 void Game::exit() {
+	sMenu.music.stop();
+	sCredits.music.stop();
+	SoundQueue::waitTillEverythingCompleted();
+	m_gameState = GameState::Exit;
+
 	window.close();
 }
 
@@ -722,7 +728,7 @@ void Game::__sIngame::letBulletsDie(const glm::vec3 aliveCenter,
 }
 
 float Game::__sIngame::getCurrentYPos() {
-	return stageOffsetStartY + stageClock.getElapsedTime().asSeconds() * 0.60f;
+	return stageOffsetStartY + stageClock.getElapsedTime().asSeconds() * 0.70f;
 }
 
 void Game::__sIngame::drawHUDText(const sf::Window& win,const Program& program) {
