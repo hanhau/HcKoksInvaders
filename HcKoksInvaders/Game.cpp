@@ -39,7 +39,7 @@ void Game::init(const GameLaunchOptions& glo) {
 	m_gameLaunchOptions = glo;
 
 	// Init window with Context
-	sf::ContextSettings cs(24, 8, 0, 3, 3, 0, false);
+	sf::ContextSettings cs(24, 8, 0, 4, 3, 0, false);
 
 	window.create(
 		sf::VideoMode(glo.res.x, glo.res.y), 
@@ -51,9 +51,9 @@ void Game::init(const GameLaunchOptions& glo) {
 
 	// Check if OpenGL Version
 	sf::ContextSettings settings = window.getSettings();
-	if (settings.majorVersion != 4 || (settings.majorVersion == 4 && settings.minorVersion < 3)) {
+	if (settings.majorVersion < 4 || (settings.majorVersion == 4 && settings.minorVersion < 3)) {
 		MessageBoxA(NULL, "Ihre Grafikkarte unterstützt kein OpenGL 4.3", NULL, MB_OK);
-		//exit();
+		exit();
 	}
 
 	// Set OpenGL Function Ptrs

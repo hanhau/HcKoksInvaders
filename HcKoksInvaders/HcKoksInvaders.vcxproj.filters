@@ -395,6 +395,7 @@
     <Text Include="res\models\ship1.obj">
       <Filter>res\models</Filter>
     </Text>
+    <Text Include="2do.txt" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\fonts\PressStart2P-Regular.ttf">

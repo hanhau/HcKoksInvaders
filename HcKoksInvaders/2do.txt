@@ -1,0 +1,14 @@
+.. GameLauncher überabeiten (schöner gestalten)
+.. Highscore Upload/Sync System überarbeiten
+.. PHP Aufrufe sicherer machen (vor ungewollten Zugriffen)
+.. OpenGL Kompatibilität erhöhen
+.. Munition automatisch auffüllen
+.. BoundingBox/Ball vom Vengabus anpassen
+.. Leistung mit mehr Threads erhöhen
+.. Resourcen auch schon während des Gamelaunchers laden
+.. Kleine Adminoberfläche für den Server
+.. Veränderung des Schwierigkeitgrades über Zeit
+.. Controller ?
+.. Audio-Levels anpassen
+.. Bloom
+.. ResourcenManager statisch und global machen
