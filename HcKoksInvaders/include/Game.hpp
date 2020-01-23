@@ -34,7 +34,6 @@ private:
 	// Resource Managers
 	TextureManager* textureManager;
 	ProgramManager* programManager;
-	ModelManager* modelManager;
 	SoundBufferManager* soundBufferManager;
 
 	// Global Default Cubemap
@@ -132,7 +131,6 @@ public:
 
 	const TextureManager& getTextureManager();
 	const ProgramManager& getProgramManager();
-	const ModelManager& getModelManager();
 	const SoundBufferManager& getSoundBufferManager();
 
 	StarShip* getStarShip();

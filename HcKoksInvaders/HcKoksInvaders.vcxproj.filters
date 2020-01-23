@@ -313,9 +313,6 @@
     <Object Include="res\models\turret_head.obj">
       <Filter>res\models</Filter>
     </Object>
-    <Object Include="res\models\medibox.obj">
-      <Filter>res\models</Filter>
-    </Object>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\models\ship1_diffuse.png">
@@ -402,6 +399,9 @@
       <Filter>res\models</Filter>
     </Text>
     <Text Include="2do.txt" />
+    <Text Include="res\models\medibox.obj">
+      <Filter>res\models</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\fonts\PressStart2P-Regular.ttf">

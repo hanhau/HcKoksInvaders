@@ -2,10 +2,12 @@
 #include <map>
 #include <vector>
 #include <thread>
+#include <string>
 #include "Model.hpp"
 
 struct ModelPreloadData {
-	std::unique_ptr<uint8_t*> m_data;
+	std::unique_ptr<uint8_t> m_data;
+	size_t m_dataLength;
 	std::string m_path;
 };
 
@@ -17,6 +19,9 @@ private:
 
 	static std::map<std::string, Model3D> m_models;
 	static void add(const std::string path, const TextureManager& texMgr, const Program& prog);
+
+	// Disallow Instances
+	ModelManager() {};
 public:
 	static void preloadToMemory();
 	static void waitForMemoryPreload();

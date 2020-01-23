@@ -1,4 +1,4 @@
-//#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include "include/Game.hpp"
 #include "include/GameLauncher.hpp"
@@ -12,6 +12,7 @@ int main()
 #endif
 {
 	NetworkManager::init("81.19.159.64","hcki.handata.eu");
+	ModelManager::preloadToMemory();
 
 	GameLaunchOptions gameLaunchOptions;
 	gameLaunchOptions.loadFromFileOrDefault();

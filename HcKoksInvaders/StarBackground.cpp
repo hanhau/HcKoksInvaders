@@ -27,8 +27,8 @@ StarBackground::StarBackground() {
 }
 
 StarBackground::~StarBackground() {
-	//glDeleteBuffers(1, &gl_vbo);
-	//glDeleteVertexArrays(1, &gl_vao);
+	glDeleteBuffers(1, &gl_vbo);
+	glDeleteVertexArrays(1, &gl_vao);
 }
 
 void StarBackground::draw(const sf::Window& window,const Program& program,float pastTime) const {

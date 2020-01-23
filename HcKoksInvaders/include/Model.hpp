@@ -46,13 +46,12 @@ private:
 	BoundingBall m_outerBall;
 public:
 	Model3D(const Program& m_progRef);
-	~Model3D();
 
 	// Bounding Balls
 	const BoundingBall& getOuterBB() const;
 
 	// Loading
-	bool loadFileFromMemory(uint8_t* const buffer, 
+	bool loadFileFromMemory(uint8_t* const buffer, const size_t bufferLength, 
 						    const std::string fileName, 
 							const TextureManager& texMgr);
 

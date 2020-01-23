@@ -19,27 +19,23 @@ Model3D::Model3D(const Program& prog) : m_progRef(prog) {
 	
 }
 
-Model3D::~Model3D() {
-	
-}
-
 const BoundingBall& Model3D::getOuterBB() const {
 	return m_outerBall;
 }
 
-bool Model3D::loadFileFromMemory(uint8_t * const buffer, 
+bool Model3D::loadFileFromMemory(uint8_t * const buffer, const size_t bufferLength, 
 								 const std::string filename, 
 							     const TextureManager& texMgr)
 {
 	try {
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFileFromMemory(buffer, sizeof(*buffer), aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferLength, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 		if (scene == nullptr)
-			throw "Error opening Assimp Scene";
+			throw std::string("Error opening Assimp Scene");
 
 		if (scene->mNumMeshes != 1)
-			throw "Invalid number of meshes. EXACTLY 1 please.";
+			throw std::string("Invalid number of meshes. EXACTLY 1 please.");
 
 		// Load Vertices
 		processAiMesh(scene->mMeshes[0],scene,m_mesh);
@@ -60,7 +56,7 @@ bool Model3D::loadFileFromMemory(uint8_t * const buffer,
 		m_outerBall = std::move(BoundingBall(glm::vec3(), max_rad));
 
 		// Load Textures (if availiable)
-		const std::string rel_fn = "res/models/" + filename;
+		const std::string rel_fn = filename.substr(0,filename.find_last_of('.'));
 
 		if (texMgr.exists(rel_fn + "_diffuse.png")) {
 			m_mesh.m_texDiffuse.loadFromFile(rel_fn + "_diffuse.png");

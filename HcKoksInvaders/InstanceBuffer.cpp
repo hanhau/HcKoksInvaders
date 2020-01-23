@@ -16,7 +16,7 @@ InstanceBuffer::InstanceBuffer(const int capacity) :
 }
 
 InstanceBuffer::~InstanceBuffer() {
-	
+	glDeleteBuffers(1,&gl_ssbo);
 }
 
 void InstanceBuffer::bind(int index) const {

@@ -73,7 +73,8 @@ void Game::init(const GameLaunchOptions& glo) {
 	// Initialize ResourceManagers
 	textureManager = new TextureManager();
 	programManager = new ProgramManager();
-	modelManager = new ModelManager(*textureManager,*programManager);
+	ModelManager::waitForMemoryPreload();
+	ModelManager::init(*textureManager,*programManager);
 	soundBufferManager = new SoundBufferManager();
 
 	// Cubemap
@@ -460,8 +461,8 @@ void Game::exit() {
 	sMenu.music.stop();
 	sCredits.music.stop();
 	SoundQueue::waitTillEverythingCompleted();
+	
 	m_gameState = GameState::Exit;
-
 	window.close();
 }
 
@@ -470,9 +471,6 @@ const TextureManager& Game::getTextureManager() {
 }
 const ProgramManager& Game::getProgramManager() {
 	return *programManager;
-}
-const ModelManager& Game::getModelManager() {
-	return *modelManager;
 }
 const SoundBufferManager& Game::getSoundBufferManager() {
 	return *soundBufferManager;
@@ -517,7 +515,7 @@ void Game::drawMainMenu() {
 	static InstanceBuffer busPos(1);
 
 	const float secs = m_gameClock.getElapsedTime().asSeconds() * 3.0f;
-	static const Model3D& bus = modelManager->getModel("res/models/vengabus_hq.obj");
+	static const Model3D& bus = ModelManager::getModel("res/models/vengabus_hq.obj");
 	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
 
 	static Camera cam;
@@ -572,9 +570,9 @@ void Game::drawCredits() {
 	static InstanceBuffer busPos(1);
 
 	const float secs = m_gameClock.getElapsedTime().asSeconds()*2*(60.f/130.f);
-	static const Model3D& money = modelManager->getModel("res/models/money.obj");
-	static const Model3D& finger = modelManager->getModel("res/models/finger.obj");
-	static const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
+	static const Model3D& money = ModelManager::getModel("res/models/money.obj");
+	static const Model3D& finger = ModelManager::getModel("res/models/finger.obj");
+	static const Model3D& bus = ModelManager::getModel("res/models/vengabus.obj");
 
 	static Text textEhrenMann = Text(
 		"HCKOKSINVADERS V1.0", 24,
@@ -654,7 +652,7 @@ void Game::drawCredits() {
 }
 
 void Game::drawGameOverScreen() {
-	static const Model3D& bus = modelManager->getModel("res/models/vengabus.obj");
+	static const Model3D& bus = ModelManager::getModel("res/models/vengabus.obj");
 	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
 
 	static Text textTailor = Text("schade.",72,glm::ivec2(0,100));
