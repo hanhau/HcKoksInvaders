@@ -1,16 +1,28 @@
 #pragma once
 #include <map>
-#include "ModelManager.hpp"
+#include <vector>
+#include <thread>
 #include "Model.hpp"
 
-class ModelManager {
-	friend class ModelInstance;
-private:
-	std::map<std::string, Model3D> m_models;
-	void add(const std::string path, const TextureManager& texMgr, const Program& prog);
-public:
-	ModelManager(const TextureManager& texMgr, const ProgramManager& progMgr);
+struct ModelPreloadData {
+	std::unique_ptr<uint8_t*> m_data;
+	std::string m_path;
+};
 
-	bool exists(const std::string path) const;
-	const Model3D& getModel(const std::string path) const;
+class ModelManager {
+private:
+	// Preload Mechanic
+	static std::map<std::string, ModelPreloadData> m_preloadData;
+	static std::thread m_preloadThread;
+
+	static std::map<std::string, Model3D> m_models;
+	static void add(const std::string path, const TextureManager& texMgr, const Program& prog);
+public:
+	static void preloadToMemory();
+	static void waitForMemoryPreload();
+
+	static void init(const TextureManager& texMgr, const ProgramManager& progMgr);
+
+	static bool exists(const std::string path);
+	static const Model3D& getModel(const std::string path);
 };

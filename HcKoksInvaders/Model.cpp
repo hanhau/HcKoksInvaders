@@ -27,11 +27,13 @@ const BoundingBall& Model3D::getOuterBB() const {
 	return m_outerBall;
 }
 
-bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
+bool Model3D::loadFileFromMemory(uint8_t * const buffer, 
+								 const std::string filename, 
+							     const TextureManager& texMgr)
 {
 	try {
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFileFromMemory(buffer, sizeof(*buffer), aiProcess_Triangulate | aiProcess_FlipUVs);
 
 		if (scene == nullptr)
 			throw "Error opening Assimp Scene";
@@ -58,12 +60,7 @@ bool Model3D::loadFromFile(const std::string path, const TextureManager& texMgr)
 		m_outerBall = std::move(BoundingBall(glm::vec3(), max_rad));
 
 		// Load Textures (if availiable)
-		std::filesystem::path filepath(path);
-		std::string filename = filepath.filename().string();
-		filename = filename.substr(0, filename.find('.'));
-		std::string folder = filepath.remove_filename().string();
-
-		const std::string rel_fn = folder + filename;
+		const std::string rel_fn = "res/models/" + filename;
 
 		if (texMgr.exists(rel_fn + "_diffuse.png")) {
 			m_mesh.m_texDiffuse.loadFromFile(rel_fn + "_diffuse.png");

@@ -1,5 +1,7 @@
 .. GameLauncher überabeiten (schöner gestalten)
 .. Highscore Upload/Sync System überarbeiten
+.. CheatEngine fixen und erkennen
+.. PHP Homepage
 .. PHP Aufrufe sicherer machen (vor ungewollten Zugriffen)
 .. OpenGL Kompatibilität erhöhen
 .. Munition automatisch auffüllen
@@ -20,3 +22,11 @@
 .. Stages Längen anpassen (pro Stage ~1 Minute?)
 .. Explosion von Gegner bei Tötung
 .. Raketenwerfer heftiger machen
+.. Season System (beim Highscore) ?
+.. Maus beim Start aus dem Bildschirm bewegen, kann eventuell stören
+.. Anmeldung checken (Passwort, etc)
+.. Login Tabulator
+.. Bug Tracking System
+.. Progressionssystem (Waffen nach jedem Level kaufen, Upgrades, etc)
+.. Installer für das Spiel (Entpacken und Redis automatisch installieren)
+.. Sockets threadunabhängig machen

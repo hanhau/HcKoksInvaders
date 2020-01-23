@@ -52,7 +52,9 @@ public:
 	const BoundingBall& getOuterBB() const;
 
 	// Loading
-	bool loadFromFile(const std::string path,const TextureManager& texMgr);
+	bool loadFileFromMemory(uint8_t* const buffer, 
+						    const std::string fileName, 
+							const TextureManager& texMgr);
 
 	// Instanced Rendering
 	void drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cubemap& cubemap) const;
