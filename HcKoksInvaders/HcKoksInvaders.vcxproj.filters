@@ -144,6 +144,9 @@
     <ClCompile Include="SoundQueue.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Util.hpp">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="include\SoundQueue.hpp">
       <Filter>Headerdateien\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Texture.hpp">
+      <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

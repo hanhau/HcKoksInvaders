@@ -188,6 +188,7 @@
     <ClCompile Include="StarBackground.cpp" />
     <ClCompile Include="StarShip.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TileEntityBase.cpp" />
   </ItemGroup>
@@ -222,6 +223,7 @@
     <ClInclude Include="include\StarBackground.hpp" />
     <ClInclude Include="include\StarShip.hpp" />
     <ClInclude Include="include\Text.hpp" />
+    <ClInclude Include="include\Texture.hpp" />
     <ClInclude Include="include\TextureManager.hpp" />
     <ClInclude Include="include\TileEntityBase.hpp" />
     <ClInclude Include="include\Util.hpp" />
