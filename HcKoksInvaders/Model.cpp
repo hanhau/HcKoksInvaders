@@ -59,54 +59,17 @@ bool Model3D::loadFileFromMemory(uint8_t * const buffer, const size_t bufferLeng
 		const std::string rel_fn = filename.substr(0,filename.find_last_of('.'));
 
 		if (texMgr.exists(rel_fn + "_diffuse.png")) {
-			m_mesh.m_texDiffuse.loadFromFile(rel_fn + "_diffuse.png");
+			m_mesh.m_texDiffuse = std::make_shared<Texture&>(TextureManager::get(rel_fn + "_diffuse.png"));
 		}
 		if (texMgr.exists(rel_fn + "_glossy.png")) {
-			m_mesh.m_texGlossy.loadFromFile(rel_fn + "_glossy.png");
+			m_mesh.m_texGlossy = std::make_shared<Texture&>(TextureManager::get(rel_fn + "_glossy.png"));
 		}
 		if (texMgr.exists(rel_fn + "_normal.png")) {
-			m_mesh.m_texNormal.loadFromFile(rel_fn + "_normal.png");
+			m_mesh.m_texNormal = std::make_shared<Texture&>(TextureManager::get(rel_fn + "_normal.png"));
 		}
 		if (texMgr.exists(rel_fn + "_emit.png")) {
-			m_mesh.m_texNormal.loadFromFile(rel_fn + "_emit.png");
+			m_mesh.m_texEmit = std::make_shared<Texture&>(TextureManager::get(rel_fn + "_emit.png"));
 		}
-
-		// Setup OpenGL Buffers
-		glBindVertexArray(0);
-
-		glGenVertexArrays(1, &m_mesh.gl_vao);
-		glGenBuffers(1, &m_mesh.gl_vbo);
-		glGenBuffers(1, &m_mesh.gl_ebo);
-
-		glBindVertexArray(m_mesh.gl_vao);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_mesh.gl_vbo);
-		glBufferData(GL_ARRAY_BUFFER, m_mesh.m_vertices.size() * sizeof(Vertex), m_mesh.m_vertices.data(), GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh.gl_ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_mesh.m_indices.size() * sizeof(unsigned int), m_mesh.m_indices.data(), GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,m_normal));
-
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_uv));
-
-		glBindVertexArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-
-		// Clean Mesh Data from RAM
-		m_mesh.m_numIndices = m_mesh.m_indices.size();
-		m_mesh.m_indices.clear();
-		m_mesh.m_numVertices = m_mesh.m_vertices.size();
-		m_mesh.m_vertices.clear();
-
-		util::checkGlCalls(__FUNCSIG__);
 
 		return true;
 	}
@@ -114,6 +77,51 @@ bool Model3D::loadFileFromMemory(uint8_t * const buffer, const size_t bufferLeng
 		std::cout << "Exception: " << e << std::endl;
 		return false;
 	}
+}
+
+void Model3D::uploadToGl() {
+	// Setup OpenGL Buffers
+	glBindVertexArray(0);
+
+	glGenVertexArrays(1, &m_mesh.gl_vao);
+	glGenBuffers(1, &m_mesh.gl_vbo);
+	glGenBuffers(1, &m_mesh.gl_ebo);
+
+	glBindVertexArray(m_mesh.gl_vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_mesh.gl_vbo);
+	glBufferData(GL_ARRAY_BUFFER, m_mesh.m_vertices.size() * sizeof(Vertex), m_mesh.m_vertices.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh.gl_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_mesh.m_indices.size() * sizeof(unsigned int), m_mesh.m_indices.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_normal));
+
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_uv));
+
+	glBindVertexArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	// Clean Mesh Data from RAM
+	m_mesh.m_numIndices = m_mesh.m_indices.size();
+	m_mesh.m_indices.clear();
+	m_mesh.m_numVertices = m_mesh.m_vertices.size();
+	m_mesh.m_vertices.clear();
+
+	util::checkGlCalls(__FUNCSIG__);
+}
+
+void Model3D::cleanFromGl() {
+	glDeleteVertexArrays(1, &m_mesh.gl_vao);
+	glDeleteBuffers(1, &m_mesh.gl_vbo);
+	glDeleteBuffers(1, &m_mesh.gl_ebo);
 }
 
 void bindTextures(
@@ -220,10 +228,10 @@ void Model3D::drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cube
 	instances.bind(0);
 
 	bindTextures(
-		m_mesh.m_texDiffuse.getNativeHandle(),
-		m_mesh.m_texGlossy.getNativeHandle(),
-		m_mesh.m_texNormal.getNativeHandle(),
-		m_mesh.m_texEmit.getNativeHandle(),
+		(*m_mesh.m_texDiffuse).getGlID(),
+		(*m_mesh.m_texGlossy).getGlID(),
+		(*m_mesh.m_texNormal).getGlID(),
+		(*m_mesh.m_texEmit).getGlID(),
 		cubemap.getGlID()
 	);
 

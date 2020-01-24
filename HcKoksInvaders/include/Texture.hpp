@@ -13,6 +13,6 @@ public:
 	bool loadFromMemory(uint8_t * const bufferFile,size_t bufferLength);
 
 	void uploadToGl();
-	int getGlID() const;
+	unsigned int getGlID() const;
 	glm::ivec2 getSize() const;
 };

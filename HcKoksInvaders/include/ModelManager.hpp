@@ -4,17 +4,12 @@
 #include <thread>
 #include <string>
 #include "Model.hpp"
-
-struct ModelPreloadData {
-	std::unique_ptr<uint8_t> m_data;
-	size_t m_dataLength;
-	std::string m_path;
-};
+#include "PreloadData.hpp"
 
 class ModelManager {
 private:
 	// Preload Mechanic
-	static std::map<std::string, ModelPreloadData> m_preloadData;
+	static std::map<std::string, PreloadData> m_preloadData;
 	static std::thread m_preloadThread;
 
 	static std::map<std::string, Model3D> m_models;

@@ -11,6 +11,7 @@
 #include "Camera.hpp"
 #include "BoundingBall.hpp"
 #include "InstanceBuffer.hpp"
+#include "Texture.hpp"
 
 class Vertex {
 public:
@@ -27,15 +28,14 @@ struct Mesh {
 	long m_numIndices;
 	long m_numVertices;
 
-	sf::Texture m_texDiffuse;
-	sf::Texture m_texGlossy;
-	sf::Texture m_texNormal;
-	sf::Texture m_texEmit;
+	std::shared_ptr<Texture&> m_texDiffuse;
+	std::shared_ptr<Texture&> m_texGlossy;
+	std::shared_ptr<Texture&> m_texNormal;
+	std::shared_ptr<Texture&> m_texEmit;
 
 	GLuint gl_vao;  // VertexArrayObject
 	GLuint gl_vbo;  // VertexBufferObject
 	GLuint gl_ebo;  // ElementBufferObject
-	GLuint gl_ssbo; // ShaderStorageBufferObject for Instances
 };
 
 class Model3D {
@@ -47,13 +47,17 @@ private:
 public:
 	Model3D(const Program& m_progRef);
 
-	// Bounding Balls
-	const BoundingBall& getOuterBB() const;
-
 	// Loading
 	bool loadFileFromMemory(uint8_t* const buffer, const size_t bufferLength, 
 						    const std::string fileName, 
 							const TextureManager& texMgr);
+
+	// Upload to OpenGL
+	void uploadToGl();
+	void cleanFromGl();
+
+	// Bounding Balls
+	const BoundingBall& getOuterBB() const;
 
 	// Instanced Rendering
 	void drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cubemap& cubemap) const;

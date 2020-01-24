@@ -1,13 +1,18 @@
 #pragma once
 #include <map>
-#include <SFML/Graphics.hpp>
+#include <thread>
+#include "PreloadData.hpp"
+#include "Texture.hpp"
+#include "ResourceManagerBase.hpp"
 
-class TextureManager {
-	std::map<const std::string, sf::Texture> m_textures;
-	void add(std::string path);
+class TextureManager : public ResourceMangerBase {	
+	static std::map<const std::string, Texture> m_textures;
+	static void add(std::string path);
+
+	~TextureManager() {}
 public:
-	TextureManager();
+	static void init();
 
-	const sf::Texture& get(const std::string path) const;
-	bool exists(std::string path) const;
+	static const Texture& get(const std::string path);
+	static bool exists(std::string path);
 };

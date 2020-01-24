@@ -248,6 +248,12 @@
     <ClInclude Include="include\Texture.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="include\PreloadData.hpp">
+      <Filter>Headerdateien\ResourceManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceManagerBase.hpp">
+      <Filter>Headerdateien\ResourceManagers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\background_star_shader.frag">

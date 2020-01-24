@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 
-std::map<std::string, ModelPreloadData> ModelManager::m_preloadData;
-std::thread								ModelManager::m_preloadThread;
-std::map<std::string, Model3D>			ModelManager::m_models;
+std::map<std::string, PreloadData> ModelManager::m_preloadData;
+std::thread						   ModelManager::m_preloadThread;
+std::map<std::string, Model3D>	   ModelManager::m_models;
 
 static const std::vector<std::string> LOAD_PATHS({
 	"res/models/vengabus.obj",
@@ -20,29 +20,36 @@ static const std::vector<std::string> LOAD_PATHS({
 	"res/models/medibox.obj"
 });
 
+void _preloadFunc(const std::vector<std::string>& loadPaths,
+				  std::map<std::string, PreloadData>& preloadData,
+				  std::map<std::string, Model3D>& models) 
+{
+	for (const auto& path : loadPaths) {
+		std::ifstream file(path, std::ios::in | std::ios::binary | std::ios::ate);
+
+		size_t fileLength = file.tellg();
+		file.seekg(0);
+
+		preloadData[path] = PreloadData();
+		preloadData[path].m_dataLength = fileLength;
+		preloadData[path].m_path = path;
+		preloadData[path].m_data = std::unique_ptr<uint8_t>(new uint8_t[fileLength]);
+
+		file.read((char*)preloadData[path].m_data.get(), fileLength);
+	}
+
+	for (const auto& path : loadPaths) {
+
+	}
+}
+
 void ModelManager::preloadToMemory() {
 	m_preloadData.clear();
 
-	m_preloadThread = std::move(std::thread([]
-		(const std::vector<std::string>& loadPaths,
-		 std::map<std::string, ModelPreloadData> &preloadData) 
-		{
-			for (const auto& path : loadPaths) {
-				std::ifstream file(path, std::ios::in | std::ios::binary | std::ios::ate);
-
-				size_t fileLength = file.tellg();
-				file.seekg(0);
-
-				preloadData[path] = ModelPreloadData();
-				preloadData[path].m_dataLength = fileLength;
-				preloadData[path].m_path = path;
-				preloadData[path].m_data = std::unique_ptr<uint8_t>(new uint8_t[fileLength]);
-
-				file.read((char*)preloadData[path].m_data.get(), fileLength);
-			}
-		},
+	m_preloadThread = std::thread(
+		_preloadFunc,
 		std::ref(LOAD_PATHS),std::ref(m_preloadData)
-	));
+	);
 }
 
 void ModelManager::waitForMemoryPreload() {
