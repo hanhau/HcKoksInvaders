@@ -21,6 +21,7 @@
 #include "include/NetworkManager.hpp"
 #include "include/SoundQueue.hpp"
 #include <Windows.h>
+#include <SFML/Window/Event.hpp>
 
 void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 	const sf::Event::MouseButtonEvent& mbEvent)
@@ -71,14 +72,18 @@ void Game::init(const GameLaunchOptions& glo) {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 
 	// Initialize ResourceManagers
-	textureManager = new TextureManager();
+	TextureManager::waitForMemoryPreload();
+	TextureManager::init();
+
 	programManager = new ProgramManager();
+	
 	ModelManager::waitForMemoryPreload();
-	ModelManager::init(*textureManager,*programManager);
+	ModelManager::init(*programManager);
+	
 	soundBufferManager = new SoundBufferManager();
 
 	// Cubemap
-	cubeMap = new Cubemap(*textureManager);
+	cubeMap = new Cubemap();
 
 	// Check OpenGL Version
 	std::cout << "OpenGL-Version: " << (const char*)glGetString(GL_VERSION) << "\n";
@@ -99,7 +104,6 @@ void Game::init(const GameLaunchOptions& glo) {
 			glm::vec4(1.f),
 			40,
 			glm::ivec2(10,10),
-			*textureManager,
 			window
 		);
 		sIngame.MunitionIconSMG = new AmmunitionIcon(
@@ -107,7 +111,6 @@ void Game::init(const GameLaunchOptions& glo) {
 			glm::vec4(1.f),
 			40,
 			glm::ivec2(100, 10),
-			*textureManager,
 			window
 		);
 		sIngame.MunitionIconRocket = new AmmunitionIcon(
@@ -115,7 +118,6 @@ void Game::init(const GameLaunchOptions& glo) {
 			glm::vec4(1.f),
 			40,
 			glm::ivec2(190, 10),
-			*textureManager,
 			window
 		);
 		sIngame.MunitionIconShotgun = new AmmunitionIcon(
@@ -123,7 +125,6 @@ void Game::init(const GameLaunchOptions& glo) {
 			glm::vec4(1.f),
 			40,
 			glm::ivec2(280, 10),
-			*textureManager,
 			window
 		);
 
@@ -466,9 +467,6 @@ void Game::exit() {
 	window.close();
 }
 
-const TextureManager& Game::getTextureManager() {
-	return *textureManager;
-}
 const ProgramManager& Game::getProgramManager() {
 	return *programManager;
 }

@@ -23,7 +23,6 @@ public:
 		const std::string pathIcon, 
 		glm::vec4 outlineColor, 
 		const int radius, glm::ivec2 pos,
-		TextureManager& texMgr,
 		const sf::Window& window
 	);
 

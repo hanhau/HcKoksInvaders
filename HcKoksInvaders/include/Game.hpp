@@ -32,7 +32,6 @@ private:
 	sf::Clock m_gameClock;
 
 	// Resource Managers
-	TextureManager* textureManager;
 	ProgramManager* programManager;
 	SoundBufferManager* soundBufferManager;
 
@@ -129,7 +128,6 @@ public:
 	void run();
 	void exit();
 
-	const TextureManager& getTextureManager();
 	const ProgramManager& getProgramManager();
 	const SoundBufferManager& getSoundBufferManager();
 

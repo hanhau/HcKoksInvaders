@@ -4,6 +4,6 @@
 class Cubemap {
 	unsigned int gl_texID;
 public:
-	Cubemap(TextureManager& texMgr);
+	Cubemap();
 	unsigned int getGlID();
 };

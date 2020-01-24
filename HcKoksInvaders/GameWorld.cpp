@@ -8,6 +8,10 @@
 #include "include/StarShip.hpp"
 #include <thread>
 #include <iostream>
+#include <fstream>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb/stb_image_write.h>
 
 const int GameWorld::MinHeightInTiles = 15;
 const int GameWorld::WidthInTiles = 5; // 8
@@ -363,32 +367,35 @@ const float GameWorld::getNDCHeight() {
 	return m_ndcHeight;
 }
 
-void GameWorld::saveToFileAsImage(std::string path) {
-	sf::Image img;
-	img.create(m_tiles[0].size(), m_tiles.size(), sf::Color::Black);
+typedef glm::vec<3, uint8_t> bmp_col;
+
+void GameWorld::saveToFileAsImage(std::string path) {	
+	bmp_col* pixels = new bmp_col[m_tiles.size() * WidthInTiles];
+	size_t pixelAmount = m_tiles.size() * WidthInTiles;
 
 	for (size_t y = 0; y < m_tiles.size(); y++) {
 		for (size_t x = 0; x < WidthInTiles; x++) {
-			sf::Color col;
+			bmp_col col;
 			
 			TileEntityBase* base = m_tiles[y][x];
 
 			if (EmptyTile * emptyTile = dynamic_cast<EmptyTile*>(base)) {
-				col = sf::Color::Black;
+				col = bmp_col{0,0,0};
 			}
 			else if (EnemySpaceShipTile * spaceShipTile = dynamic_cast<EnemySpaceShipTile*>(base)) {
-				col = sf::Color::Red;
+				col = bmp_col{255,0,0};
 			}
 			else if (EnemyTurretTile * enemyTurretTile = dynamic_cast<EnemyTurretTile*>(base)) {
-				col = sf::Color::Green;
+				col = bmp_col{0,255,0};
 			}
 			else {
-				col = sf::Color::Magenta;
+				col = bmp_col{0,128,255};
 			}
 
-			img.setPixel(x, y, col);
+			size_t index = 0;
+			pixels[index] = col;
 		}
 	}
 
-	img.saveToFile(path);
+	stbi_write_bmp(path.c_str(), m_tiles.size(), WidthInTiles, 3, pixels);
 }

@@ -92,7 +92,7 @@ void makeVertices(std::vector<ButtonVertex>& vertices,
 AmmunitionIcon::AmmunitionIcon(const std::string pathIcon, 
 							   glm::vec4 outlineColor, 
 							   const int radius, glm::ivec2 pos,
-							   TextureManager& texMgr, const sf::Window& window) :
+							   const sf::Window& window) :
 	m_col(outlineColor),
 	m_radius(radius),
 	m_position(pos),
@@ -104,9 +104,9 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 		2.f/(float)window.getSize().y
 	);
 
-	if (!texMgr.exists(pathIcon))
+	if (!TextureManager::exists(pathIcon))
 		throw "Texture not found: " + std::string(__FUNCSIG__);
-	gl_textureID = texMgr.get(pathIcon).getNativeHandle();
+	gl_textureID = TextureManager::get(pathIcon).getGlID();
 
 	std::vector<ButtonVertex> vertices;
 	makeVertices(vertices,

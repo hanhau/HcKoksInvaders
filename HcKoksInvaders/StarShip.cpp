@@ -4,6 +4,7 @@
 
 #include <deque>
 #include <SFML/Audio/Sound.hpp>
+#include <SFML/Window.hpp>
 
 const int StarShip::maxAmmoSMG = 100;
 const int StarShip::maxAmmoShotgun = 100;

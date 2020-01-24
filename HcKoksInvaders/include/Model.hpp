@@ -21,6 +21,8 @@ public:
 };
 
 struct Mesh {
+	Mesh();
+
 	// only used for loading
 	std::vector<Vertex> m_vertices;
 	std::vector<unsigned int> m_indices;
@@ -28,10 +30,10 @@ struct Mesh {
 	long m_numIndices;
 	long m_numVertices;
 
-	std::shared_ptr<Texture&> m_texDiffuse;
-	std::shared_ptr<Texture&> m_texGlossy;
-	std::shared_ptr<Texture&> m_texNormal;
-	std::shared_ptr<Texture&> m_texEmit;
+	const Texture* m_texDiffuse;
+	const Texture* m_texGlossy;
+	const Texture* m_texNormal;
+	const Texture* m_texEmit;
 
 	GLuint gl_vao;  // VertexArrayObject
 	GLuint gl_vbo;  // VertexBufferObject
@@ -49,8 +51,7 @@ public:
 
 	// Loading
 	bool loadFileFromMemory(uint8_t* const buffer, const size_t bufferLength, 
-						    const std::string fileName, 
-							const TextureManager& texMgr);
+						    const std::string fileName);
 
 	// Upload to OpenGL
 	void uploadToGl();

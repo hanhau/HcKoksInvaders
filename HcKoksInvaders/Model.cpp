@@ -11,6 +11,20 @@
 #include <Camera.hpp>
 
 /* -------------------------------------------------------------------
+							   MESH
+------------------------------------------------------------------- */
+
+Mesh::Mesh() :
+	m_vertices(), m_indices(),
+	m_numIndices(0), m_numVertices(0),
+	m_texDiffuse(nullptr),
+	m_texGlossy(nullptr),
+	m_texNormal(nullptr),
+	m_texEmit(nullptr),
+	gl_vao(0),gl_vbo(0),gl_ebo(0)
+{}
+
+/* -------------------------------------------------------------------
                                MODEL
 ------------------------------------------------------------------- */
 void processAiMesh(aiMesh* ai_mesh, const aiScene* scene,Mesh &mesh);
@@ -24,8 +38,7 @@ const BoundingBall& Model3D::getOuterBB() const {
 }
 
 bool Model3D::loadFileFromMemory(uint8_t * const buffer, const size_t bufferLength, 
-								 const std::string filename, 
-							     const TextureManager& texMgr)
+								 const std::string filename)
 {
 	try {
 		Assimp::Importer importer;
@@ -58,17 +71,17 @@ bool Model3D::loadFileFromMemory(uint8_t * const buffer, const size_t bufferLeng
 		// Load Textures (if availiable)
 		const std::string rel_fn = filename.substr(0,filename.find_last_of('.'));
 
-		if (texMgr.exists(rel_fn + "_diffuse.png")) {
-			m_mesh.m_texDiffuse = std::make_shared<Texture&>(TextureManager::get(rel_fn + "_diffuse.png"));
+		if (TextureManager::exists(rel_fn + "_diffuse.png")) {
+			m_mesh.m_texDiffuse = &TextureManager::get(rel_fn + "_diffuse.png");
 		}
-		if (texMgr.exists(rel_fn + "_glossy.png")) {
-			m_mesh.m_texGlossy = std::make_shared<Texture&>(TextureManager::get(rel_fn + "_glossy.png"));
+		if (TextureManager::exists(rel_fn + "_glossy.png")) {
+			m_mesh.m_texGlossy = &TextureManager::get(rel_fn + "_glossy.png");
 		}
-		if (texMgr.exists(rel_fn + "_normal.png")) {
-			m_mesh.m_texNormal = std::make_shared<Texture&>(TextureManager::get(rel_fn + "_normal.png"));
+		if (TextureManager::exists(rel_fn + "_normal.png")) {
+			m_mesh.m_texNormal = &TextureManager::get(rel_fn + "_normal.png");
 		}
-		if (texMgr.exists(rel_fn + "_emit.png")) {
-			m_mesh.m_texEmit = std::make_shared<Texture&>(TextureManager::get(rel_fn + "_emit.png"));
+		if (TextureManager::exists(rel_fn + "_emit.png")) {
+			m_mesh.m_texEmit = &TextureManager::get(rel_fn + "_emit.png");
 		}
 
 		return true;
@@ -125,30 +138,30 @@ void Model3D::cleanFromGl() {
 }
 
 void bindTextures(
-	unsigned int diffuse,
-	unsigned int glossy,
-	unsigned int normal,
-	unsigned int emit,
+	const Texture* diffuse,
+	const Texture* glossy,
+	const Texture* normal,
+	const Texture* emit,
 	unsigned int cubemap) 
 {
-	if (diffuse != 0) {
+	if (diffuse != nullptr) {
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuse);
+		glBindTexture(GL_TEXTURE_2D, diffuse->getGlID());
 	}
 
-	if (glossy != 0) {
+	if (glossy != nullptr) {
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, glossy);
+		glBindTexture(GL_TEXTURE_2D, glossy->getGlID());
 	}
 
-	if (normal != 0) {
+	if (normal != nullptr) {
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, normal);
+		glBindTexture(GL_TEXTURE_2D, normal->getGlID());
 	}
 
-	if (emit != 0) {
+	if (emit != nullptr) {
 		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, emit);
+		glBindTexture(GL_TEXTURE_2D, emit->getGlID());
 	}
 
 	if (cubemap != 0) {
@@ -228,10 +241,10 @@ void Model3D::drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cube
 	instances.bind(0);
 
 	bindTextures(
-		(*m_mesh.m_texDiffuse).getGlID(),
-		(*m_mesh.m_texGlossy).getGlID(),
-		(*m_mesh.m_texNormal).getGlID(),
-		(*m_mesh.m_texEmit).getGlID(),
+		m_mesh.m_texDiffuse,
+		m_mesh.m_texGlossy,
+		m_mesh.m_texNormal,
+		m_mesh.m_texEmit,
 		cubemap.getGlID()
 	);
 

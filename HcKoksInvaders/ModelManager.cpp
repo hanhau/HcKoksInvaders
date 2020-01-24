@@ -48,7 +48,7 @@ void ModelManager::preloadToMemory() {
 
 	m_preloadThread = std::thread(
 		_preloadFunc,
-		std::ref(LOAD_PATHS),std::ref(m_preloadData)
+		std::ref(LOAD_PATHS),std::ref(m_preloadData),std::ref(m_models)
 	);
 }
 
@@ -56,7 +56,7 @@ void ModelManager::waitForMemoryPreload() {
 	m_preloadThread.join();
 }
 
-void ModelManager::add(const std::string path, const TextureManager& texMgr,const Program& prog) {
+void ModelManager::add(const std::string path,const Program& prog) {
 	try {
 		if (exists(path))
 			throw "Model already exists @ " + std::string(__FUNCSIG__);
@@ -70,8 +70,7 @@ void ModelManager::add(const std::string path, const TextureManager& texMgr,cons
 		if (!m_models.at(path).loadFileFromMemory(
 			m_preloadData[path].m_data.get(),
 			m_preloadData[path].m_dataLength,
-			path,
-			texMgr
+			path
 		))
 			throw "Unable to load " + path + " @ " + std::string(__FUNCSIG__);
 	}
@@ -81,17 +80,17 @@ void ModelManager::add(const std::string path, const TextureManager& texMgr,cons
 	}
 }
 
-void ModelManager::init(const TextureManager& texMgr,const ProgramManager& progMgr) {
+void ModelManager::init(const ProgramManager& progMgr) {
 	const Program* p = &progMgr.get(ProgramManager::ProgramEntry::Model3D);
 	
-	add("res/models/vengabus.obj",texMgr, *p);
-	add("res/models/vengabus_hq.obj",texMgr, *p);
-	add("res/models/ship1.obj",texMgr, *p);
-	add("res/models/turret_base.obj",texMgr, *p);
-	add("res/models/turret_head.obj",texMgr, *p);
-	add("res/models/money.obj",texMgr, *p);
-	add("res/models/finger.obj",texMgr, *p);
-	add("res/models/medibox.obj", texMgr, *p);
+	add("res/models/vengabus.obj", *p);
+	add("res/models/vengabus_hq.obj", *p);
+	add("res/models/ship1.obj", *p);
+	add("res/models/turret_base.obj", *p);
+	add("res/models/turret_head.obj", *p);
+	add("res/models/money.obj", *p);
+	add("res/models/finger.obj", *p);
+	add("res/models/medibox.obj", *p);
 
 	m_preloadData.clear();
 }

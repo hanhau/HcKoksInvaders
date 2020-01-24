@@ -4,7 +4,7 @@
 #include <fstream>
 #include <vector>
 
-const std::vector<std::string> LOAD_PATHS({
+const std::vector<std::string> TextureManager::m_rmPreloadPaths({
 	"res/images/icon_munition_pistol.png",
 	"res/images/icon_munition_rocket.png",
 	"res/images/icon_munition_shotgun.png",
@@ -42,78 +42,51 @@ std::map<std::string, PreloadData>   TextureManager::m_rmPreloadData;
 std::thread						     TextureManager::m_rmPreloadThread;
 std::map<const std::string, Texture> TextureManager::m_textures;
 
-void preloadFunc(std::vector<std::string>& loadPaths,
-				 std::map<std::string, PreloadData>& pData) 
+void _preloadFunc(const std::vector<std::string>& loadPaths,
+				 std::map<std::string, PreloadData>& pDataMap,
+				 std::map<const std::string, Texture> &textures) 
 {
+	pDataMap.clear();
+
 	for (const auto& path : loadPaths) {
 		std::ifstream file(path, std::ios::in | std::ios::ate | std::ios::binary);
 		
 		size_t fileLength = file.tellg();
 		file.seekg(0);
 
+		pDataMap[path] = PreloadData();
+		pDataMap[path].m_dataLength = fileLength;
+		pDataMap[path].m_path = path;
+		pDataMap[path].m_data = std::unique_ptr<uint8_t>(new uint8_t[fileLength]);
 
+		file.read((char*)pDataMap[path].m_data.get(), fileLength);
 	}
+
+	for (const auto& pData: pDataMap) {
+		textures.emplace(pData.first,Texture());
+		textures[pData.first].loadFromMemory(
+			pData.second.m_data.get(), 
+			pData.second.m_dataLength
+		);
+	}
+
+	pDataMap.clear();
 }
 
 void TextureManager::preloadToMemory() {
-	m_preloadThread = std::thread(&preloadFunc);
+	m_rmPreloadThread = std::thread(
+		_preloadFunc,
+		std::ref(m_rmPreloadPaths), std::ref(m_rmPreloadData), std::ref(m_textures)
+	);
 }
 
 void TextureManager::waitForMemoryPreload() {
-	m_preloadThread.join();
+	m_rmPreloadThread.join();
 }
 
 void TextureManager::init() {
-	add("res/images/icon_munition_pistol.png");
-	add("res/images/icon_munition_rocket.png");
-	add("res/images/icon_munition_shotgun.png");
-	add("res/images/icon_munition_smg.png");
-
-	add("res/images/cubemap/front.png");
-	add("res/images/cubemap/back.png");
-	add("res/images/cubemap/left.png");
-	add("res/images/cubemap/right.png");
-	add("res/images/cubemap/top.png");
-	add("res/images/cubemap/bot.png");
-
-	add("res/models/ship1_diffuse.png");
-	add("res/models/ship1_glossy.png");
-
-	add("res/models/vengabus_diffuse.png");
-	add("res/models/vengabus_glossy.png");
-
-	add("res/models/vengabus_hq_diffuse.png");
-	add("res/models/vengabus_hq_glossy.png");
-
-	add("res/models/finger_diffuse.png");
-	add("res/models/finger_glossy.png");
-
-	add("res/models/money_diffuse.png");
-	add("res/models/money_glossy.png");
-
-	add("res/models/turret_base_diffuse.png");
-	add("res/models/turret_base_glossy.png");
-	
-	add("res/models/turret_head_diffuse.png");
-	add("res/models/turret_head_glossy.png");
-}
-
-void TextureManager::add(std::string path) {
-	try {
-		if (exists(path))
-			throw "Texture already added @ " + std::string(__FUNCSIG__);
-
-		Texture temp_tex;
-		const PreloadData& pData = m_preloadData[path];
-		if (!temp_tex.loadFromMemory(pData.m_data.get(),pData.m_dataLength)) {
-			throw "Error loading file @ " + std::string(__FUNCSIG__);
-			return;
-		}
-
-		m_textures.emplace(path, std::move(temp_tex));
-	}
-	catch (std::string e) {
-		std::cout << e << std::endl;
+	for (auto& tex : m_textures) {
+		tex.second.uploadToGl();
 	}
 }
 
