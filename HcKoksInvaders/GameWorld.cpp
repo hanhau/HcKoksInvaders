@@ -174,6 +174,7 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 	static const Model3D& modelTurret = ModelManager.getModel("res/models/turret_head.obj");
 	static const Model3D& modelEnemySpaceShip = ModelManager.getModel("res/models/ship1.obj");
 
+	// Handle TURRETS
 	for (auto& iterTurret: m_enemyTurretTilesPtrs) {
 		if (iterTurret == nullptr)
 			continue;
@@ -213,6 +214,8 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 			}
 		}
 	}
+
+	// Handle SPACESHIPS
 	for (auto& iterSpaceship : m_enemySpaceshipTilesPtrs) {
 		if (iterSpaceship == nullptr)
 			continue;
