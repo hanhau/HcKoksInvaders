@@ -5,24 +5,24 @@
 #include <string>
 #include <vector>
 
-std::map<std::string, PreloadData> ModelManager::m_preloadData;
-std::thread						   ModelManager::m_preloadThread;
-std::map<std::string, Model3D>	   ModelManager::m_models;
+_ModelManager ModelManager;
 
-static const std::vector<std::string> LOAD_PATHS({
-	"res/models/vengabus.obj",
-	"res/models/vengabus_hq.obj",
-	"res/models/ship1.obj",
-	"res/models/turret_base.obj",
-	"res/models/turret_head.obj",
-	"res/models/money.obj",
-	"res/models/finger.obj",
-	"res/models/medibox.obj"
-});
+_ModelManager::_ModelManager() : 
+	ResourceManagerBase({
+		"res/models/vengabus.obj",
+		"res/models/vengabus_hq.obj",
+		"res/models/ship1.obj",
+		"res/models/turret_base.obj",
+		"res/models/turret_head.obj",
+		"res/models/money.obj",
+		"res/models/finger.obj",
+		"res/models/medibox.obj"
+	})
+{}
 
 void _preloadFunc(const std::vector<std::string>& loadPaths,
 				  std::map<std::string, PreloadData>& preloadData,
-				  std::map<std::string, Model3D>& models) 
+				  std::map<std::string, Model3D> * const models) 
 {
 	for (const auto& path : loadPaths) {
 		std::ifstream file(path, std::ios::in | std::ios::binary | std::ios::ate);
@@ -39,67 +39,52 @@ void _preloadFunc(const std::vector<std::string>& loadPaths,
 	}
 
 	for (const auto& path : loadPaths) {
+		try {
+			if (models->find(path) != models->end())
+				throw "Model already exists @ " + std::string(__FUNCTION__);
 
+			models->emplace(path, Model3D());
+
+			if (!models->at(path).loadFileFromMemory(
+				preloadData[path].m_data.get(),
+				preloadData[path].m_dataLength,
+				path
+			))
+				throw "Unable to load " + path + " @ " + std::string(__FUNCTION__);
+		}
+		catch (std::string e) {
+			std::cout << e << "\n";
+		}
 	}
 }
 
-void ModelManager::preloadToMemory() {
-	m_preloadData.clear();
+void _ModelManager::preloadToMemory() {
+	m_rmPreloadData.clear();
 
-	m_preloadThread = std::thread(
+	m_rmPreloadThread = std::thread(
 		_preloadFunc,
-		std::ref(LOAD_PATHS),std::ref(m_preloadData),std::ref(m_models)
+		std::ref(m_rmPreloadPaths),std::ref(m_rmPreloadData),&m_models
 	);
 }
 
-void ModelManager::waitForMemoryPreload() {
-	m_preloadThread.join();
+void _ModelManager::waitForMemoryPreload() {
+	if(m_rmPreloadThread.joinable())
+		m_rmPreloadThread.join();
 }
 
-void ModelManager::add(const std::string path,const Program& prog) {
-	try {
-		if (exists(path))
-			throw "Model already exists @ " + std::string(__FUNCSIG__);
-
-		m_models.emplace(
-			std::piecewise_construct,
-			std::forward_as_tuple(path),
-			std::forward_as_tuple(prog)
-		);
-
-		if (!m_models.at(path).loadFileFromMemory(
-			m_preloadData[path].m_data.get(),
-			m_preloadData[path].m_dataLength,
-			path
-		))
-			throw "Unable to load " + path + " @ " + std::string(__FUNCSIG__);
+void _ModelManager::init() {
+	for (auto& iter : m_models) {
+		iter.second.uploadToGl();
 	}
-	catch (std::string e)
-	{
-		std::cout << e << std::endl;
-	}
+
+	m_rmPreloadData.clear();
 }
 
-void ModelManager::init(const ProgramManager& progMgr) {
-	const Program* p = &progMgr.get(ProgramManager::ProgramEntry::Model3D);
-	
-	add("res/models/vengabus.obj", *p);
-	add("res/models/vengabus_hq.obj", *p);
-	add("res/models/ship1.obj", *p);
-	add("res/models/turret_base.obj", *p);
-	add("res/models/turret_head.obj", *p);
-	add("res/models/money.obj", *p);
-	add("res/models/finger.obj", *p);
-	add("res/models/medibox.obj", *p);
-
-	m_preloadData.clear();
-}
-
-bool ModelManager::exists(const std::string path) {
+bool _ModelManager::exists(const std::string path) {
 	return m_models.find(path) != m_models.end();
 }
 
-const Model3D& ModelManager::getModel(const std::string path) {
+const Model3D& _ModelManager::getModel(const std::string path) {
 	if (!exists(path))
 		throw;
 

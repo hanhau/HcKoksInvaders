@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "PreloadData.hpp"
 
 class Shader
 {
@@ -18,8 +19,9 @@ public:
 		Unitialized
 	};
 
-	bool loadFromFile(const std::string path,ShaderType shaderType);
+	bool loadFromMemory(uint8_t* buffer,size_t bufferLength,ShaderType shaderType);
 	bool loadFromString(const std::string str, ShaderType shaderType);
+	bool loadFromPreloadData(const PreloadData& pData, ShaderType shaderType);
 
 	const ShaderType& getType() const;
 	unsigned int getID() const;

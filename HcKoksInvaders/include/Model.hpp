@@ -43,11 +43,9 @@ struct Mesh {
 class Model3D {
 private:
 	Mesh m_mesh;
-	const Program& m_progRef;
-
 	BoundingBall m_outerBall;
 public:
-	Model3D(const Program& m_progRef);
+	Model3D();
 
 	// Loading
 	bool loadFileFromMemory(uint8_t* const buffer, const size_t bufferLength, 

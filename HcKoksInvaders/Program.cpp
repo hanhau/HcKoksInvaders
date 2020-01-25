@@ -32,7 +32,7 @@ Program::Program(Shader const& vertex,Shader const& fragment) :
 		std::cout << "\n------------\n";
 	}
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 Program::~Program() {
 	//glDeleteProgram(glID);
@@ -45,12 +45,12 @@ const unsigned int Program::getID() const {
 void Program::bind() const {
 	glUseProgram(glID);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 void Program::unbind() const {
 	glUseProgram(0);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 
 // Uniform Operations
@@ -65,7 +65,7 @@ void Program::setUniform(const std::string name, glm::mat4x4 mat4) const {
 	bind();
 	glUniformMatrix4fv(loc,1,GL_FALSE,(const GLfloat*)glm::value_ptr(mat4));
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 void Program::setUniform(const std::string name, sf::Vector3f vec3) const {
 	GLuint loc = glGetUniformLocation(glID, name.c_str());
@@ -79,7 +79,7 @@ void Program::setUniform(const std::string name, sf::Vector3f vec3) const {
 	bind();
 	glUniform3fv(loc, 1, vals);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 void Program::setUniform(const std::string name, sf::Vector2f vec2) const {
 	GLuint loc = glGetUniformLocation(glID, name.c_str());
@@ -93,7 +93,7 @@ void Program::setUniform(const std::string name, sf::Vector2f vec2) const {
 	bind();
 	glUniform2fv(loc, 1, vals);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 
 void Program::setUniform(const std::string name, float f) const {
@@ -106,7 +106,7 @@ void Program::setUniform(const std::string name, float f) const {
 	bind();
 	glUniform1f(loc, f);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 void Program::setUniform(const std::string name, int i) const {
 	GLuint loc = glGetUniformLocation(glID, name.c_str());
@@ -118,5 +118,5 @@ void Program::setUniform(const std::string name, int i) const {
 	bind();
 	glUniform1i(loc, i);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }

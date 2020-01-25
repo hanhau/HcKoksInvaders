@@ -5,24 +5,21 @@
 #include <string>
 #include "Model.hpp"
 #include "PreloadData.hpp"
+#include "ResourceManagerBase.hpp"
 
-class ModelManager {
+class _ModelManager : public ResourceManagerBase {
 private:
-	// Preload Mechanic
-	static std::map<std::string, PreloadData> m_preloadData;
-	static std::thread m_preloadThread;
-
-	static std::map<std::string, Model3D> m_models;
-	static void add(const std::string path, const Program& prog);
-
-	// Disallow Instances
-	ModelManager() {};
+	std::map<std::string, Model3D> m_models;
 public:
-	static void preloadToMemory();
-	static void waitForMemoryPreload();
+	_ModelManager();
 
-	static void init(const ProgramManager& progMgr);
+	void preloadToMemory();
+	void waitForMemoryPreload();
 
-	static bool exists(const std::string path);
-	static const Model3D& getModel(const std::string path);
+	void init();
+
+	bool exists(const std::string path);
+	const Model3D& getModel(const std::string path);
 };
+
+extern _ModelManager ModelManager;

@@ -171,8 +171,8 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 										 float visibleOffsetYNegative,
 										 int& points) 
 {
-	static const Model3D& modelTurret = ModelManager::getModel("res/models/turret_head.obj");
-	static const Model3D& modelEnemySpaceShip = ModelManager::getModel("res/models/ship1.obj");
+	static const Model3D& modelTurret = ModelManager.getModel("res/models/turret_head.obj");
+	static const Model3D& modelEnemySpaceShip = ModelManager.getModel("res/models/ship1.obj");
 
 	for (auto& iterTurret: m_enemyTurretTilesPtrs) {
 		if (iterTurret == nullptr)
@@ -255,10 +255,10 @@ void GameWorld::updateOnBulletCollisions(std::list<Bullet>& bullets,
 }
 
 void GameWorld::draw(const Camera& camera, Cubemap& cubemap) {
-	static const Model3D& enemyShip = ModelManager::getModel("res/models/ship1.obj");
-	static const Model3D& turretHead = ModelManager::getModel("res/models/turret_head.obj");
-	static const Model3D& turretBase = ModelManager::getModel("res/models/turret_base.obj");
-	static const Model3D& playerShip = ModelManager::getModel("res/models/vengabus.obj");
+	static const Model3D& enemyShip = ModelManager.getModel("res/models/ship1.obj");
+	static const Model3D& turretHead = ModelManager.getModel("res/models/turret_head.obj");
+	static const Model3D& turretBase = ModelManager.getModel("res/models/turret_base.obj");
+	static const Model3D& playerShip = ModelManager.getModel("res/models/vengabus.obj");
 
 	static sf::Clock clock;
 

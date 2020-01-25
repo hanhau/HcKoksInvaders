@@ -22,8 +22,7 @@ std::vector<glm::vec3> getBulletVertices() {
 
 constexpr unsigned int MAX_BULLETS = 1024;
 
-BulletRenderer::BulletRenderer(const ProgramManager& progMgr) :
-	m_progMgr(progMgr)
+BulletRenderer::BulletRenderer()
 {
 	const std::vector<glm::vec3> vertices(getBulletVertices());
 	
@@ -48,13 +47,13 @@ BulletRenderer::BulletRenderer(const ProgramManager& progMgr) :
 }
 
 void BulletRenderer::drawInstances(std::list<Bullet>& bullets, const Camera& cam) {
-	static const Program& prog = m_progMgr.get(ProgramManager::ProgramEntry::Bullet);
+	static const Program& prog = ProgramManager.get(ProgramEntry::Bullet);
 	static std::vector<BulletPosData> bulletPos(MAX_BULLETS);
 
 	const unsigned int bulletCount = bullets.size();
 
 	if (bulletCount > MAX_BULLETS)
-		printf_s("Too many bullets in %s",__FUNCSIG__);
+		printf_s("Too many bullets in %s", __FUNCTION__);
 
 	unsigned int i = 0;
 	for (auto& iter : bullets) {

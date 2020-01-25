@@ -123,12 +123,12 @@ void NetworkManager::init(const std::string ip,
     m_impl->wsadata = new WSADATA();
 
     if (WSAStartup(0x0101, m_impl->wsadata))
-        std::cout << __FUNCSIG__ << " ERROR\n";
+        std::cout << __FUNCTION__ << " ERROR\n";
 }
 
 void NetworkManager::shutdown() {
     if (WSACleanup())
-        std::cout << __FUNCSIG__ << " ERROR\n";
+        std::cout << __FUNCTION__ << " ERROR\n";
 }
 
 bool NetworkManager::sendHttpsRequest(const RequestType type,

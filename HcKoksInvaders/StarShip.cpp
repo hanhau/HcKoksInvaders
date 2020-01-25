@@ -113,7 +113,7 @@ WeaponType StarShip::getWeaponType() {
 
 void StarShip::draw(const Camera& camera, Cubemap& cubemap) {
 	static InstanceBuffer shipPos(1);
-	static const Model3D& ship = ModelManager::getModel("res/models/vengabus.obj");
+	static const Model3D& ship = ModelManager.getModel("res/models/vengabus.obj");
 
 	shipPos[0] = ModelPosition(
 		m_pos,
@@ -230,7 +230,7 @@ void StarShip::processShoot() {
 }
 
 void StarShip::handleBullets(std::list<Bullet>& bullets) {
-	static const Model3D& ship = ModelManager::getModel("res/models/vengabus.obj");
+	static const Model3D& ship = ModelManager.getModel("res/models/vengabus.obj");
 	static const BoundingBall bb = ship.getOuterBB();
 	static const float shipRadius = bb.getRadius() * m_scale;
 

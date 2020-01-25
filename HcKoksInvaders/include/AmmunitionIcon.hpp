@@ -29,7 +29,6 @@ public:
 	void draw(
 		const sf::Window& win,
 		float percentageFull,
-		const ProgramManager& programMgr,
 		const std::string slotTextStr,
 		bool active
 	);

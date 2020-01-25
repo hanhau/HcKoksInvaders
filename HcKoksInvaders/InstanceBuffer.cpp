@@ -54,7 +54,7 @@ int InstanceBuffer::getInnerCount() const {
 
 ModelPosition& InstanceBuffer::operator[](unsigned int pos) {
 	if (pos > m_capacity - 1)
-		throw "Out of Bounds @ " + std::string(__FUNCSIG__);
+		throw "Out of Bounds @ " + std::string(__FUNCTION__);
 
 	return m_positions[pos];
 }

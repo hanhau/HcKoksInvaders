@@ -105,10 +105,10 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 	FT_Face face{};
 
 	if (FT_Init_FreeType(&ft))
-		std::cout << "Error initializing FT @ " << std::string(__FUNCSIG__) << "\n";
+		std::cout << "Error initializing FT @ " << std::string(__FUNCTION__) << "\n";
 
 	if (FT_New_Face(ft, "res/fonts/PressStart2P-Regular.ttf", 0, &face))
-		std::cout << "Error opening Face @ " << std::string(__FUNCSIG__) << "\n";
+		std::cout << "Error opening Face @ " << std::string(__FUNCTION__) << "\n";
 
 	if ((face->face_flags & FT_FACE_FLAG_SCALABLE) != FT_FACE_FLAG_SCALABLE) {
 		std::cout << "Error: font is not scalable.";
@@ -119,19 +119,19 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 
 	glGenTextures(1, &m_impl->gl_tex2DArray);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, m_impl->gl_tex2DArray);
-	util::checkGlCalls("glCreate/Bind Texture @ " + std::string(__FUNCSIG__));
+	util::checkGlCalls("glCreate/Bind Texture @ " + std::string(__FUNCTION__));
 	
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	util::checkGlCalls("glPixelStorei @ " + std::string(__FUNCSIG__));
+	util::checkGlCalls("glPixelStorei @ " + std::string(__FUNCTION__));
 
 	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1,GL_R8, pixelheight, pixelheight, 128);
-	util::checkGlCalls("glTexStorage3D @ " + std::string(__FUNCSIG__));
+	util::checkGlCalls("glTexStorage3D @ " + std::string(__FUNCTION__));
 
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	util::checkGlCalls("glTexParameteri @ " + std::string(__FUNCSIG__));
+	util::checkGlCalls("glTexParameteri @ " + std::string(__FUNCTION__));
 
 	for (unsigned char c = 0; c <= 127; c++) {
 		if(FT_Load_Char(face, c, FT_LOAD_RENDER))
@@ -158,7 +158,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 			1, GL_RED, GL_UNSIGNED_BYTE,
 			clearBuffer
 		);
-		util::checkGlCalls(std::to_string(c) + " " + text + " glTexSubImage3D clear @ " + std::string(__FUNCSIG__));
+		util::checkGlCalls(std::to_string(c) + " " + text + " glTexSubImage3D clear @ " + std::string(__FUNCTION__));
 
 		// insert layer
 		glTexSubImage3D(
@@ -174,7 +174,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 			GL_UNSIGNED_BYTE, // type
 			face->glyph->bitmap.buffer // data
 		);
-		util::checkGlCalls(std::to_string(c) + " " + text + " glTexSubImage3D fill @ " + std::string(__FUNCSIG__));
+		util::checkGlCalls(std::to_string(c) + " " + text + " glTexSubImage3D fill @ " + std::string(__FUNCTION__));
 	}
 
 	FT_Done_Face(face);
@@ -199,7 +199,7 @@ Text::Text(const std::string text,int pixelheight, glm::ivec2 posInPixel)
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	util::checkGlCalls((text + " " + std::string(__FUNCSIG__)).c_str());
+	util::checkGlCalls((text + " " + std::string(__FUNCTION__)).c_str());
 }
 
 void Text::setText(const std::string text) {
@@ -297,5 +297,5 @@ void Text::draw(const sf::Window& win, const Program& program, glm::vec3 col) {
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }

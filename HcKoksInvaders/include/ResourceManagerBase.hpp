@@ -4,14 +4,18 @@
 #include <vector>
 #include <map>
 
-class ResourceMangerBase {
+class ResourceManagerBase {
 protected:
-	static const std::vector<std::string> m_rmPreloadPaths;
-	static std::map<std::string, PreloadData> m_rmPreloadData;
-	static std::thread m_rmPreloadThread;
+	const std::vector<std::string> m_rmPreloadPaths;
+	std::map<std::string, PreloadData> m_rmPreloadData;
+	std::thread m_rmPreloadThread;
 public:
-	static void preloadToMemory();
-	static void waitForMemoryPreload();
+	inline ResourceManagerBase(const std::vector<std::string> paths) :
+		m_rmPreloadPaths(paths)
+	{}
 
-	virtual ~ResourceMangerBase() {}
+	virtual void preloadToMemory() {};
+	virtual void waitForMemoryPreload() {};
+
+	virtual ~ResourceManagerBase() {}
 };

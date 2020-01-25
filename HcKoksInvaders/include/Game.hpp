@@ -32,7 +32,6 @@ private:
 	sf::Clock m_gameClock;
 
 	// Resource Managers
-	ProgramManager* programManager;
 	SoundBufferManager* soundBufferManager;
 
 	// Global Default Cubemap
@@ -128,7 +127,6 @@ public:
 	void run();
 	void exit();
 
-	const ProgramManager& getProgramManager();
 	const SoundBufferManager& getSoundBufferManager();
 
 	StarShip* getStarShip();

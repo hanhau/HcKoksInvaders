@@ -12,8 +12,8 @@ int main()
 #endif
 {
 	NetworkManager::init("81.19.159.64","hcki.handata.eu");
-	ModelManager::preloadToMemory();
-	TextureManager::preloadToMemory();
+	TextureManager.preloadToMemory();
+	ProgramManager.preloadToMemory();
 
 	GameLaunchOptions gameLaunchOptions;
 	gameLaunchOptions.loadFromFileOrDefault();

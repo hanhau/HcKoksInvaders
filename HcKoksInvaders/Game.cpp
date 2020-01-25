@@ -72,13 +72,15 @@ void Game::init(const GameLaunchOptions& glo) {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 
 	// Initialize ResourceManagers
-	TextureManager::waitForMemoryPreload();
-	TextureManager::init();
+	TextureManager.waitForMemoryPreload();
+	TextureManager.init();
 
-	programManager = new ProgramManager();
-	
-	ModelManager::waitForMemoryPreload();
-	ModelManager::init(*programManager);
+	ProgramManager.waitForMemoryPreload();
+	ProgramManager.init();
+
+	ModelManager.preloadToMemory();
+	ModelManager.waitForMemoryPreload();
+	ModelManager.init();
 	
 	soundBufferManager = new SoundBufferManager();
 
@@ -94,7 +96,7 @@ void Game::init(const GameLaunchOptions& glo) {
 	std::cout << "antialiasing level:" << settings.antialiasingLevel << std::endl;
 
 	// Check OpenGL Errors
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 
 	// Load IngameUI
 	{
@@ -249,11 +251,14 @@ void Game::init(const GameLaunchOptions& glo) {
 
 		sIngame.gameWorld = new GameWorld(*this);
 
-		sIngame.bulletRenderer = new BulletRenderer(*programManager);
+		sIngame.bulletRenderer = new BulletRenderer();
 	}
 
 	// Init GameState
 	m_gameState = GameState::MainMenu;
+
+	// Pre Cleanup
+	TextureManager.cleanMemory();
 }
 
 void Game::run() {
@@ -337,7 +342,7 @@ void Game::run() {
 				static StarBackground starBkg;
 				starBkg.draw(
 					window, 
-					programManager->get(ProgramManager::ProgramEntry::IngameBackground), 
+					ProgramManager.get(ProgramEntry::IngameBackground),
 					m_gameClock.getElapsedTime().asSeconds()
 				);
 
@@ -365,24 +370,24 @@ void Game::run() {
 				sIngame.gameWorld->draw(cam1, *cubeMap);
 				sIngame.playerShip->draw(cam1, *cubeMap);
 
-				const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+				const Program& textProg = ProgramManager.get(ProgramEntry::Text);
 
 				sIngame.drawHUDText(window, textProg);
 
 				sIngame.MunitionIconPistol->draw(
-					window,100.f, *programManager,"[1]",
+					window,100.f,"[1]",
 					sIngame.playerShip->getWeaponType() == WeaponType::Pistol
 				);
 				sIngame.MunitionIconSMG->draw(
-					window, sIngame.playerShip->getSMGAmmoPercent(), *programManager, "[2]", 
+					window, sIngame.playerShip->getSMGAmmoPercent(), "[2]", 
 					sIngame.playerShip->getWeaponType() == WeaponType::SMG
 				);
 				sIngame.MunitionIconRocket->draw(
-					window,sIngame.playerShip->getRocketAmmoPercent(), *programManager,"[3]",
+					window,sIngame.playerShip->getRocketAmmoPercent(), "[3]",
 					sIngame.playerShip->getWeaponType() == WeaponType::Rocket
 				);
 				sIngame.MunitionIconShotgun->draw(
-					window,sIngame.playerShip->getShotgunAmmoPercent(), *programManager,"[4]",
+					window,sIngame.playerShip->getShotgunAmmoPercent(), "[4]",
 					sIngame.playerShip->getWeaponType() == WeaponType::Shotgun
 				);
 
@@ -467,9 +472,6 @@ void Game::exit() {
 	window.close();
 }
 
-const ProgramManager& Game::getProgramManager() {
-	return *programManager;
-}
 const SoundBufferManager& Game::getSoundBufferManager() {
 	return *soundBufferManager;
 }
@@ -501,7 +503,7 @@ void Game::startGame() {
 
 // private functions
 void Game::drawFpsCounter(sf::Time timeElapsed) {
-	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+	static const Program& textProg = ProgramManager.get(ProgramEntry::Text);
 	static Text text = Text("n",18,glm::ivec2(2,2));
 
 	text.setText(std::to_string((int)(1'000'000.0/(double)std::max((unsigned long long)timeElapsed.asMicroseconds(),1ull))));
@@ -513,8 +515,8 @@ void Game::drawMainMenu() {
 	static InstanceBuffer busPos(1);
 
 	const float secs = m_gameClock.getElapsedTime().asSeconds() * 3.0f;
-	static const Model3D& bus = ModelManager::getModel("res/models/vengabus_hq.obj");
-	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+	static const Model3D& bus = ModelManager.getModel("res/models/vengabus_hq.obj");
+	static const Program& textProg = ProgramManager.get(ProgramEntry::Text);
 
 	static Camera cam;
 	cam.setCameraPos(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -529,11 +531,11 @@ void Game::drawMainMenu() {
 	);
 	busPos.transferToGpu();
 
-	starBkg.draw(window,programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs);
+	starBkg.draw(window, ProgramManager.get(ProgramEntry::MainMenuBackground), secs);
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 
 	for (auto& iter : sMenu.buttonVec)
-		iter->draw(window, *programManager);
+		iter->draw(window);
 
 	sMenu.textTitle->draw(window, textProg, glm::vec3(
 		abs(cosf(secs * 2.0f)),
@@ -568,9 +570,9 @@ void Game::drawCredits() {
 	static InstanceBuffer busPos(1);
 
 	const float secs = m_gameClock.getElapsedTime().asSeconds()*2*(60.f/130.f);
-	static const Model3D& money = ModelManager::getModel("res/models/money.obj");
-	static const Model3D& finger = ModelManager::getModel("res/models/finger.obj");
-	static const Model3D& bus = ModelManager::getModel("res/models/vengabus.obj");
+	static const Model3D& money = ModelManager.getModel("res/models/money.obj");
+	static const Model3D& finger = ModelManager.getModel("res/models/finger.obj");
+	static const Model3D& bus = ModelManager.getModel("res/models/vengabus.obj");
 
 	static Text textEhrenMann = Text(
 		"HCKOKSINVADERS V1.0", 24,
@@ -595,7 +597,7 @@ void Game::drawCredits() {
 	cam.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f));
 	cam.setProjectionMatrix(glm::perspective(glm::radians(65.f), window.getSize().x / (float)window.getSize().y, 1.f, 500.f));
 
-	starBkg.draw(window,programManager->get(ProgramManager::ProgramEntry::MainMenuBackground), secs*3.0);
+	starBkg.draw(window,ProgramManager.get(ProgramEntry::MainMenuBackground), secs*3.0);
 
 	for (double i = 0, j = 0; i < 1000.0; i += 10.0,j+=1.0) {
 		float s = 0.2f + abs(cosf(secs + i)) * 0.1f;
@@ -631,7 +633,7 @@ void Game::drawCredits() {
 	finger.drawInstanceQueue(fingerPos, cam, *cubeMap);
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 
-	const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+	const Program& textProg = ProgramManager.get(ProgramEntry::Text);
 	textCreatedBy.draw(window, textProg);
 	textHannes.draw(window, textProg);
 	textEhrenMann.draw(window, textProg, glm::vec3(
@@ -646,12 +648,12 @@ void Game::drawCredits() {
 	));
 
 	for (auto& iter : sCredits.buttonVec)
-		iter->draw(window, *programManager);
+		iter->draw(window);
 }
 
 void Game::drawGameOverScreen() {
-	static const Model3D& bus = ModelManager::getModel("res/models/vengabus.obj");
-	static const Program& textProg = programManager->get(ProgramManager::ProgramEntry::Text);
+	static const Model3D& bus = ModelManager.getModel("res/models/vengabus.obj");
+	static const Program& textProg = ProgramManager.get(ProgramEntry::Text);
 
 	static Text textTailor = Text("schade.",72,glm::ivec2(0,100));
 	textTailor.centerHorizontally(window);
@@ -684,7 +686,7 @@ void Game::drawGameOverScreen() {
 	));
 	busPos.transferToGpu();
 
-	starBkg.draw(window,programManager->get(ProgramManager::ProgramEntry::MainMenuBackground),secs);
+	starBkg.draw(window,ProgramManager.get(ProgramEntry::MainMenuBackground),secs);
 	bus.drawInstanceQueue(busPos, cam, *cubeMap);
 
 	textTailor.draw(window, textProg, glm::vec3(1.0, 0.0, 0.0));
@@ -693,7 +695,7 @@ void Game::drawGameOverScreen() {
 	textHighscoreStages.draw(window, textProg);
 
 	for (auto& iter : sGameOver.buttonVec)
-		iter->draw(window, *programManager);
+		iter->draw(window);
 }
 
 // struct funcs

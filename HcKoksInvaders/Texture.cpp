@@ -10,26 +10,25 @@ bool Texture::loadFromMemory(uint8_t* const bufferFile, size_t bufferLength) {
 	unsigned char* temp = stbi_load_from_memory(
 		bufferFile, bufferLength, 
 		&m_size.x, &m_size.y, &m_nrChannels, 
-		0 //STBI_rgb_alpha
+		0
 	);
 
-	m_buffer = std::unique_ptr<uint8_t>(new uint8_t[m_size.x * m_size.y]);
-	m_bufferLength = bufferLength;
+	m_bufferLength = m_size.x * m_size.y * m_nrChannels;
+	m_buffer = std::unique_ptr<uint8_t>(new uint8_t[m_bufferLength]);
+
+	memcpy_s(m_buffer.get(), m_bufferLength, temp, m_bufferLength);
 	
 	stbi_image_free(temp);
 	return true;
 }
+void Texture::cleanBuffer() {
+	m_buffer.release();
+	m_bufferLength = 0;
+}
 
 void Texture::uploadToGl() {
 	try {
-		GLint format;
-		switch (m_nrChannels) {
-		case 1: case 2: default:
-			throw "Not supported Format of Img @ " + std::string(__FUNCSIG__);
-			break;
-		case 3: format = GL_RGB; break;
-		case 4: format = GL_RGBA; break;
-		}
+		GLint format = getFormat();
 
 		glGenTextures(1, &gl_textureID);
 		glBindTexture(GL_TEXTURE_2D, gl_textureID);
@@ -42,10 +41,11 @@ void Texture::uploadToGl() {
 		glTexImage2D(
 			GL_TEXTURE_2D, 0, format,
 			m_size.x, m_size.y, 0, format,
-			GL_UNSIGNED_BYTE, nullptr//m_buffer.get()
+			GL_UNSIGNED_BYTE, (void*)m_buffer.get()
 		);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	catch (std::string e) {
 		std::cout << e << "\n";
@@ -61,4 +61,16 @@ unsigned int Texture::getGlID() const {
 }
 glm::ivec2 Texture::getSize() const {
 	return m_size;
+}
+uint8_t* const Texture::getBuffer() const {
+	return m_buffer.get();
+}
+const int Texture::getFormat() const {
+	switch (m_nrChannels) {
+	case 1: case 2: default:
+		throw std::exception(std::string("Not supported Format of Img @ " + std::string(__FUNCTION__)).c_str());
+		break;
+	case 3: return GL_RGB; break;
+	case 4: return GL_RGBA; break;
+	}
 }

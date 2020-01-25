@@ -7,20 +7,9 @@ Shader::~Shader() {
 	//glDeleteShader(glID);
 }
 
-bool Shader::loadFromFile(const std::string path,Shader::ShaderType shaderType) {
+bool Shader::loadFromMemory(uint8_t* buffer, size_t bufferLength,Shader::ShaderType shaderType) {
 	m_shaderType = shaderType;
 	
-	std::fstream file(path, std::ios::in | std::ios::ate);
-	if (!file.is_open())
-		return false;
-
-	size_t length(file.tellg());
-	std::string content(length, ' ');
-
-	file.seekg(0, std::ios_base::beg);
-	file.read(&content[0], length);
-	file.close();
-
 	switch (shaderType) {
 	case ShaderType::Fragment:
 		glID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -31,32 +20,18 @@ bool Shader::loadFromFile(const std::string path,Shader::ShaderType shaderType) 
 	default: break;
 	}
 
-	GLchar const* files[] = { &content[0] };
-	GLint lengths[] = { length };
+	GLchar const* files[] = { (GLchar*)buffer };
+	GLint lengths[] = { bufferLength };
 	glShaderSource(glID, 1, files, lengths);
 	glCompileShader(glID);
 
 	return true;
 }
 bool Shader::loadFromString(const std::string str, Shader::ShaderType shaderType) {
-	m_shaderType = shaderType;
-	
-	switch (shaderType) {
-	case ShaderType::Fragment:
-		glID = glCreateShader(GL_FRAGMENT_SHADER);
-		break;
-	case ShaderType::Vertex:
-		glID = glCreateShader(GL_VERTEX_SHADER);
-		break;
-	default: break;
-	}
-
-	GLchar const* files[] = { &str[0] };
-	GLint lengths[] = { str.length() };
-	glShaderSource(glID, 1, files, lengths);
-	glCompileShader(glID);
-
-	return true;
+	return loadFromMemory((uint8_t*)str.data(), str.length(), shaderType);
+}
+bool Shader::loadFromPreloadData(const PreloadData& pData, ShaderType shaderType) {
+	return loadFromMemory(pData.m_data.get(), pData.m_dataLength, shaderType);
 }
 
 const Shader::ShaderType& Shader::getType() const {

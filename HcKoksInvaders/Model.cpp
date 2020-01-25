@@ -29,9 +29,7 @@ Mesh::Mesh() :
 ------------------------------------------------------------------- */
 void processAiMesh(aiMesh* ai_mesh, const aiScene* scene,Mesh &mesh);
 
-Model3D::Model3D(const Program& prog) : m_progRef(prog) {
-	
-}
+Model3D::Model3D() {}
 
 const BoundingBall& Model3D::getOuterBB() const {
 	return m_outerBall;
@@ -71,17 +69,17 @@ bool Model3D::loadFileFromMemory(uint8_t * const buffer, const size_t bufferLeng
 		// Load Textures (if availiable)
 		const std::string rel_fn = filename.substr(0,filename.find_last_of('.'));
 
-		if (TextureManager::exists(rel_fn + "_diffuse.png")) {
-			m_mesh.m_texDiffuse = &TextureManager::get(rel_fn + "_diffuse.png");
+		if (TextureManager.exists(rel_fn + "_diffuse.png")) {
+			m_mesh.m_texDiffuse = &TextureManager.get(rel_fn + "_diffuse.png");
 		}
-		if (TextureManager::exists(rel_fn + "_glossy.png")) {
-			m_mesh.m_texGlossy = &TextureManager::get(rel_fn + "_glossy.png");
+		if (TextureManager.exists(rel_fn + "_glossy.png")) {
+			m_mesh.m_texGlossy = &TextureManager.get(rel_fn + "_glossy.png");
 		}
-		if (TextureManager::exists(rel_fn + "_normal.png")) {
-			m_mesh.m_texNormal = &TextureManager::get(rel_fn + "_normal.png");
+		if (TextureManager.exists(rel_fn + "_normal.png")) {
+			m_mesh.m_texNormal = &TextureManager.get(rel_fn + "_normal.png");
 		}
-		if (TextureManager::exists(rel_fn + "_emit.png")) {
-			m_mesh.m_texEmit = &TextureManager::get(rel_fn + "_emit.png");
+		if (TextureManager.exists(rel_fn + "_emit.png")) {
+			m_mesh.m_texEmit = &TextureManager.get(rel_fn + "_emit.png");
 		}
 
 		return true;
@@ -128,7 +126,7 @@ void Model3D::uploadToGl() {
 	m_mesh.m_numVertices = m_mesh.m_vertices.size();
 	m_mesh.m_vertices.clear();
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 
 void Model3D::cleanFromGl() {
@@ -171,7 +169,7 @@ void bindTextures(
 
 	glActiveTexture(GL_TEXTURE0);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 
 void unbindTextures() {
@@ -192,7 +190,7 @@ void unbindTextures() {
 	
 	glActiveTexture(GL_TEXTURE0);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 
 void processAiMesh(aiMesh* ai_mesh, const aiScene* scene, Mesh& mesh) {
@@ -230,13 +228,14 @@ void processAiMesh(aiMesh* ai_mesh, const aiScene* scene, Mesh& mesh) {
 }
 
 void Model3D::drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cubemap &cubemap) const {
-	m_progRef.bind();
+	static const Program& program = ProgramManager.get(ProgramEntry::Model3D);
 
 	glm::mat4x4 view = cam.getViewMatrix();
 	glm::mat4x4 perspective = cam.getProjectionMatrix();
 
-	m_progRef.setUniform("matProjection", perspective);
-	m_progRef.setUniform("matView", view);
+	program.bind();
+	program.setUniform("matProjection", perspective);
+	program.setUniform("matView", view);
 
 	instances.bind(0);
 
@@ -263,7 +262,7 @@ void Model3D::drawInstanceQueue(InstanceBuffer& instances,const Camera& cam,Cube
 
 	instances.unbind();
 
-	m_progRef.unbind();
+	program.unbind();
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }

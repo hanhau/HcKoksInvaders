@@ -5,15 +5,19 @@
 #include "Texture.hpp"
 #include "ResourceManagerBase.hpp"
 
-class TextureManager : public ResourceMangerBase {	
-	static std::map<const std::string, Texture> m_textures;
-	~TextureManager() {}
+class _TextureManager : public ResourceManagerBase {	
+	std::map<std::string, Texture> m_textures;
 public:
-	static void init();
+	_TextureManager();
 
-	static void preloadToMemory();
-	static void waitForMemoryPreload();
+	void init();
+	void cleanMemory();
 
-	static const Texture& get(const std::string path);
-	static bool exists(std::string path);
+	void preloadToMemory();
+	void waitForMemoryPreload();
+
+	const Texture& get(const std::string path);
+	bool exists(std::string path);
 };
+
+extern _TextureManager TextureManager;

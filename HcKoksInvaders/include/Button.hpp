@@ -3,7 +3,6 @@
 #include <functional>
 #include <array>
 #include <glm/vec2.hpp>
-#include "ProgramManager.hpp"
 #include "Text.hpp"
 #include <SFML/Window/Window.hpp>
 
@@ -26,7 +25,7 @@ public:
 		bool centerHorizontally = false
 	);
 
-	void draw(const sf::Window& window,const ProgramManager& progMgr);
+	void draw(const sf::Window& window);
 	bool containsPoint(const glm::ivec2 pointInPixel) const;	
 
 	std::function<void()> onClick;

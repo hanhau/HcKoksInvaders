@@ -1,5 +1,5 @@
-.. ResourcenManager statisch und global machen
-.. Bei Texturen von SFML wegkommen
+70 ResourcenManager statisch und global machen
+OK Bei Texturen von SFML wegkommen
 .. CheatEngine fixen und erkennen
 .. GameLauncher überabeiten (schöner gestalten)
 .. Highscore Upload/Sync System überarbeiten
@@ -17,7 +17,7 @@
 .. Controller ?
 .. Audio-Levels anpassen
 .. Bloom
-.. Gesundheitspakete bei Gegner zufällig droppen lassen
+.. Gesundheitspakete bei Gegnern zufällig droppen lassen
    -> Je geringer die Gesundheit, desto höher die Chance
    -> statische Gegner 10HP
    -> dynamische 20HP
@@ -32,3 +32,4 @@
 .. Progressionssystem (Waffen nach jedem Level kaufen, Upgrades, etc)
 .. Installer für das Spiel (Entpacken und Redis automatisch installieren)
 .. Rasperry Pi 4 Version inkl. Arcade Station
+.. Lautstärke Regler

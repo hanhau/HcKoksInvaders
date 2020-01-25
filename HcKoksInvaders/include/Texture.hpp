@@ -13,9 +13,13 @@ class Texture {
 	void cleanFromGl();
 public:
 	bool loadFromMemory(uint8_t * const bufferFile,size_t bufferLength);
+	void cleanBuffer();
 
 	void uploadToGl();
 
 	unsigned int getGlID() const;
 	glm::ivec2 getSize() const;
+
+	uint8_t* const getBuffer() const;
+	const int getFormat() const;
 };

@@ -104,9 +104,9 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 		2.f/(float)window.getSize().y
 	);
 
-	if (!TextureManager::exists(pathIcon))
-		throw "Texture not found: " + std::string(__FUNCSIG__);
-	gl_textureID = TextureManager::get(pathIcon).getGlID();
+	if (!TextureManager.exists(pathIcon))
+		throw "Texture not found: " + std::string(__FUNCTION__);
+	gl_textureID = TextureManager.get(pathIcon).getGlID();
 
 	std::vector<ButtonVertex> vertices;
 	makeVertices(vertices,
@@ -140,15 +140,14 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 
 void AmmunitionIcon::draw(const sf::Window& win, 
 						  float percentageFull, 
-						  const ProgramManager& programMgr,
 						  const std::string slotTextStr,
 						  bool active)
 {
 	static Text slotText = Text("", 18, {0,0});
 	static sf::Clock clock;
 
-	const Program& program = programMgr.get(ProgramManager::ProgramEntry::AmmunitionIcon);
-	const Program& programText = programMgr.get(ProgramManager::ProgramEntry::Text);
+	const Program& program = ProgramManager.get(ProgramEntry::AmmunitionIcon);
+	const Program& programText = ProgramManager.get(ProgramEntry::Text);
 
 	percentageFull = std::clamp(percentageFull, 0.f, 100.f);
 

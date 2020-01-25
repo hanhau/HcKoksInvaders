@@ -10,10 +10,8 @@ class BulletRenderer
 	unsigned int gl_vao;
 	unsigned int gl_vbo;
 	unsigned int gl_ssbo;
-
-	const ProgramManager& m_progMgr;
 public:
-	BulletRenderer(const ProgramManager& progMgr);
+	BulletRenderer();
 
 	void drawInstances(std::list<Bullet>& bullets, const Camera& cam);
 };

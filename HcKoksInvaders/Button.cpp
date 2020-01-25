@@ -4,6 +4,7 @@
 #include <vector>
 #include <glm\ext\matrix_transform.hpp>
 #include <SFML\Window\Mouse.hpp>
+#include "ProgramManager.hpp"
 
 class ButtonVertex {
 public:
@@ -116,16 +117,16 @@ Button::Button(
 
 	glBindVertexArray(0);
 
-	util::checkGlCalls(__FUNCSIG__);
+	util::checkGlCalls(__FUNCTION__);
 }
 
-void Button::draw(const sf::Window& window,const ProgramManager& progMgr)
+void Button::draw(const sf::Window& window)
 {
 	static sf::Clock clock;
 	const float clockSecs = clock.getElapsedTime().asSeconds();
 
-	const Program& textProg = progMgr.get(ProgramManager::ProgramEntry::Text);
-	const Program& buttonProg = progMgr.get(ProgramManager::ProgramEntry::Button);
+	const Program& textProg = ProgramManager.get(ProgramEntry::Text);
+	const Program& buttonProg = ProgramManager.get(ProgramEntry::Button);
 
 	buttonProg.bind();
 
