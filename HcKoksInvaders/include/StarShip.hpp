@@ -54,9 +54,8 @@ public:
 	void addShotgunAmmo(int shots);
 	void addRocketAmmo(int shots);
 
-	const float getSMGAmmoPercent() const;
-	const float getShotgunAmmoPercent() const;
-	const float getRocketAmmoPercent() const;
+	const float getWeaponAmmoPercent(const WeaponType wt) const;
+	const float getWeaponReloadProgress(const WeaponType wt) const;
 
 	const int getHealth();
 	void setHealth(int health);

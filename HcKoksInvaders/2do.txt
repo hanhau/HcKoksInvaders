@@ -9,8 +9,8 @@ OK Bei Texturen von SFML wegkommen
 .. OpenGL Kompatibilität erhöhen
 .. Munition automatisch auffüllen
 .. BoundingBox/Ball vom Vengabus anpassen
-.. Leistung mit mehr Threads erhöhen
-.. Resourcen auch schon während des Gamelaunchers laden
+10 Leistung mit mehr Threads erhöhen
+OK Resourcen auch schon während des Gamelaunchers laden
 .. Kleine Adminoberfläche für den Server
 .. Veränderung des Schwierigkeitgrades über Zeit
    -> höhere Y-Geschwindigkeit
@@ -21,7 +21,7 @@ OK Bei Texturen von SFML wegkommen
    -> Je geringer die Gesundheit, desto höher die Chance
    -> statische Gegner 10HP
    -> dynamische 20HP
-.. Stages Längen anpassen (pro Stage ~1 Minute?)
+OK Stages Längen anpassen (pro Stage ~1 Minute?)
 .. Explosion von Gegner bei Tötung
 .. Raketenwerfer heftiger machen
 .. Season System (beim Highscore) ?

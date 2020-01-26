@@ -6,8 +6,8 @@
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Window.hpp>
 
-const int StarShip::maxAmmoSMG = 100;
-const int StarShip::maxAmmoShotgun = 100;
+const int StarShip::maxAmmoSMG = 200;
+const int StarShip::maxAmmoShotgun = 33;
 const int StarShip::maxAmmoRocket = 3;
 
 const float StarShip::coolDownPistol = 0.2f;
@@ -82,15 +82,46 @@ const float _getAmmoPercent(int val, int max) {
 	else 
 		return std::roundf(((float)val / (float)max) * 100.f);
 }
+const float StarShip::getWeaponAmmoPercent(const WeaponType wt) const {
+	switch (wt) {
+	case WeaponType::Pistol:
+		return 100.f;
+	case WeaponType::Rocket:
+		return _getAmmoPercent(m_ammoRocket, maxAmmoRocket);
+		break;
+	case WeaponType::Shotgun:
+		return _getAmmoPercent(m_ammoShotgun, maxAmmoShotgun);
+		break;
+	case WeaponType::SMG:
+		return _getAmmoPercent(m_ammoSMG, maxAmmoSMG);
+		break;
+	}
+}
 
-const float StarShip::getSMGAmmoPercent() const {
-	return _getAmmoPercent(m_ammoSMG, maxAmmoSMG);
+const float _getReloadProgress(float coolDownOfWeapon, float elapsedSeconds) {
+	float missingTime = std::max(0.0f, coolDownOfWeapon - elapsedSeconds);
+
+	if (missingTime == 0.0f)
+		return 1.0f;
+	else {
+		return 1.0f - (missingTime / coolDownOfWeapon);
+	}
 }
-const float StarShip::getShotgunAmmoPercent() const {
-	return _getAmmoPercent(m_ammoShotgun, maxAmmoShotgun);
-}
-const float StarShip::getRocketAmmoPercent() const {
-	return _getAmmoPercent(m_ammoRocket, maxAmmoRocket);
+const float StarShip::getWeaponReloadProgress(const WeaponType wt) const {
+	switch (wt) {
+		case WeaponType::Pistol:
+			return _getReloadProgress(coolDownPistol,m_clockPistol.getElapsedTime().asSeconds());
+			break;
+		case WeaponType::Rocket:
+			return _getReloadProgress(coolDownRocket, m_clockRocket.getElapsedTime().asSeconds());
+			break;
+		case WeaponType::Shotgun:
+			return _getReloadProgress(coolDownShotgun, m_clockShotgun.getElapsedTime().asSeconds());
+			break;
+		case WeaponType::SMG:
+			return _getReloadProgress(coolDownSMG, m_clockSMG.getElapsedTime().asSeconds());
+			break;
+	}
 }
 
 void StarShip::setHealth(int health) {

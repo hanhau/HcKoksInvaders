@@ -141,7 +141,8 @@ AmmunitionIcon::AmmunitionIcon(const std::string pathIcon,
 void AmmunitionIcon::draw(const sf::Window& win, 
 						  float percentageFull, 
 						  const std::string slotTextStr,
-						  bool active)
+						  bool active,
+						  float reloadProgress)
 {
 	static Text slotText = Text("", 18, {0,0});
 	static sf::Clock clock;
@@ -164,6 +165,8 @@ void AmmunitionIcon::draw(const sf::Window& win,
 	program.setUniform("fColor", sf::Vector3f(m_col.r, m_col.g, m_col.b));
 	program.setUniform("uPos", sf::Vector2f(renderPos.x,renderPos.y));
 	program.setUniform("fTexture0", 0);
+	
+	program.setUniform("fReloadProgress",reloadProgress);
 
 	if (percentageFull == 0.0f)
 		program.setUniform("fGrayImage",1);

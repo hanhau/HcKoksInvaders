@@ -376,19 +376,23 @@ void Game::run() {
 
 				sIngame.MunitionIconPistol->draw(
 					window,100.f,"[1]",
-					sIngame.playerShip->getWeaponType() == WeaponType::Pistol
+					sIngame.playerShip->getWeaponType() == WeaponType::Pistol,
+					sIngame.playerShip->getWeaponReloadProgress(WeaponType::Pistol)
 				);
 				sIngame.MunitionIconSMG->draw(
-					window, sIngame.playerShip->getSMGAmmoPercent(), "[2]", 
-					sIngame.playerShip->getWeaponType() == WeaponType::SMG
+					window, sIngame.playerShip->getWeaponAmmoPercent(WeaponType::SMG), "[2]", 
+					sIngame.playerShip->getWeaponType() == WeaponType::SMG,
+					sIngame.playerShip->getWeaponReloadProgress(WeaponType::SMG)
 				);
 				sIngame.MunitionIconRocket->draw(
-					window,sIngame.playerShip->getRocketAmmoPercent(), "[3]",
-					sIngame.playerShip->getWeaponType() == WeaponType::Rocket
+					window, sIngame.playerShip->getWeaponAmmoPercent(WeaponType::Rocket), "[3]",
+					sIngame.playerShip->getWeaponType() == WeaponType::Rocket,
+					sIngame.playerShip->getWeaponReloadProgress(WeaponType::Rocket)
 				);
 				sIngame.MunitionIconShotgun->draw(
-					window,sIngame.playerShip->getShotgunAmmoPercent(), "[4]",
-					sIngame.playerShip->getWeaponType() == WeaponType::Shotgun
+					window, sIngame.playerShip->getWeaponAmmoPercent(WeaponType::Shotgun), "[4]",
+					sIngame.playerShip->getWeaponType() == WeaponType::Shotgun,
+					sIngame.playerShip->getWeaponReloadProgress(WeaponType::Shotgun)
 				);
 
 				if (sIngame.isGameOver()) {
@@ -794,4 +798,4 @@ bool Game::__sIngame::isGameOver() {
 
 const float Game::__sIngame::stageOffsetEndY = 1.f;
 const float Game::__sIngame::stageOffsetStartY = -4.f;
-const int Game::__sIngame::stageHeight = 192;
+const int Game::__sIngame::stageHeight = 96;

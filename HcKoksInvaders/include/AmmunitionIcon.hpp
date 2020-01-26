@@ -28,8 +28,9 @@ public:
 
 	void draw(
 		const sf::Window& win,
-		float percentageFull,
+		float percentageFull, // 0.0f (empty) - 100.f (full)
 		const std::string slotTextStr,
-		bool active
+		bool active,
+		float reloadProgress // 0.0f (needsTime) - 1.0f (ready2Shoot)
 	);
 };
