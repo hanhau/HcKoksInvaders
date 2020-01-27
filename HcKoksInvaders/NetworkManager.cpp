@@ -183,7 +183,7 @@ bool NetworkManager::sendHttpsRequest(const RequestType type,
 std::future<UserLoginValidResult> NetworkManager::verifyUserLoginValid(const std::string login,
                                                                        const std::string password) 
 {
-    return std::async([](const std::string login,const std::string password) 
+    return std::async(std::launch::async,[](const std::string login,const std::string password) 
     {
         UserLoginValidResult res;
 
@@ -222,7 +222,7 @@ std::future<UserLoginValidResult> NetworkManager::verifyUserLoginValid(const std
 std::future<UserIDResult> NetworkManager::getUserID(const std::string login,
                                                     const std::string password) 
 {
-    return async([](const std::string login, const std::string password) 
+    return async(std::launch::async, [](const std::string login, const std::string password)
     {
         UserIDResult res;
 
@@ -252,89 +252,114 @@ std::future<UserIDResult> NetworkManager::getUserID(const std::string login,
     );
 }
 
-bool NetworkManager::uploadHighscore(const int userID,
-                                     const int highscore,
-                                     const int stages)
+std::future<UploadHighscoreResult> NetworkManager::uploadHighscore(const int userID,
+                                                                   const int highscore,
+                                                                   const int stages)
 {
-    std::string request = 
-        "/uploadHighscore.php?userid=" + encodeStringToUrl(std::to_string(userID)) +
-        "&highscore=" + encodeStringToUrl(std::to_string(highscore)) +
-        "&stages=" + encodeStringToUrl(std::to_string(stages));
-
-    std::string res;
-    if (!sendHttpsRequest(
-        RequestType::GET,
-        request,
-        res
-    )) {
-        return false;
-    };
-
-    return true;
-}
-
-bool NetworkManager::getUserStatistics(const int userID,
-                                       int& played_games,
-                                       int& highscorePoints,
-                                       int& highscoreStages)
-{
-    std::string res;
-    if (!sendHttpsRequest(
-        RequestType::GET,
-        "getUserStatistics.php?userid=" + encodeStringToUrl(std::to_string(userID)),
-        res
-    )) {
-        return false;
-    };
-
-    played_games = 0;
-    highscorePoints = 0;
-    highscoreStages = 0;
-
-    std::string playedGamesString = getDataString("PLAYEDGAMES", res);
-    std::string highscorePointsString = getDataString("HIGHSCOREPOINTS", res);
-    std::string highscoreStagesString = getDataString("HIGHSCORESTAGES", res);
-
-    if (res.find("RESULT_ERROR") != std::string::npos ||
-        playedGamesString == "" ||
-        highscorePointsString == "" ||
-        highscoreStagesString == "") 
+    return std::async(std::launch::async, [](const int userID, const int highscore, const int stages) 
     {
-        return false;
-    }
-    
-    int games, points, stages;
+        UploadHighscoreResult res;
 
-    try {
-        games = std::stoi(playedGamesString);
-        points = std::stoi(highscorePointsString);
-        stages = std::stoi(highscoreStagesString);
-    }
-    catch (std::exception e) {
-        return false;
-    }
+        std::string request =
+            "/uploadHighscore.php?userid=" + encodeStringToUrl(std::to_string(userID)) +
+            "&highscore=" + encodeStringToUrl(std::to_string(highscore)) +
+            "&stages=" + encodeStringToUrl(std::to_string(stages));
 
-    played_games = games;
-    highscorePoints = points;
-    highscoreStages = stages;
+        std::string response;
+        if (!sendHttpsRequest(
+            RequestType::GET,
+            request,
+            response
+        )) {
+            res.success = false;
+            return res;
+        };
 
-    return true;
+        return res;
+    },
+    userID, highscore, stages
+    );
 }
 
-bool NetworkManager::checkVersionCurrent(const std::string appVersionString,
-                                         bool& result) 
+std::future<UserStatisticsResult> NetworkManager::getUserStatistics(const int userID)
 {
-    std::string request = 
-        "/getCurrentLiveVersion.php";
-    
-    std::string res;
-    if (!sendHttpsRequest(RequestType::GET, request, res))
-        return false;
+    return std::async(std::launch::async, [](const int userID) 
+    {
+        UserStatisticsResult res;
+        
+        std::string response;
+        if (!sendHttpsRequest(
+            RequestType::GET,
+            "getUserStatistics.php?userid=" + encodeStringToUrl(std::to_string(userID)),
+            response
+        )) {
+            res.success = false;
+            return res;
+        };
 
-    if (getDataString("VERSIONCURRENT", res) == "TRUE")
-        result = true;
-    else
-        result = false;
+        res.played_games = 0;
+        res.highscorePoints = 0;
+        res.highscoreStages = 0;
 
-    return true;
+        std::string playedGamesString = getDataString("PLAYEDGAMES", response);
+        std::string highscorePointsString = getDataString("HIGHSCOREPOINTS", response);
+        std::string highscoreStagesString = getDataString("HIGHSCORESTAGES", response);
+
+        if (response.find("RESULT_ERROR") != std::string::npos ||
+            playedGamesString == "" ||
+            highscorePointsString == "" ||
+            highscoreStagesString == "")
+        {
+            res.success = false;
+            res.errMessage = "Allgemeiner Fehler bei der Anfrage.";
+            return res;
+        }
+
+        int games, points, stages;
+
+        try {
+            games = std::stoi(playedGamesString);
+            points = std::stoi(highscorePointsString);
+            stages = std::stoi(highscoreStagesString);
+        }
+        catch (std::exception e) {
+            res.success = false;
+            res.errMessage = std::string(e.what());
+            return res;
+        }
+
+        res.played_games = games;
+        res.highscorePoints = points;
+        res.highscoreStages = stages;
+
+        return res;
+    },
+    userID
+    );
+}
+
+std::future<VersionCurrentResult> NetworkManager::checkVersionCurrent(const std::string appVersionString) 
+{
+    return std::async(std::launch::async, [](const std::string appVersionString) {
+        VersionCurrentResult res;
+
+        std::string request = 
+            "/checkVersionCurrent.php" 
+            "?appVersionString=" + encodeStringToUrl(appVersionString);
+
+        std::string response;
+        if (!sendHttpsRequest(RequestType::GET, request, response)) {
+            res.success = false;
+            return res;
+        }
+
+        if (getDataString("VERSIONCURRENT", response) == "TRUE")
+            res.isCurrent = true;
+        else
+            res.isCurrent = false;
+
+        return res;
+    },
+    appVersionString
+    );
 }

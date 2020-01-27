@@ -410,14 +410,14 @@ void Game::run() {
 					if (m_gameLaunchOptions.userid != 0) {
 						std::cout << "Saving highscore in H-Cloud\n";
 
-						bool res = NetworkManager::uploadHighscore(
+						auto resUploadHighscore = NetworkManager::uploadHighscore(
 							m_gameLaunchOptions.userid,
 							sIngame.currentPoints,
 							sIngame.currentStage - 1
 						);
-						if (!res) {
+						/*if (!resUploadHighscore.success) {
 							std::cout << "Error uploading Highscore\n";
-						}
+						}*/
 					}
 
 					m_gameState = GameState::GameOver;
@@ -714,14 +714,15 @@ void Game::__sMenu::refreshHighscore(const GameLaunchOptions& glo) {
 	else 
 	{
 		int playedGames = 0;
-		bool res = NetworkManager::getUserStatistics(
-			glo.userid,
-			playedGames,
-			highscorePoints, highscoreStages
-		);
+		auto resUserStatistics = NetworkManager::getUserStatistics(glo.userid).get();
 
-		if (!res)
+		if (!resUserStatistics.success)
 			HighscoreManager::get(highscorePoints, highscoreStages);
+		else {
+			highscorePoints = resUserStatistics.highscorePoints;
+			highscoreStages = resUserStatistics.highscoreStages;
+			playedGames = resUserStatistics.played_games;
+		}
 
 		textLoginName->setText(glo.login);
 		textPlayedGames->setText("Gespielte Spiele: " + std::to_string(playedGames));
