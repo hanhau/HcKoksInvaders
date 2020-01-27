@@ -246,23 +246,22 @@ LRESULT CALLBACK __WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 					break; 
 				}
 
-				std::string errMessage = "";
-				bool res = NetworkManager::verifyUserLoginValid(login, password, errMessage);
+				auto resVerify = NetworkManager::verifyUserLoginValid(login, password).get();
 
-				if (!res) {
-					MessageBoxA(hwnd, errMessage.c_str(), "Info", MB_OK);
+				if (!resVerify.success) {
+					MessageBoxA(hwnd, resVerify.errMessage.c_str(), "Info", MB_OK);
 					break;
 				}
 			
-				res = NetworkManager::getUserID(login, password, gloPtr->userid);
-				if (!res) {
+				auto resUserID = NetworkManager::getUserID(login, password).get();
+				if (!resUserID.success) {
 					MessageBoxA(hwnd, "Kann ID des Users nicht vom Server holen.", "Fehler", MB_OK);
 					break;
 				}
 
+				gloPtr->userid = resUserID.userid;
 				gloPtr->login = login;
 				gloPtr->password = password;
-
 				gloPtr->fullscreen = IsDlgButtonChecked(hwnd, ID::CHECK_FULLSCREEN);
 				gloPtr->res = determineResolution(gloPtr->fullscreen);
 				gloPtr->exit = false;

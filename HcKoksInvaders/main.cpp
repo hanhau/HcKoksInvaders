@@ -4,6 +4,8 @@
 #include "include/GameLauncher.hpp"
 #include "include/NetworkManager.hpp"
 
+#include <future>
+
 #ifdef RELEASE_BUILD
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
 #else

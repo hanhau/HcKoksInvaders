@@ -215,6 +215,7 @@
     <ClInclude Include="include\ModelManager.hpp" />
     <ClInclude Include="include\ModelPosition.hpp" />
     <ClInclude Include="include\NetworkManager.hpp" />
+    <ClInclude Include="include\NetworkManagerResult.hpp" />
     <ClInclude Include="include\PreloadData.hpp" />
     <ClInclude Include="include\Program.hpp" />
     <ClInclude Include="include\ProgramManager.hpp" />

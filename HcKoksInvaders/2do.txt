@@ -1,6 +1,8 @@
 70 ResourcenManager statisch und global machen
 OK Bei Texturen von SFML wegkommen
 .. CheatEngine fixen und erkennen
+.. Alte Versionen dürfen nicht mehr uploaden
+.. Auto Updater
 .. GameLauncher überabeiten (schöner gestalten)
 .. Highscore Upload/Sync System überarbeiten
 .. Sockets threadunabhängig machen (fire and forget)

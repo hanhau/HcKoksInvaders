@@ -133,7 +133,7 @@ void NetworkManager::shutdown() {
 
 bool NetworkManager::sendHttpsRequest(const RequestType type,
                                       const std::string url,
-                                      std::string& res)
+                                      std::string& response)
 {
     int s;
     s = socket(AF_INET, SOCK_STREAM, 0);
@@ -177,64 +177,79 @@ bool NetworkManager::sendHttpsRequest(const RequestType type,
     request += "Host: "+m_impl->host+"\r\n\r\n";
 
     sendPacket(request.c_str());
-    res = recvPacket();
+    response = recvPacket();
 }
 
-bool NetworkManager::verifyUserLoginValid(const std::string login,
-                                          const std::string password,
-                                          std::string& errorMessage) 
+std::future<UserLoginValidResult> NetworkManager::verifyUserLoginValid(const std::string login,
+                                                                       const std::string password) 
 {
-    std::string res;
-    if (!sendHttpsRequest(
-        RequestType::GET,
-        "/verifyUserLoginValid.php?login=" + encodeStringToUrl(login) +
-        "&password=" + encodeStringToUrl(password),
-        res
-    )) {
-        errorMessage = "Kann sich nicht mit dem Server verbinden.";
-        return false;
-    };
+    return std::async([](const std::string login,const std::string password) 
+    {
+        UserLoginValidResult res;
 
-    if (res.find("RESULT_OK") != std::string::npos) {
-        errorMessage = "";
-        return true;
-    }
-    else if (res.find("RESULT_NOTFOUND") != std::string::npos) {
-        errorMessage = "Der Nutzer wurde noch nicht angelegt.";
-    }
-    else if (res.find("RESULT_INVALIDPASSWORD") != std::string::npos) {
-        errorMessage = "Ungültiges Passwort";
-    }
-    else {
-        errorMessage = "Unbekannter Fehler";
-    }
+        std::string response;
+        if (!sendHttpsRequest(
+            RequestType::GET,
+            "/verifyUserLoginValid.php?login=" + encodeStringToUrl(login) +
+            "&password=" + encodeStringToUrl(password),
+            response
+        )) {
+            res.success = false;
+            res.errMessage = "Kann sich nicht mit dem Server verbinden.";
+            return res;
+        };
 
-    return false;
+        if (response.find("RESULT_OK") != std::string::npos) {
+            res.valid = true;
+            return res;
+        }
+        else if (response.find("RESULT_NOTFOUND") != std::string::npos) {
+            res.errMessage = "Der Nutzer wurde noch nicht angelegt.";
+        }
+        else if (response.find("RESULT_INVALIDPASSWORD") != std::string::npos) {
+            res.errMessage = "Ungültiges Passwort";
+        }
+        else {
+            res.errMessage = "Unbekannter Fehler";
+        }
+
+        return res;
+    },
+    login,password
+    );
 }
 
-bool NetworkManager::getUserID(const std::string login,
-                               const std::string password,
-                               int& userID) 
+std::future<UserIDResult> NetworkManager::getUserID(const std::string login,
+                                                    const std::string password) 
 {
-    std::string res;
-    if (!sendHttpsRequest(
-        RequestType::GET,
-        "/getUserID.php?login=" + encodeStringToUrl(login) +
-        "&password=" + encodeStringToUrl(password),
-        res
-    )) {
-        userID = 0;
-        return false;
-    };
+    return async([](const std::string login, const std::string password) 
+    {
+        UserIDResult res;
 
-    if (res.find("RESULT_ERROR") != std::string::npos) {
-        userID = 0;
-        return false;
-    }
-    else {
-        userID = std::atoi(getDataString("USERID", res).c_str());
-        return true;
-    }
+        std::string response;
+        if (!sendHttpsRequest(
+            RequestType::GET,
+            "/getUserID.php?login=" + encodeStringToUrl(login) +
+            "&password=" + encodeStringToUrl(password),
+            response
+        )) {
+            res.userid = 0;
+            res.success = false;
+            return res;
+        };
+
+        if (response.find("RESULT_ERROR") != std::string::npos) {
+            res.userid = 0;
+            res.success = false;
+            return res;
+        }
+        else {
+            res.userid = std::atoi(getDataString("USERID", response).c_str());
+            return res;
+        }
+    },
+    login, password        
+    );
 }
 
 bool NetworkManager::uploadHighscore(const int userID,
@@ -306,3 +321,20 @@ bool NetworkManager::getUserStatistics(const int userID,
     return true;
 }
 
+bool NetworkManager::checkVersionCurrent(const std::string appVersionString,
+                                         bool& result) 
+{
+    std::string request = 
+        "/getCurrentLiveVersion.php";
+    
+    std::string res;
+    if (!sendHttpsRequest(RequestType::GET, request, res))
+        return false;
+
+    if (getDataString("VERSIONCURRENT", res) == "TRUE")
+        result = true;
+    else
+        result = false;
+
+    return true;
+}

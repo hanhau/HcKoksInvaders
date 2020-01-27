@@ -52,6 +52,9 @@
     <Filter Include="res\fonts">
       <UniqueIdentifier>{2028021a-29b6-4b27-a8fa-43565ba1b4fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\Network">
+      <UniqueIdentifier>{95b92852-585a-4e0f-b7a7-90df36cd6a3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -230,9 +233,6 @@
     <ClInclude Include="include\Cubemap.hpp">
       <Filter>Headerdateien\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="include\NetworkManager.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="include\GameLauncher.hpp">
       <Filter>Headerdateien\Game</Filter>
     </ClInclude>
@@ -253,6 +253,12 @@
     </ClInclude>
     <ClInclude Include="include\ResourceManagerBase.hpp">
       <Filter>Headerdateien\ResourceManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkManager.hpp">
+      <Filter>Headerdateien\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkManagerResult.hpp">
+      <Filter>Headerdateien\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

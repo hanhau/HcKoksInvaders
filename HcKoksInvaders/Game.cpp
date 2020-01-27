@@ -23,6 +23,10 @@
 #include <Windows.h>
 #include <SFML/Window/Event.hpp>
 
+const std::string Game::VERSION_STRING = std::to_string(
+	std::hash<std::string>()(std::string(__DATE__) + std::string(__TIMESTAMP__))
+);
+
 void handleButtons_MouseLeftClicked(const std::vector<Button*>& buttons,
 	const sf::Event::MouseButtonEvent& mbEvent)
 {

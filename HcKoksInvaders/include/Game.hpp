@@ -115,6 +115,8 @@ private:
 	} sGameOver;
 
 public:
+	static const std::string VERSION_STRING;
+
 	enum class GameState {
 		MainMenu,
 		Ingame,
