@@ -55,6 +55,12 @@
     <Filter Include="Headerdateien\Network">
       <UniqueIdentifier>{95b92852-585a-4e0f-b7a7-90df36cd6a3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\ATM">
+      <UniqueIdentifier>{3ff5a18d-a260-4017-a407-9a2eea9c79b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\System">
+      <UniqueIdentifier>{4f127d3c-8d76-4bba-8c37-2749cfeca811}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -152,9 +158,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Util.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="include\ModelManager.hpp">
       <Filter>Headerdateien\ResourceManagers</Filter>
     </ClInclude>
@@ -259,6 +262,15 @@
     </ClInclude>
     <ClInclude Include="include\NetworkManagerResult.hpp">
       <Filter>Headerdateien\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AntiTemperMethods.hpp">
+      <Filter>Headerdateien\ATM</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Util.hpp">
+      <Filter>Headerdateien\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Clock.hpp">
+      <Filter>Headerdateien\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

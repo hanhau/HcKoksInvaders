@@ -39,6 +39,7 @@ glm::ivec2 determineResolution(bool fullscreen) {
 		res.x = res.y * prefAspectRatio;
 	}
 
+	printf_s("Res: %d %d", res.x, res.y);
 	return res;
 }
 

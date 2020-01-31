@@ -195,12 +195,14 @@
   <ItemGroup>
     <ClCompile Include="GameLauncher.cpp" />
     <ClInclude Include="include\AmmunitionIcon.hpp" />
+    <ClInclude Include="include\AntiTemperMethods.hpp" />
     <ClInclude Include="include\BoundingBall.hpp" />
     <ClInclude Include="include\Bullet.hpp" />
     <ClInclude Include="include\BulletEmitter.hpp" />
     <ClInclude Include="include\BulletRenderer.hpp" />
     <ClInclude Include="include\Button.hpp" />
     <ClInclude Include="include\Camera.hpp" />
+    <ClInclude Include="include\Clock.hpp" />
     <ClInclude Include="include\Cubemap.hpp" />
     <ClInclude Include="include\EmptyTile.hpp" />
     <ClInclude Include="include\EnemySpaceShipTile.hpp" />

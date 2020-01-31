@@ -43,6 +43,14 @@ private:
 		AmmunitionIcon* MunitionIconRocket;
 		AmmunitionIcon* MunitionIconShotgun;
 		
+		sf::Clock clockRefillSMG;
+		sf::Clock clockRefillShotgun;
+		sf::Clock clockRefillRocket;
+
+		static const float intervalRefillSMG;
+		static const float intervalRefillShotgun;
+		static const float intervalRefillRocket;
+
 		Text* textHealth;
 		Text* textPoints;
 		Text* textStage;

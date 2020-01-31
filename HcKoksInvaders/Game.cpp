@@ -399,6 +399,29 @@ void Game::run() {
 					sIngame.playerShip->getWeaponReloadProgress(WeaponType::Shotgun)
 				);
 
+				// Handle Refills
+				{
+					if (sIngame.clockRefillSMG.getElapsedTime().asSeconds() >= 
+						sIngame.intervalRefillSMG) 
+					{
+						sIngame.clockRefillSMG.restart();
+						sIngame.playerShip->addSMGAmmo(1);
+					}
+					if (sIngame.clockRefillRocket.getElapsedTime().asSeconds() >=
+						sIngame.intervalRefillRocket)
+					{
+						sIngame.clockRefillRocket.restart();
+						sIngame.playerShip->addRocketAmmo(1);
+					}
+					if (sIngame.clockRefillShotgun.getElapsedTime().asSeconds() >=
+						sIngame.intervalRefillShotgun)
+					{
+						sIngame.clockRefillShotgun.restart();
+						sIngame.playerShip->addShotgunAmmo(1);
+					}
+				}
+
+				// Check Gameover
 				if (sIngame.isGameOver()) {
 					sGameOver.points = sIngame.currentPoints;
 					sGameOver.stages = sIngame.currentStage-1;
@@ -423,6 +446,7 @@ void Game::run() {
 					m_gameState = GameState::GameOver;
 				}
 
+				// Check Stage Finished
 				if (sIngame.isStageFinished()) {
 					std::cout << "Stage finished\n";
 					sIngame.bullets.clear();
@@ -804,3 +828,7 @@ bool Game::__sIngame::isGameOver() {
 const float Game::__sIngame::stageOffsetEndY = 1.f;
 const float Game::__sIngame::stageOffsetStartY = -4.f;
 const int Game::__sIngame::stageHeight = 96;
+
+const float Game::__sIngame::intervalRefillSMG     =  0.3f;
+const float Game::__sIngame::intervalRefillShotgun =  1.5f;
+const float Game::__sIngame::intervalRefillRocket  = 15.0f;

@@ -3,6 +3,7 @@
 #include "include/Game.hpp"
 #include "include/GameLauncher.hpp"
 #include "include/NetworkManager.hpp"
+#include "include/AntiTemperMethods.hpp"
 
 #include <future>
 
@@ -13,6 +14,13 @@ HINSTANCE hInstance = 0;
 int main()
 #endif
 {
+#ifdef RELEASE_BUILD
+	AntiTemperMethods::hideCurrentThread();
+	if (IsDebuggerPresent())
+		exit(-1);
+#endif 
+	AntiTemperMethods::getHardwareInfoHash();
+
 	NetworkManager::init("81.19.159.64","hcki.handata.eu");
 	TextureManager.preloadToMemory();
 	ProgramManager.preloadToMemory();

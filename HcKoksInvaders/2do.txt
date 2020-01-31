@@ -5,11 +5,11 @@ OK Bei Texturen von SFML wegkommen
 .. Auto Updater
 .. GameLauncher überabeiten (schöner gestalten)
 .. Highscore Upload/Sync System überarbeiten
-.. Sockets threadunabhängig machen (fire and forget)
+OK Sockets threadunabhängig machen (fire and forget/future/promise)
 .. PHP Homepage für Admin
 .. PHP Aufrufe sicherer machen (vor ungewollten Zugriffen)
 .. OpenGL Kompatibilität erhöhen
-.. Munition automatisch auffüllen
+OK Munition automatisch auffüllen
 .. BoundingBox/Ball vom Vengabus anpassen
 10 Leistung mit mehr Threads erhöhen
 OK Resourcen auch schon während des Gamelaunchers laden
