@@ -7,22 +7,16 @@
 #include <stb/stb_image.h>
 
 bool Texture::loadFromMemory(uint8_t* const bufferFile, size_t bufferLength) {
-	unsigned char* temp = stbi_load_from_memory(
-		bufferFile, bufferLength, 
-		&m_size.x, &m_size.y, &m_nrChannels, 
-		0
-	);
-
 	m_bufferLength = m_size.x * m_size.y * m_nrChannels;
-	m_buffer = std::unique_ptr<uint8_t>(new uint8_t[m_bufferLength]);
-
-	memcpy_s(m_buffer.get(), m_bufferLength, temp, m_bufferLength);
-	
-	stbi_image_free(temp);
+	m_buffer = std::unique_ptr<uint8_t>((uint8_t*)stbi_load_from_memory(
+		bufferFile, bufferLength,
+		&m_size.x, &m_size.y, &m_nrChannels,
+		0
+	));
 	return true;
 }
 void Texture::cleanBuffer() {
-	m_buffer.release();
+	m_buffer.reset();
 	m_bufferLength = 0;
 }
 

@@ -5,8 +5,6 @@
 #include "include/NetworkManager.hpp"
 #include "include/AntiTemperMethods.hpp"
 
-#include <future>
-
 #ifdef RELEASE_BUILD
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow)
 #else

@@ -1,13 +1,7 @@
 #pragma once
-#include <initializer_list>
 #include <iostream>
 
-enum class LogLocation {
-	File, Console
-};
-
 class _Log {
-
 	// Private Functions
 	inline void print(const char* str) {
 		std::cout << str;
@@ -24,12 +18,14 @@ class _Log {
 		}
 	}
 public:
-	void init(std::initializer_list<LogLocation> locations);
-
-	void debug();
-	void info();
-	void error();
-	void opengl();
+	template<typename... Args>
+		void debug(const char* line, Args... args);
+	template<typename... Args>
+		void info(const char* line, Args... args);
+	template<typename... Args>
+		void error(const char* line, Args... args);
+	template<typename... Args>
+		void opengl(const char* line, Args... args);
 };
 
 extern _Log Log;
