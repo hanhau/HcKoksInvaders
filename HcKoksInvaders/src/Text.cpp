@@ -1,8 +1,8 @@
-#include "include/Text.hpp"
+#include "../include/Text.hpp"
 #include <gl/glew.h>
 #include <array>
 #include <iostream>
-#include "include/Util.hpp"
+#include "../include/Util.hpp"
 
 #include <ft2build.h>
 #include <glm\ext\matrix_transform.hpp>

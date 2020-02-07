@@ -1,4 +1,4 @@
-#include "include/BoundingBall.hpp"
+#include "../include/BoundingBall.hpp"
 
 BoundingBall::BoundingBall() : 
 	m_pos(), m_radius(0.0f)

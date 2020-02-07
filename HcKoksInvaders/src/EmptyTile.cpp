@@ -1,4 +1,4 @@
-#include "include/EmptyTile.hpp"
+#include "../include/EmptyTile.hpp"
 
 EmptyTile::EmptyTile(Game * const ref_game) :
 	TileEntityBase(ref_game)

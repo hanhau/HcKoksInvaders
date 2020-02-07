@@ -1,4 +1,4 @@
-#include "include/Camera.hpp"
+#include "../include/Camera.hpp"
 
 Camera::Camera() :
 	m_projectionMat(glm::identity<glm::mat4>()),

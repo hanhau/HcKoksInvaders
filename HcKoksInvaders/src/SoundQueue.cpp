@@ -1,4 +1,4 @@
-#include "include/SoundQueue.hpp"
+#include "../include/SoundQueue.hpp"
 #include <thread>
 
 std::array<sf::Sound, 200>* SoundQueue::m_sounds;

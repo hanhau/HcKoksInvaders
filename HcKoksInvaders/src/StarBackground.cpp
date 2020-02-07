@@ -1,4 +1,4 @@
-#include "include/StarBackground.hpp"
+#include "../include/StarBackground.hpp"
 #include <GL/glew.h>
 
 StarBackground::StarBackground() {

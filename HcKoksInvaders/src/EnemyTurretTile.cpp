@@ -1,5 +1,5 @@
-#include "include/EnemyTurretTile.hpp"
-#include "include/Bullet.hpp"
+#include "../include/EnemyTurretTile.hpp"
+#include "../include/Bullet.hpp"
 
 EnemyTurretTile::EnemyTurretTile(Game* const ref_game,int seed,
 								 const glm::vec3 pos,const float scale) :

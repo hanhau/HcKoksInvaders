@@ -1,4 +1,4 @@
-#include "include/NetworkManager.hpp"
+#include "../include/NetworkManager.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 

@@ -1,5 +1,5 @@
-#include "include/AmmunitionIcon.hpp"
-#include "include/Text.hpp"
+#include "../include/AmmunitionIcon.hpp"
+#include "../include/Text.hpp"
 #include <GL/glew.h>
 #include <SFML/System/Clock.hpp>
 

@@ -1,4 +1,4 @@
-#include "include/HighscoreManager.hpp"
+#include "../include/HighscoreManager.hpp"
 #include <string>
 #include <fstream>
 #include <filesystem>

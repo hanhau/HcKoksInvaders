@@ -1,5 +1,5 @@
-#include "include/GameLauncher.hpp"
-#include "include/NetworkManager.hpp"
+#include "../include/GameLauncher.hpp"
+#include "../include/NetworkManager.hpp"
 
 LRESULT CALLBACK __WndProc(HWND, UINT, WPARAM, LPARAM);
 

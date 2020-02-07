@@ -1,4 +1,4 @@
-#include "include/Model.hpp"
+#include "../include/Model.hpp"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <assimp/scene.h>
@@ -7,7 +7,7 @@
 #include <iostream>
 #include <filesystem>
 #include <GL/glew.h>
-#include "include/Util.hpp"
+#include "../include/Util.hpp"
 #include <Camera.hpp>
 
 /* -------------------------------------------------------------------

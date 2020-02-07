@@ -1,6 +1,6 @@
-#include "include/StarShip.hpp"
-#include "include/Model.hpp"
-#include "include/SoundQueue.hpp"
+#include "../include/StarShip.hpp"
+#include "../include/Model.hpp"
+#include "../include/SoundQueue.hpp"
 
 #include <deque>
 #include <SFML/Audio/Sound.hpp>

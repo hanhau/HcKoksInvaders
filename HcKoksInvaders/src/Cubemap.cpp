@@ -1,7 +1,7 @@
-#include "include/Cubemap.hpp"
+#include "../include/Cubemap.hpp"
 #include <GL/glew.h>
 #include <Util.hpp>
-#include "include/TextureManager.hpp"
+#include "../include/TextureManager.hpp"
 
 Cubemap::Cubemap() {
 	glActiveTexture(GL_TEXTURE4);

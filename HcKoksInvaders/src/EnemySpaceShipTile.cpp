@@ -1,4 +1,4 @@
-#include "include/EnemySpaceShipTile.hpp"
+#include "../include/EnemySpaceShipTile.hpp"
 
 EnemySpaceShipTile::EnemySpaceShipTile(
 	Game* const ref_game, int seed,

@@ -1,6 +1,6 @@
-#include "include/BulletEmitter.hpp"
-#include "include/Game.hpp"
-#include "include/SoundQueue.hpp"
+#include "../include/BulletEmitter.hpp"
+#include "../include/Game.hpp"
+#include "../include/SoundQueue.hpp"
 #include <stdio.h>
 
 BulletEmitter::BulletEmitter(Game* const gamePtr,

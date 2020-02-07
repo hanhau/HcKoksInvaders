@@ -1,4 +1,4 @@
-#include "include/GameLaunchOptions.hpp"
+#include "../include/GameLaunchOptions.hpp"
 #include <filesystem>
 #include <fstream>
 

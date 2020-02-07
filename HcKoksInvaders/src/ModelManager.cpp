@@ -1,4 +1,4 @@
-#include "include/ModelManager.hpp"
+#include "../include/ModelManager.hpp"
 #include <iostream>
 #include <fstream>
 #include <thread>

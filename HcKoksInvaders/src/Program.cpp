@@ -1,4 +1,4 @@
-#include "include/Program.hpp"
+#include "../include/Program.hpp"
 #include <GL/glew.h>
 #include <iostream>
 #include <glm\gtc\type_ptr.hpp>

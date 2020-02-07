@@ -1,4 +1,4 @@
-#include "include/TileEntityBase.hpp"
+#include "../include/TileEntityBase.hpp"
 
 TileEntityBase::TileEntityBase(Game* const game) :
 	m_gameRef(game)

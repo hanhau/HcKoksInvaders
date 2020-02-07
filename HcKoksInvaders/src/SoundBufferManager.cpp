@@ -1,4 +1,4 @@
-#include "include/SoundBufferManager.hpp"
+#include "../include/SoundBufferManager.hpp"
 #include <iostream>
 
 void SoundBufferManager::add(std::string path)

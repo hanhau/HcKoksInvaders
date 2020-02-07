@@ -1,4 +1,4 @@
-#include "include/TextureManager.hpp"
+#include "../include/TextureManager.hpp"
 #include <iostream>
 #include <GL\glew.h>
 #include <fstream>

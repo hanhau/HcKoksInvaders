@@ -1,4 +1,4 @@
-#include "include/InstanceBuffer.hpp"
+#include "../include/InstanceBuffer.hpp"
 #include <GL/glew.h>
 #include <string>
 

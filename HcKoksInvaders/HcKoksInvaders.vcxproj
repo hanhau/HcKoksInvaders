@@ -161,39 +161,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AmmunitionIcon.cpp" />
-    <ClCompile Include="BoundingBall.cpp" />
-    <ClCompile Include="BulletEmitter.cpp" />
-    <ClCompile Include="BulletRenderer.cpp" />
-    <ClCompile Include="Button.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Cubemap.cpp" />
-    <ClCompile Include="EmptyTile.cpp" />
-    <ClCompile Include="EnemySpaceShipTile.cpp" />
-    <ClCompile Include="EnemyTurretTile.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameLaunchOptions.cpp" />
-    <ClCompile Include="GameWorld.cpp" />
-    <ClCompile Include="HighscoreManager.cpp" />
-    <ClCompile Include="InstanceBuffer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="ModelManager.cpp" />
-    <ClCompile Include="NetworkManager.cpp" />
-    <ClCompile Include="Program.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ProgramManager.cpp" />
-    <ClCompile Include="SoundBufferManager.cpp" />
-    <ClCompile Include="SoundQueue.cpp" />
-    <ClCompile Include="StarBackground.cpp" />
-    <ClCompile Include="StarShip.cpp" />
-    <ClCompile Include="Text.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="TileEntityBase.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="GameLauncher.cpp" />
     <ClInclude Include="include\AmmunitionIcon.hpp" />
     <ClInclude Include="include\AntiTemperMethods.hpp" />
     <ClInclude Include="include\BoundingBall.hpp" />
@@ -428,6 +395,39 @@
     <Media Include="res\audio\gunShotgun.wav" />
     <Media Include="res\audio\gunSMG.wav" />
     <Media Include="res\audio\hcDankeBye.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\AmmunitionIcon.cpp" />
+    <ClCompile Include="src\BoundingBall.cpp" />
+    <ClCompile Include="src\BulletEmitter.cpp" />
+    <ClCompile Include="src\BulletRenderer.cpp" />
+    <ClCompile Include="src\Button.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Cubemap.cpp" />
+    <ClCompile Include="src\EmptyTile.cpp" />
+    <ClCompile Include="src\EnemySpaceShipTile.cpp" />
+    <ClCompile Include="src\EnemyTurretTile.cpp" />
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GameLauncher.cpp" />
+    <ClCompile Include="src\GameLaunchOptions.cpp" />
+    <ClCompile Include="src\GameWorld.cpp" />
+    <ClCompile Include="src\HighscoreManager.cpp" />
+    <ClCompile Include="src\InstanceBuffer.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\ModelManager.cpp" />
+    <ClCompile Include="src\NetworkManager.cpp" />
+    <ClCompile Include="src\Program.cpp" />
+    <ClCompile Include="src\ProgramManager.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\SoundBufferManager.cpp" />
+    <ClCompile Include="src\SoundQueue.cpp" />
+    <ClCompile Include="src\StarBackground.cpp" />
+    <ClCompile Include="src\StarShip.cpp" />
+    <ClCompile Include="src\Text.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TextureManager.cpp" />
+    <ClCompile Include="src\TileEntityBase.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
