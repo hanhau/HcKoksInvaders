@@ -177,6 +177,9 @@
     <ClInclude Include="include\Clock.hpp">
       <Filter>Headerdateien\System</Filter>
     </ClInclude>
+    <ClInclude Include="include\Log.hpp">
+      <Filter>Headerdateien\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\background_star_shader.frag">

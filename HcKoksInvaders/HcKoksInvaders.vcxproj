@@ -180,6 +180,7 @@
     <ClInclude Include="include\GameWorld.hpp" />
     <ClInclude Include="include\HighscoreManager.hpp" />
     <ClInclude Include="include\InstanceBuffer.hpp" />
+    <ClInclude Include="include\Log.hpp" />
     <ClInclude Include="include\Model.hpp" />
     <ClInclude Include="include\ModelManager.hpp" />
     <ClInclude Include="include\ModelPosition.hpp" />

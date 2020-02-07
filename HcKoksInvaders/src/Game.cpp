@@ -631,29 +631,29 @@ void Game::drawCredits() {
 
 	starBkg.draw(window,ProgramManager.get(ProgramEntry::MainMenuBackground), secs*3.0);
 
-	for (double i = 0, j = 0; i < 1000.0; i += 10.0,j+=1.0) {
-		float s = 0.2f + abs(cosf(secs + i)) * 0.1f;
+	for (float i = 0.f, j = 0.f; i < 1000.0f; i += 10.0f,j+=1.0f) {
+		float s = 0.2f + abs(cosf(secs)) * 0.1f;
 		moneyPos[(int)j] = 
 			ModelPosition(
 				sf::Vector3f(
-					cos(i + secs / 2.52442) * 2.0,
-					sin(i + secs / 2.52442) * 2.0,
-					-50.f + j*0.5
+					cosf(i + secs / 2.52442f) * 2.0f,
+					sinf(i + secs / 2.52442f) * 2.0f,
+					-50.f + j*0.5f
 				),
-				secs*cos(j)*0.25f*j, sf::Vector3f(cosf(i),cosf(j),cosf(i+j)),
+				secs*cosf(j)*0.25f*j, sf::Vector3f(cosf(i),cosf(j),cosf(i+j)),
 				sf::Vector3f(s, s, s)
 			);
 	}
 
 	fingerPos[0] = ModelPosition(
-		sf::Vector3f(0.0,-0.2 + cos(secs*3)*0.4,-1.0f-abs(cosf(secs*0.5f))*40.0f),
-		glm::radians(180.f+(sin(secs*1.2)+1.0)*90.f), sf::Vector3f(0.0001f,1.0,0.0001f),
-		sf::Vector3f(0.35,0.35,0.35)
+		sf::Vector3f(0.0f,-0.2f + cosf(secs*3.0f)*0.4f,-1.0f-abs(cosf(secs*0.5f))*40.0f),
+		glm::radians(180.f+(sinf(secs*1.2f)+1.0)*90.f), sf::Vector3f(0.0001f,1.0,0.0001f),
+		sf::Vector3f(0.35f,0.35f,0.35f)
 	);
 
 	busPos[0] = ModelPosition(
-		sf::Vector3f(0.0, -0.2 + cos(secs * 3) * 0.4, -1.0f - abs(sinf(secs*0.5f)) * 40.0f),
-		glm::radians(90.f + (sin(secs*1.1) + 1.0) * 90.f), sf::Vector3f(0.0001f, 1.0, 0.0001f),
+		sf::Vector3f(0.0f, -0.2f + cosf(secs*3.0f) * 0.4f, -1.0f - abs(sinf(secs*0.5f)) * 40.0f),
+		glm::radians(90.f + (sinf(secs*1.1f) + 1.0) * 90.f), sf::Vector3f(0.0001f, 1.0, 0.0001f),
 		sf::Vector3f(0.35, 0.35, 0.35)
 	);
 
