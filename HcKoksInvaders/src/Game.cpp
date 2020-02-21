@@ -595,6 +595,25 @@ void Game::drawMainMenu() {
 	}
 }
 
+void __creditsThreadFunc(InstanceBuffer * const ibuffer,int start,int end,const float secs)
+{
+	for (int j = start; j < end; j++)
+	{
+		const float i = j * 10.f;
+		const float s = 0.2f + abs(cosf(secs)) * 0.1f;
+		(*ibuffer)[j] =
+			ModelPosition(
+				sf::Vector3f(
+					cosf(i + secs / 2.52442f) * 2.0f,
+					sinf(i + secs / 2.52442f) * 2.0f,
+					-50.f + j * 0.5f
+				),
+				secs * cosf(j) * 0.25f * j, sf::Vector3f(cosf(i), cosf(j), cosf(i + j)),
+				sf::Vector3f(s, s, s)
+			);
+	}
+}
+
 void Game::drawCredits() {
 	static StarBackground starBkg;
 	static InstanceBuffer moneyPos(100);
@@ -631,7 +650,30 @@ void Game::drawCredits() {
 
 	starBkg.draw(window,ProgramManager.get(ProgramEntry::MainMenuBackground), secs*3.0);
 
-	for (float i = 0.f, j = 0.f; i < 1000.0f; i += 10.0f,j+=1.0f) {
+	static unsigned int thread_count = std::thread::hardware_concurrency();
+	static std::vector<std::thread> threads(thread_count);
+
+	const int totalEntities = 100;
+	const int entitiesPerThread = totalEntities / thread_count;
+	const int entitiesRest = totalEntities % thread_count;
+
+	for (int i = 0; i < thread_count; i++)
+	{
+		threads[i] = std::thread(
+			__creditsThreadFunc,
+			&moneyPos,
+			i*entitiesPerThread,entitiesPerThread*(i+1),
+			secs
+		);
+	}
+	if (entitiesRest != 0)
+	{	
+	}
+
+	for (auto& iter : threads)
+		iter.join();
+
+	/*for (float i = 0.f, j = 0.f; i < 1000.0f; i += 10.0f,j+=1.0f) {
 		float s = 0.2f + abs(cosf(secs)) * 0.1f;
 		moneyPos[(int)j] = 
 			ModelPosition(
@@ -643,7 +685,7 @@ void Game::drawCredits() {
 				secs*cosf(j)*0.25f*j, sf::Vector3f(cosf(i),cosf(j),cosf(i+j)),
 				sf::Vector3f(s, s, s)
 			);
-	}
+	}*/
 
 	fingerPos[0] = ModelPosition(
 		sf::Vector3f(0.0f,-0.2f + cosf(secs*3.0f)*0.4f,-1.0f-abs(cosf(secs*0.5f))*40.0f),

@@ -16,7 +16,7 @@ uniform mat4 matProgressCubemap;
 void main(){
 	vec3 I = vec4(matProgressCubemap * vec4(normalize(vPos),1.0)).xyz;
     vec3 R = reflect(I, normalize(vNormal));
-
+	
 	vec4 col = texture(texDiffuse,vUV); 
 	vec4 col_ = texture(texCubemap, R).gbra;
 
