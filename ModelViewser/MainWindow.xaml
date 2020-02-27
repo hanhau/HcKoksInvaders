@@ -5,14 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="H3D-ModelViewer" Height="450" Width="800"
+        Background="#222222">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="390*"/>
+            <RowDefinition Height="29" MaxHeight="29" MinHeight="29"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="301*"/>
-            <ColumnDefinition Width="95*"/>
+            <ColumnDefinition Width="600" MinWidth="600"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <sharpGL:OpenGLControl OpenGLDraw="OpenGLControl_OpenGLDraw" MinWidth="300"/>
-        <GridSplitter HorizontalAlignment="Left" Margin="1,0,0,0" Width="5" Grid.Column="1" Height="419" VerticalAlignment="Bottom"/>
-        <ListBox Grid.Column="1" Margin="5,0,0,0"/>
+
+        <sharpGL:OpenGLControl OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialize" MinWidth="300"/>
+        <GridSplitter HorizontalAlignment="Left" Margin="1,0,0,0" Width="5" Grid.Column="1" Grid.RowSpan="2"/>
+
+        <!-- ">>" -->
+        <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="290,5,202,0">
+            <TextBlock>&#x003e;&#x003e;</TextBlock>
+        </Button>
+        <!-- ">" -->
+        <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="280,5,235,0">
+            <TextBlock>&#x003e;</TextBlock>
+        </Button>
+        <!-- "play/pause" -->
+        <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="290,5,290,0">
+            <TextBlock>&#x25B6;</TextBlock>
+        </Button>
+        <!-- "<" -->
+        <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="235,5,280,0">
+            <TextBlock>&#x003c;</TextBlock>
+        </Button>
+        <!-- "<<" -->
+        <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="202,5,290,0">
+            <TextBlock>&#x003c;&#x003c;</TextBlock>
+        </Button>
+        <TreeView Grid.Column="1" HorizontalAlignment="Left" Height="390" VerticalAlignment="Top" Width="187" Margin="5,0,0,0"/>
     </Grid>
 </Window>

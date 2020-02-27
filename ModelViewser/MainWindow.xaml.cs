@@ -34,5 +34,17 @@ namespace ModelViewser
 
             gl.Flush();
         }
+
+        private void OpenGLControl_OpenGLInitialize(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        {
+            OpenGL gl = args.OpenGL;
+
+            gl.Enable(OpenGL.GL_DEPTH_TEST);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

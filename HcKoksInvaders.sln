@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HcKoksInvaders", "HcKoksInv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelViewer", "ModelViewser\ModelViewer.csproj", "{7AD36A1C-4CA4-4621-A1DF-CC68C18E7FBF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "H3D", "H3D\H3D.vcxproj", "{28925567-742C-4478-B78B-A24E8E330AE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,16 @@ Global
 		{7AD36A1C-4CA4-4621-A1DF-CC68C18E7FBF}.Release|x64.Build.0 = Release|Any CPU
 		{7AD36A1C-4CA4-4621-A1DF-CC68C18E7FBF}.Release|x86.ActiveCfg = Release|Any CPU
 		{7AD36A1C-4CA4-4621-A1DF-CC68C18E7FBF}.Release|x86.Build.0 = Release|Any CPU
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Debug|x64.ActiveCfg = Debug|x64
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Debug|x64.Build.0 = Debug|x64
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Debug|x86.ActiveCfg = Debug|Win32
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Debug|x86.Build.0 = Debug|Win32
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Release|Any CPU.ActiveCfg = Release|Win32
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Release|x64.ActiveCfg = Release|x64
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Release|x64.Build.0 = Release|x64
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Release|x86.ActiveCfg = Release|Win32
+		{28925567-742C-4478-B78B-A24E8E330AE4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
