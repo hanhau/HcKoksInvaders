@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
-        Title="H3D-ModelViewer" Height="450" Width="800"
+        Title="H3D-ModelViewer" Height="450" Width="906"
         Background="#222222">
     <Grid>
         <Grid.RowDefinitions>
@@ -14,32 +14,35 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="600" MinWidth="600"/>
-            <ColumnDefinition/>
+            <ColumnDefinition MaxWidth="300" Width="301"/>
         </Grid.ColumnDefinitions>
 
-        <sharpGL:OpenGLControl OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialize" MinWidth="300"/>
-        <GridSplitter HorizontalAlignment="Left" Margin="1,0,0,0" Width="5" Grid.Column="1" Grid.RowSpan="2"/>
+        <TreeView Grid.Column="2" HorizontalAlignment="Right" Width="295"/>
+
+        <sharpGL:OpenGLControl MouseWheel="OpenGLControl_MouseWheel" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialize" MinWidth="300"/>
+        <GridSplitter HorizontalAlignment="Stretch" Margin="0,0,295,0" Grid.Column="1" Grid.RowSpan="2"/>
 
         <!-- ">>" -->
         <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="290,5,202,0">
-            <TextBlock>&#x003e;&#x003e;</TextBlock>
+            <TextBlock><Run Text="&gt;&gt;"/></TextBlock>
         </Button>
         <!-- ">" -->
         <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="280,5,235,0">
-            <TextBlock>&#x003e;</TextBlock>
+            <TextBlock><Run Text="&gt;"/></TextBlock>
         </Button>
         <!-- "play/pause" -->
         <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="290,5,290,0">
-            <TextBlock>&#x25B6;</TextBlock>
+            <TextBlock><Run Text="▶"/></TextBlock>
         </Button>
         <!-- "<" -->
         <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="235,5,280,0">
-            <TextBlock>&#x003c;</TextBlock>
+            <TextBlock><Run Text="&lt;"/></TextBlock>
         </Button>
         <!-- "<<" -->
         <Button Grid.Row="1" VerticalAlignment="Top" Height="20" Click="Button_Click" HorizontalAlignment="Center" Width="20" Margin="202,5,290,0">
-            <TextBlock>&#x003c;&#x003c;</TextBlock>
+            <TextBlock><Run Text="&lt;&lt;"/></TextBlock>
         </Button>
-        <TreeView Grid.Column="1" HorizontalAlignment="Left" Height="390" VerticalAlignment="Top" Width="187" Margin="5,0,0,0"/>
+        <Button Content="Modell laden" Grid.Column="1" Margin="11,5,0,4" Grid.Row="1" HorizontalAlignment="Left" Width="75"/>
+        <TextBox Grid.Column="1" Height="20" Margin="93,5,6,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" IsEnabled="False"/>
     </Grid>
 </Window>

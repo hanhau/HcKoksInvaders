@@ -46,5 +46,10 @@ namespace ModelViewser
         {
 
         }
+
+        private void OpenGLControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+
+        }
     }
 }
