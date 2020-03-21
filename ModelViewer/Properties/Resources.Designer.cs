@@ -4,11 +4,11 @@
 //     Laufzeitversion: 4.0.30319.42000
 //
 //     Änderungen an dieser Datei können fehlerhaftes Verhalten verursachen und gehen verloren, wenn
-//     der Code neu generiert wird.
+//     der Code erneut generiert wird.
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ModelViewer.Properties
+namespace ModelViewser.Properties
 {
 
 
@@ -44,7 +44,7 @@ namespace ModelViewer.Properties
             {
                 if ((resourceMan == null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelViewer.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelViewser.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
