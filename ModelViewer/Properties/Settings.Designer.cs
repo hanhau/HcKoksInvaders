@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ModelViewer.Properties
+namespace ModelViewser.Properties
 {
 
 
