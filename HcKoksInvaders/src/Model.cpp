@@ -4,11 +4,13 @@
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include <assimp/material.h>
 #include <iostream>
 #include <filesystem>
 #include <GL/glew.h>
 #include "../include/Util.hpp"
 #include <Camera.hpp>
+#include "../include/Log.hpp"
 
 /* -------------------------------------------------------------------
 							   MESH
@@ -35,6 +37,40 @@ const BoundingBall& Model3D::getOuterBB() const {
 	return m_outerBall;
 }
 
+static std::string debugMaterialString(aiMaterial* mat,const char* pKey) {
+	aiString str;
+	int i;
+	aiColor4D col;
+	float f;
+
+	if (pKey == "AI_MATKEY_NAME") {
+		aiGetMaterialString(mat, pKey, 0, 0, &str);
+		return str.C_Str();
+	}
+	else if (pKey == "AI_MATKEY_COLOR_DIFFUSE" || pKey == "AI_MATKEY_COLOR_SPECULAR" ||
+		     pKey == "AI_MATKEY_COLOR_AMBIENT" || pKey == "AI_MATKEY_COLOR_EMISSIVE" ||
+		     pKey == "AI_MATKEY_TRANSPARENT") {
+		aiGetMaterialColor(mat, pKey, 0, 0, &col);
+		return "(" + 
+			std::string(std::to_string(col.a)) + "," + 
+			std::string(std::to_string(col.g)) + "," + 
+			std::string(std::to_string(col.b)) + "," +
+			std::string(std::to_string(col.a)) +
+		")";
+	}
+	else if (pKey == "AI_MATKEY_WIREFRAME" || pKey == "AI_MATKEY_TWOSIDED" || 
+		     pKey == "AI_MATKEY_SHADING_MODEL" || pKey == "AI_MATKEY_BLEND_FUNC") {
+		aiGetMaterialInteger(mat, pKey, 0, 0, &i);
+		return std::to_string(i);
+	}
+	else if (pKey == "AI_MATKEY_OPACITY" || pKey == "AI_MATKEY_SHININESS" ||
+		     pKey == "AI_MATKEY_SHININESS_STRENGTH" || pKey == "AI_MATKEY_REFRACTI") {
+		aiGetMaterialFloat(mat, pKey, 0, 0, &f);
+		return std::to_string(f);
+	}
+	else return "";
+}
+
 bool Model3D::loadFileFromMemory(uint8_t * const buffer, const size_t bufferLength, 
 								 const std::string filename)
 {
@@ -47,6 +83,42 @@ bool Model3D::loadFileFromMemory(uint8_t * const buffer, const size_t bufferLeng
 
 		if (scene->mNumMeshes != 1)
 			throw std::string("Invalid number of meshes. EXACTLY 1 please.");
+
+		// Debug Out Materials
+		for (int i = 0; i < scene->mNumMaterials; i++) {
+			printf_s("Mesh %s: \n" 
+				"NAME: %s\n"
+				"COLOR_DIFFUSE: %s\n"
+				"COLOR_SPECULAR: %s\n"
+				"COLOR_AMBIENT: %s\n"
+				"COLOR_EMISSIVE: %s\n"
+				"COLOR_TRANSPARENT: %s\n"
+				"WIREFRAME: %s\n"
+				"TWOSIDED: %s\n"
+				"SHADING_MODEL: %s\n"
+				"BLEND_FUNC: %s\n"
+				"OPACITY: %s\n"
+				"SHININESS: %s\n"
+				"SHININESS_STRENGTH: %s\n"
+				"REFRACTI: %s\n"
+				"\n",
+				filename.c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_NAME").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_COLOR_DIFFUSE").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_COLOR_SPECULAR").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_COLOR_AMBIENT").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_COLOR_EMISSIVE").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_COLOR_TRANSPARENT").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_WIREFRAME").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_TWOSIDED").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_SHADING_MODEL").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_BLEND_FUNC").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_OPACITY").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_SHININESS").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_SHININESS_STRENGTH").c_str(),
+				debugMaterialString(scene->mMaterials[i],"AI_MATKEY_REFRACTI").c_str()
+			);
+		}
 
 		// Load Vertices
 		processAiMesh(scene->mMeshes[0],scene,m_mesh);

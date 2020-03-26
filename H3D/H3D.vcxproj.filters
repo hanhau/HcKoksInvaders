@@ -16,14 +16,41 @@
     <Filter Include="Headerdateien\Model">
       <UniqueIdentifier>{1913c58c-c783-4c30-8728-97d3e15f7da9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\Model">
+      <UniqueIdentifier>{d05a9699-8807-4fc6-b5c9-f8f8cb15eff7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="src\Model\Animation.cpp">
+      <Filter>Quelldateien\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Material.cpp">
+      <Filter>Quelldateien\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Mesh.cpp">
+      <Filter>Quelldateien\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Model3D.cpp">
+      <Filter>Quelldateien\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="H3D\Model3D.hpp">
+      <Filter>Headerdateien\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.hpp">
+      <Filter>Headerdateien\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.hpp">
+      <Filter>Headerdateien\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.hpp">
+      <Filter>Headerdateien\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Vertex.hpp">
       <Filter>Headerdateien\Model</Filter>
     </ClInclude>
   </ItemGroup>
